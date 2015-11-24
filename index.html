@@ -58,7 +58,7 @@ When booting from disk, it will probably fail the first time, you need to go int
 <p>Using ZFS with bhyve guests: Use ZFS volumes instead of disk image files for performance benefits.</p>
 <p><code># zfs create -V16G -o volmode=dev zroot/guestdisk0</code></p>
 <p>When starting the VM, specify the ZFS volume as the disk drive</p>
-<code># bhyve -A -H -P -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,tap1 -s3:0,virtio-blk,/dev/zvol/zroot/guestdisk0 -l  com1,stdio -c 4 -m 1024M guestname
+<p><code># bhyve -A -H -P -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,tap1 -s3:0,virtio-blk,/dev/zvol/zroot/guestdisk0 -l  com1,stdio -c 4 -m 1024M guestname</code></p>
 
 
 </body>
