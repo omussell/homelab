@@ -53,7 +53,7 @@ When booting from disk, it will probably fail the first time, you need to go int
 <p><code># sh /usr/share/examples/bhyve/vmrun.sh -c 4 -m 1024M -t tap0 -d guest.img -i -I FreeBSD10.2_bootonly.iso guestname</code></p>
 
 <p>Reboot the VM, during reboot, press 4 to reboot to exit the loop. The guest can then be run from hard disk.</p>
-<p><code># sh /usr/share/examples/bhyve/vmrun.sh -c 4 -m 1024M -t tap0 -d guest.img guestname</p>
+<p><code># sh /usr/share/examples/bhyve/vmrun.sh -c 4 -m 1024M -t tap0 -d guest.img guestname</code></p>
 
 <p>Using ZFS with bhyve guests: Use ZFS volumes instead of disk image files for performance benefits.</p>
 <p><code># zfs create -V16G -o volmode=dev zroot/guestdisk0</code></p>
