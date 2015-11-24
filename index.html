@@ -14,7 +14,7 @@ Hardware</h2>
 
 <ul style="list-style-type:none">
 <li><b>Gigabyte Brix Pro GB-BXI7-4770R</b>
-</li><li>- Intel Core i7-4770R (Quad core 3.2Ghz)
+</li><li>- Intel Core i7-4770R (quad core 3.2Ghz)
 </li><li>- 16GB RAM
 </li><li>- 250GB mSATA SSD
 </li><li>- 250GB 2.5 inch SSD
@@ -28,6 +28,32 @@ Hardware</h2>
 </li><li>- 2 x 3TB HDD
 </li></ul>
 <br>
+
+<h2>
+Virtualisation Host Setup</h2>
+
+<p>
+Download FreeBSD 10.2 RELEASE amd64 uefi memstick.img from the FreeBSD website. Use the Win32DiskImager utility or dd to write the .img file to a USB stick. Once complete, boot the Brix via USB. (Hit Delete during bootup to enter BIOS and change boot options.) Follow the default install process. For disk configuration, select auto-ZFS and use striping across both disks. 
+When booting from disk, it will probably fail the first time, you need to go into the BIOS and find the CSM option, then change it to enabled. When you reboot, it should boot from disk correctly.
+
+</p><p>Preparing the host: Load the bhyve kernel module, then create a tap interface for the network device.
+<code># kldload vmm</code>
+<code># ifconfig tap0 create</code>
+<code># sysctl net.link.tap.up_on_open=1</code>
+<code># ifconfig bridge0 create</code>
+<code># ifconfig bridge0 addm igb0 addm tap0	### May fail, ok to continue ###</code>
+<code># ifconfig bridge0 up</code>
+Creating a FreeBSD guest: Create a virtual disk for the VM, download a FreeBSD bootonly ISO, start using the vmrun.sh script
+<code># truncate -s 16G guest.img</code>
+
+<code># fetch $path_to_FreeBSD10.2_bootonly.iso</code>
+
+<code># sh /usr/share/examples/bhyve/vmrun.sh -c 4 -m 1024M -t tap0 -d guest.img -i -I FreeBSD10.2_bootonly.iso guestname</code>
+
+Reboot the VM, during reboot, press 4 to reboot to exit the loop. The guest can then be run from hard disk.
+<code># sh /usr/share/examples/bhyve/vmrun.sh -c 4 -m 1024M -t tap0 -d guest.img guestname
+
+</p>
 
 </body>
 </html>
