@@ -36,24 +36,22 @@ Virtualisation Host Setup</h2>
 Download FreeBSD 10.2 RELEASE amd64 uefi memstick.img from the FreeBSD website. Use the Win32DiskImager utility or dd to write the .img file to a USB stick. Once complete, boot the Brix via USB. (Hit Delete during bootup to enter BIOS and change boot options.) Follow the default install process. For disk configuration, select auto-ZFS and use striping across both disks. 
 When booting from disk, it will probably fail the first time, you need to go into the BIOS and find the CSM option, then change it to enabled. When you reboot, it should boot from disk correctly.
 
-</p><p>Preparing the host: Load the bhyve kernel module, then create a tap interface for the network device.
-<code># kldload vmm</code>
-<code># ifconfig tap0 create</code>
-<code># sysctl net.link.tap.up_on_open=1</code>
-<code># ifconfig bridge0 create</code>
-<code># ifconfig bridge0 addm igb0 addm tap0	### May fail, ok to continue ###</code>
-<code># ifconfig bridge0 up</code>
-Creating a FreeBSD guest: Create a virtual disk for the VM, download a FreeBSD bootonly ISO, start using the vmrun.sh script
-<code># truncate -s 16G guest.img</code>
+</p><p>Preparing the host: Load the bhyve kernel module, then create a tap interface for the network device.</p>
+<p><code># kldload vmm</code></p>
+<p><code># ifconfig tap0 create</code></p>
+<p><code># sysctl net.link.tap.up_on_open=1</code></p>
+<p><code># ifconfig bridge0 create</code></p>
+<p><code># ifconfig bridge0 addm igb0 addm tap0	### May fail, ok to continue ###</code></p>
+<p><code># ifconfig bridge0 up</code></p>
+<p>Creating a FreeBSD guest: Create a virtual disk for the VM, download a FreeBSD bootonly ISO, start using the vmrun.sh script</p>
+<p><code># truncate -s 16G guest.img</code></p>
 
-<code># fetch $path_to_FreeBSD10.2_bootonly.iso</code>
+<p><code># fetch $path_to_FreeBSD10.2_bootonly.iso</code></p>
 
-<code># sh /usr/share/examples/bhyve/vmrun.sh -c 4 -m 1024M -t tap0 -d guest.img -i -I FreeBSD10.2_bootonly.iso guestname</code>
+<p><code># sh /usr/share/examples/bhyve/vmrun.sh -c 4 -m 1024M -t tap0 -d guest.img -i -I FreeBSD10.2_bootonly.iso guestname</code></p>
 
-Reboot the VM, during reboot, press 4 to reboot to exit the loop. The guest can then be run from hard disk.
-<code># sh /usr/share/examples/bhyve/vmrun.sh -c 4 -m 1024M -t tap0 -d guest.img guestname
-
-</p>
+<p>Reboot the VM, during reboot, press 4 to reboot to exit the loop. The guest can then be run from hard disk.</p>
+<p><code># sh /usr/share/examples/bhyve/vmrun.sh -c 4 -m 1024M -t tap0 -d guest.img guestname</p>
 
 </body>
 </html>
