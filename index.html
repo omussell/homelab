@@ -57,9 +57,25 @@ When booting from disk, it will probably fail the first time, you need to go int
 
 <p>Using ZFS with bhyve guests: Use ZFS volumes instead of disk image files for performance benefits.</p>
 <p><code># zfs create -V16G -o volmode=dev zroot/guestdisk0</code></p>
+
 <p>When starting the VM, specify the ZFS volume as the disk drive</p>
 <p><code># bhyve -A -H -P -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,tap1 -s3:0,virtio-blk,/dev/zvol/zroot/guestdisk0 -l  com1,stdio -c 4 -m 1024M guestname</code></p>
 
+<p>Virtual machine consoles: have the console of bhyve be a null modem device that can be accessed with <code>cu</code></p>
+<p><code># kldload nmdm</code></p>
+<p><code># bhyve -A -H -P -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,tap1 -s 3:0,virtio-blk,./linux.img -l com1,/dev/nmdm0A -c 4 -m 1024M linuxguest</code></p>
+<p><code># cu -l /dev/nmdm0B -s 9600</code></p>
+
+<p>Managing virtual machines: device nodes are created in /dev/vmm</p>
+<p><code># ls -al /dev/vmm</code></p>
+<p>VMs can then be destroyed:</p>
+<p><code># bhyvectl --destroy --vm=guestname</code></p>
+
+<h2>
+NAS Setup
+</h2>
+
+<p>Download FreeNAS ISO from the FreeNAS website. Use the Rufus utility to create a bootable USB stick. This requires two USB sticks, one is used for initial install and the other will be used for the persistent configuration. Follow the default install process. Once the install is complete, you can access the configuration webpage by navigating to the IP set during install in a browser. Select Sharing, then create two new shares. SSD_Storage is striping of the two SSDs, HDD_Storage is a the two HDDs in a mirror.</p>
 
 </body>
 </html>
