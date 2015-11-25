@@ -1,0 +1,35 @@
+<html><head>
+	<title>omussell/github</title>
+
+</head>
+
+<body bgcolor="FFFFFF">
+
+<center>
+<h1>
+Infrastructure
+</h1></center>
+
+<h2>
+Version Control
+</h2>
+
+<h2>
+Gold Server Setup
+</h2>
+
+<p>Load the <code>vmm</code> kernel module, and create the tap0 interface.</p>
+<p>Fetch the FreeBSD bootonly ISO file and store in ~.</p>
+
+<p>A ZFS volume can be created to use as the block device to improve performance.</p>
+<p><code>zfs create -V16G -o volmode=dev zroot/vm/gold_server</code></p>
+<p>Use <code>zfs list</code> to view the new zfs volume (it isn't mounted, thats fine)</p>
+<p>Run the <code>vmrun.sh</code> script to start the VM</p>
+<p><code>sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 256M -t tap0 -d /dev/zvol/zroot/vm/gold_server -i -I bootonly.iso gold_server</code></p>
+<p>Flags: -c = number of vCPUs, -m = RAM, -t = Tap device, -d = Disk device, -i = Force boot from ISO, -I = ISO location</p>
+<p>Install the operating system as normal. On disk setup, I chose UFS filesystem rather than ZFS, not sure if it makes a difference. At the end, reboot, and when it boots up again, press 4 to exit the reboot loop.</p>
+<p>To run the VM from the disk rather than the CD:<p>
+<p><code>sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 256M -t tap0 -d /dev/zvol/zroot/vm/gold_server gold_server</code></p>
+
+</body>
+</html>
