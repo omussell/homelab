@@ -13,7 +13,8 @@ Homelab</h1></center>
 Hardware</h2>
 
 <ul style="list-style-type:none">
-<li><b>Gigabyte Brix Pro GB-BXI7-4770R</b>
+<li><b><u>Virtualisation Host</u></b>
+</li><li><b>Gigabyte Brix Pro GB-BXI7-4770R</b>
 </li><li>- Intel Core i7-4770R (quad core 3.2Ghz)
 </li><li>- 16GB RAM
 </li><li>- 250GB mSATA SSD
@@ -21,16 +22,25 @@ Hardware</h2>
 </li></ul>
 <br>
 <ul style="list-style-type:none">
-<li><b>HP ProLiant G8 Microserver G1610T</b>
+<li><b><u>NAS</u></b>
+</li><li><b>HP ProLiant G8 Microserver G1610T</b>
 </li><li>- Intel Celeron G1610T (dual core, 2.3 Ghz)
 </li><li>- 16GB RAM
 </li><li>- 2 x 250GB SSD
 </li><li>- 2 x 3TB HDD
 </li></ul>
 <br>
+<ul style="list-style-type:none">
+<li><b><u>Management client</u></b>
+</li><li><b>Raspberry Pi 2 Model B</b>
+</li><li>- Quad core, 1GB RAM
+</li><li>- 8GB MicroSD (w/ NOOBS)
+</li></ul>
+<br>
 
 <h2>
-Virtualisation Host Setup</h2>
+Virtualisation Host Setup
+</h2>
 
 <p>
 Download FreeBSD 10.2 RELEASE amd64 uefi memstick.img from the FreeBSD website. Use the Win32DiskImager utility or dd to write the .img file to a USB stick. Once complete, boot the Brix via USB. (Hit Delete during bootup to enter BIOS and change boot options.) Follow the default install process. For disk configuration, select auto-ZFS and use striping across both disks. 
@@ -76,6 +86,45 @@ NAS Setup
 </h2>
 
 <p>Download FreeNAS ISO from the FreeNAS website. Use the Rufus utility to create a bootable USB stick. This requires two USB sticks, one is used for initial install and the other will be used for the persistent configuration. Follow the default install process. Once the install is complete, you can access the configuration webpage by navigating to the IP set during install in a browser. Select Sharing, then create two new shares. SSD_Storage is striping of the two SSDs, HDD_Storage is a the two HDDs in a mirror.</p>
+
+<h2>
+SSH Setup
+</h2>
+
+<p>To enable remote access to the virtualisation host, and to prevent the need to attach monitor/keyboard, SSh access is enabled.</p>
+
+<p>On the Pi, generate a SSH key pair:</p>
+<p><code># ssh-keygen -t rsa</code></p>
+<p>Ensure the passphrase is strong</p>
+
+<p>The key pair is created in the ~/.ssh directory. ~/.ssh/id_rsa is the private key, ~/.ssh/id_rsa.pub is the public key.</p>
+<p>The public key needs copying to the server. Before this can take place, you need user credentials on the server.</p>
+<p>On the server:</p>
+<p><code># vim /etc/ssh/ssh_config</code></p>
+<p>Add line: "AllowGroups wheel"</p>
+<p>Now use the <code>adduser</code> command to create a user, and add them to the "wheel" group</p>
+<p>Login with this user, and run <code>ssh-keygen</code>, but do not generate a new key pair. This will create the .ssh directory with the correct permissions.</p>
+
+<p>On the client:</p>
+<p><code># cd ~/.ssh</code></p>
+<p><code># cat id_rsa.pub | ssh user@hostname 'cat >>.ssh/authorized_keys'</code></p>
+
+<p>Test connecting using <code># ssh user@hostname</code></p>
+<p>Once connected, use <code>su</code> to elevate to root, then edit /etc/ssh/sshd_config</p>
+
+<p><code>
+Port 22
+Protocol 2
+SyslogFacility AUTH
+LogLevel INFO
+PermitRootLogin no
+
+RSAAuthentication yes
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+PasswordAuthentication no
+</code></p>
+
 
 </body>
 </html>
