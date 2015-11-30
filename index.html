@@ -52,7 +52,7 @@ When booting from disk, it will probably fail the first time, you need to go int
 <p><code># ifconfig tap0 create</code></p>
 <p><code># sysctl net.link.tap.up_on_open=1</code></p>
 <p><code># ifconfig bridge0 create</code></p>
-<p><code># ifconfig bridge0 addm igb0 addm tap0	### May fail, ok to continue ###</code></p>
+<p><code># ifconfig bridge0 addm re0 addm tap0	### Use ifconfig to find your NIC name ###</code></p>
 <p><code># ifconfig bridge0 up</code></p>
 
 <p>Creating a FreeBSD guest: Create a virtual disk for the VM, download a FreeBSD bootonly ISO, start using the vmrun.sh script</p>
