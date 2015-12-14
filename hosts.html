@@ -1,0 +1,77 @@
+<html><head>
+	<title>omussell/github</title>
+
+</head>
+
+<body bgcolor="FFFFFF">
+
+<center>
+<h1>
+Hosts
+</center>
+</h1>
+
+<h2>
+Virtualisation Host
+</h2>
+
+<p>
+Download FreeBSD 10.2 RELEASE amd64 uefi memstick.img from the FreeBSD website. Use the Win32DiskImager utility or dd to write the .img file to a USB stick. Once complete, boot the Brix via USB. (Hit Delete during bootup to enter BIOS and change boot options.) Follow the default install process. For disk configuration, select auto-ZFS and use striping across both disks. 
+When booting from disk, it will probably fail the first time, you need to go into the BIOS and find the CSM option, then change it to enabled. When you reboot, it should boot from disk correctly.
+</p>
+
+<p>Preparing the host: Load the bhyve kernel module, then create a tap interface for the network device.</p>
+<p><code># kldload vmm</code></p>
+<p><code># ifconfig tap0 create</code></p>
+<p><code># sysctl net.link.tap.up_on_open=1</code></p>
+<p><code># ifconfig bridge0 create</code></p>
+<p><code># ifconfig bridge0 addm re0 addm tap0	### Use ifconfig to find your NIC name ###</code></p>
+<p><code># ifconfig bridge0 up</code></p>
+
+<h2>
+Storage
+</h2>
+
+<p>Download FreeNAS ISO from the FreeNAS website. Use the Rufus utility to create a bootable USB stick. This requires two USB sticks, one is used for initial install and the other will be used for the persistent configuration. Follow the default install process. Once the install is complete, you can access the configuration webpage by navigating to the IP set during install in a browser. Select Sharing, then create two new shares. SSD_Storage is striping of the two SSDs, HDD_Storage is a the two HDDs in a mirror.</p>
+
+<h2>
+SSH Setup
+</h2>
+
+<p>To enable remote access to the virtualisation host, and to prevent the need to attach monitor/keyboard, SSh access is enabled.</p>
+
+<p>On the Pi, generate a SSH key pair:</p>
+<p><code># ssh-keygen -t rsa</code></p>
+<p>Ensure the passphrase is strong</p>
+
+<p>The key pair is created in the ~/.ssh directory. ~/.ssh/id_rsa is the private key, ~/.ssh/id_rsa.pub is the public key.</p>
+<p>The public key needs copying to the server. Before this can take place, you need user credentials on the server.</p>
+<p>On the server:</p>
+<p><code># vim /etc/ssh/ssh_config</code></p>
+<p>Add line: "AllowGroups wheel"</p>
+<p>Now use the <code>adduser</code> command to create a user, and add them to the "wheel" group</p>
+<p>Login with this user, and run <code>ssh-keygen</code>, but do not generate a new key pair. This will create the .ssh directory with the correct permissions.</p>
+
+<p>On the client:</p>
+<p><code># cd ~/.ssh</code></p>
+<p><code># cat id_rsa.pub | ssh user@hostname 'cat >>.ssh/authorized_keys'</code></p>
+
+<p>Test connecting using <code># ssh user@hostname</code></p>
+<p>Once connected, use <code>su</code> to elevate to root, then edit /etc/ssh/sshd_config</p>
+
+<p><code>
+Port 22
+Protocol 2
+SyslogFacility AUTH
+LogLevel INFO
+PermitRootLogin no
+
+RSAAuthentication yes
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+PasswordAuthentication no
+</code></p>
+
+
+</body>
+</html>
