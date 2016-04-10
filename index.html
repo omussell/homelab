@@ -10,9 +10,68 @@
 Homelab
 </h1></center>
 
-<ul style="list-style-type:none">
-<li>
-list of links
+<h2>
+Automating FreeBSD Jail Creation
+</h2>
 
+<pre>
+Creating the template:
+zfs create -o mountpoint=/usr/local/jails zroot/jails
+zfs create -p zroot/jails/template
+
+Download the base files into a new directory
+mkdir ~/jails
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/10.2-RELEASE/base.txz -o ~/jails
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/10.2-RELEASE/lib32.txz -o ~/jails
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/10.2-RELEASE/ports.txz -o ~/jails
+
+Extract the base files
+tar -xf ~/jails/base.txz -C /usr/local/jails/template
+tar -xf ~/jails/lib32.txz -C /usr/local/jails/template
+tar -xf ~/jails/ports.txz -C /usr/local/jails/template
+
+Copy files from host to template
+cp /etc/resolv.conf /usr/local/jails/template/etc/resolv.conf
+cp /etc/localtime /usr/local/jails/template/etc/localtime
+mkdir -p /usr/local/template/home/username/.ssh
+cp /home/username/.ssh/authorized_keys /usr/local/jails/template/home/username/.ssh
+
+When finished, take a snapshot
+zfs snapshot zroot/jails/template@1
+
+Edit /etc/jail.conf
+# Global settings applied to all jails
+
+interface = "re0";
+host.hostname = "$name";
+ip4.addr = 192.168.1.$ip;
+path = "/usr/local/jails/$name";
+
+exec.start = "/bin/sh /etc/rc";
+exec.stop = "/bin/sh /etc/rc.shutdown";
+exec.clean;
+mount.devfs;
+
+# Jail Definitions
+testjail {
+	$ip = 15;
+}
+
+Run the jail
+jail -c testjail
+
+View running jails
+jls
+
+Login to the jail
+jexec $jailname sh
 </body>
 </html>
+
+
+
+
+
+
+
+
