@@ -65,6 +65,19 @@ jls
 
 Login to the jail
 jexec $jailname sh
+
+<h2>
+New Jail Creation Script
+</h2>
+<pre>
+#! /bin/sh
+read -p "Enter jail name:" hostname
+zfs clone zroot/jails/template@1 zroot/jails/$hostname
+echo hostname=\"$hostname\" &gt; /usr/local/jails/$hostname/etc/rc.conf
+# Disable sendmail to speed up start time
+echo sendmail_submit_enable=\"NO\" &gt;&gt; /usr/local/jails/$hostname/etc/rc.conf
+echo sendmail_outbound_enable=\"NO\" &gt;&gt; /usr/local/jails/$hostname/etc/rc.conf
+echo sendmail_msp_queue_enable=\"NO\" &gt;&gt; /usr/local/jails/$hostname/etc/rc.conf
 </body>
 </html>
 
