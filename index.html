@@ -18,7 +18,7 @@ Hardware
 <pre>
 <b><u>Virtualisation Host</u></b>
 <b>Gigabyte Brix Pro GB-BXI7-4770R</b>
-- Intel Core i7-4770R (quad core 3.2GHz
+- Intel Core i7-4770R (quad core 3.2GHz)
 - 16GB RAM
 - 250GB mSATA SSD
 - 250GB 2.5 inch SSD
@@ -105,6 +105,54 @@ echo hostname=\"$hostname\" &gt; /usr/local/jails/$hostname/etc/rc.conf
 echo sendmail_submit_enable=\"NO\" &gt;&gt; /usr/local/jails/$hostname/etc/rc.conf
 echo sendmail_outbound_enable=\"NO\" &gt;&gt; /usr/local/jails/$hostname/etc/rc.conf
 echo sendmail_msp_queue_enable=\"NO\" &gt;&gt; /usr/local/jails/$hostname/etc/rc.conf
+</pre>
+
+<h2>
+Automating Bhyve VM Creation
+</h2>
+
+<pre>
+Edit /etc/sysctl.conf
+net.link.tap.up_on_open=1
+
+Edit /boot/loader.conf
+vmm_load="YES"
+nmdm_load="YES"
+if_bridge_load="YES"
+if_tap_load="YES"
+
+Edit /etc/rc.conf
+cloned_interfaces="bridge0 tap0"
+ifconfig_bridge0="addm re0 addm tap0"
+
+Create ZFS volume
+zfs create -V16G -o volmode=dev zroot/testvm
+
+Download the installation image
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/ISO-IMAGES/10.2/FreeBSD-10.2-RELEASE-amd64-disc1.iso 
+
+Start the VM
+sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/testvm -i -I FreeBSD-10.2-RELEASE-amd64-disc1.iso testvm
+
+Install as normal, following the menu options
+</pre>
+
+<h2>
+New VM Creation Script
+</h2>
+
+<pre>
+#! /bin/sh
+read -p "Enter hostname: " hostname
+zfs create -V16G -o volmode=dev zroot/$hostname
+sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/$hostname -i -I ~/FreeBSD-10.2-RELEASE-amd64-disc1.iso $hostname
+</pre>
+
+<h2>
+Automating FreeBSD Install for VMs
+</h2>
+
+
 </body>
 </html>
 
