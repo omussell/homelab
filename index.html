@@ -156,6 +156,30 @@ NanoBSD
 <a href="https://2010.asiabsdcon.org/papers/abc2010-P4A-paper.pdf">PDF: NanoBSD, ZFS and Jails</a>
 </pre>
 
+<pre>
+cd to NanoBSD build directory
+cd /usr/src/tools/tools/nanobsd
+
+Run the build script, using default values for now
+sh nanobsd.sh
+
+Wait a while for buildworld to finish
+
+Go to output directory
+cd /usr/obj/nanobsd.full
+
+Create a new ZFS device
+zfs create -V5G -o volmode=dev zroot/testnano
+
+Copy the NanoBSD full image to the ZFS device
+dd if=_.disk.full of=/dev/zvol/zroot/testnano
+
+Run Bhyve using the ZFS device for boot
+sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/testnano testnano
+
+It boots! But, it can't mount root on a device... yet....
+</pre>
+
 
 </body>
 </html>
