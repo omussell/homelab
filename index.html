@@ -153,7 +153,6 @@ Backing up VMs
 </h2>
 
 <pre>
-
 In the FreeNAS web interface, create a new user
 Account
 Add User
@@ -175,6 +174,9 @@ $ zfs snapshot zroot/testvm@1
 
 Send the snapshot to the NAS
 $ zfs send zroot/testvm@1 | ssh user@freenas zfs recv -dvu SSD_storage/backup
+
+After a full snapshot is taken, incremental backups can be performed
+$ zfs send -i zroot/testvm@1 zroot/testvm@2 | ssh user@freenas zfs recv -dvu SSD_storage/backup
 </pre>
 
 <h2>
