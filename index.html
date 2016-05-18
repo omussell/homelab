@@ -149,6 +149,35 @@ sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/$h
 </pre>
 
 <h2>
+Backing up VMs
+</h2>
+
+<pre>
+
+In the FreeNAS web interface, create a new user
+Account
+Add User
+Fill in the fields
+Allow sudo
+Ensure the public key is pasted into the SSH key field
+
+Connect to the NAS over SSH
+# sysctl vfs.usermount=1
+# echo vfs.usermount=1 &gt;&gt; /etc/sysctl.conf
+# zfs create SSD_storage/backup
+# zfs allow -u user create,mount,receive SSD_storage/backup
+
+Allow user to send snapshots
+# zfs allow -u user send,snapshot zroot
+
+Create the snapshot
+$ zfs snapshot zroot/testvm@1
+
+Send the snapshot to the NAS
+$ zfs send zroot/testvm@1 | ssh user@freenas zfs recv -dvu SSD_storage/backup
+</pre>
+
+<h2>
 NanoBSD
 </h2>
 <pre>
