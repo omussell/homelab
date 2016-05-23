@@ -149,6 +149,31 @@ sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/$h
 </pre>
 
 <h2>
+Creating a Linux guest
+</h2>
+
+<pre>
+Create a file for the hard disk
+truncate -s 16G linux.img
+
+Create the file to map the virtual devices for kernel load
+cat device.map (use the full path)
+(hd0) /root/linux.img
+(cd0) /root/linux.iso
+
+Load the kernel
+grub-bhyve -m device.map -r cd0 -M 1024M linuxguest
+
+Grub should start, choose install as normal
+
+Start the VM
+bhyve -A -H -P -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,tap0 -s 3:0,virtio-blk,/root/linux.img -l com1,dev/nmdm0A -c 1 -m 512M linuxguest
+
+Access through the serial console
+cu -l /dev/nmdm0B
+</pre>
+
+<h2>
 Backing up VMs
 </h2>
 
