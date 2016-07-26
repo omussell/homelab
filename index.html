@@ -167,7 +167,7 @@ grub-bhyve -m device.map -r cd0 -M 1024M linuxguest
 Grub should start, choose install as normal
 
 Start the VM
-bhyve -A -H -P -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,tap0 -s 3:0,virtio-blk,/root/linux.img -l com1,dev/nmdm0A -c 1 -m 512M linuxguest
+bhyve -A -H -P -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,tap0 -s 3:0,virtio-blk,/root/linux.img -l com1,/dev/nmdm0A -c 1 -m 512M linuxguest
 
 Access through the serial console
 cu -l /dev/nmdm0B
@@ -267,6 +267,13 @@ Run Bhyve using the ZFS device for boot
 sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/testnano testnano
 
 It boots! But, it can't mount root on a device... yet....
+
+***
+
+Got it to boot by changing ${NANO_DRIVE} to vtbd0 in the config file. Need to
+get it working by setting the variable properly. Also need to get the files
+and packages as part of the image.
+
 </pre>
 
 
