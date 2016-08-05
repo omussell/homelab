@@ -114,7 +114,7 @@ tar -xf /tmp/ports.txz -C /usr/local/jails/template
 # Copy files from host/hypervisor to template
 cp /etc/resolv.conf /usr/local/jails/template/etc/resolv.conf
 cp /etc/localtime /usr/local/jails/template/etc/localtime
-mkdir -p /usr/local/template/home/pi/.ssh
+mkdir -p /usr/local/template/home/user/.ssh
 cp /home/user/.ssh/authorized_keys /usr/local/jails/template/home/user/.ssh
 
 # Create the snapshot
