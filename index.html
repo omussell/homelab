@@ -311,8 +311,82 @@ and packages as part of the image.
 
 </pre>
 
+<h2>
+Jails Infrastructure
+</h2>
+
+<pre>
+createalljails.sh
+
+cat /etc/jail.conf | grep -E \{$ | sed "s/{//" &gt; ~/jails/listofjails.txt
+
+for jail in `cat ~/jails/listofjails.txt`
+do
+	zfs clone zroot/jails/template@1 zroot/jails/$jail
+	echo hostname=$jail &gt; /usr/local/jails/$jail/etc/rc.conf
+
+	# Disable sendmail to speed up start time
+	echo sendmail_submit_enable=\"NO\" &gt;&gt; /usr/local/jails/$jail/etc/rc.conf
+	echo sendmail_outbound_enable=\"NO\" &gt;&gt; /usr/local/jails/$jail/etc/rc.conf
+	echo sendmail_msp_queue_enable=\"NO\" &gt;&gt; /usr/local/jails/$jail/etc/rc.conf
+
+cat ~/jails/listofjails.txt | sed "s/^/jail \=c /"
+</pre>
+
+<h2>
+/etc/jail.conf
+</h2>
+
+<pre>
+# Global settings applied to all jails
+
+interface = "re0";
+host.hostname = "$name";
+ip4.addr = 192.168.1.$ip;
+path = "/usr/local/jails/$name";
+
+exec.start = "/bin/sh /etc/rc";
+exec.stop = "/bin/sh /etc/rc.shutdown";
+exec.clean;
+mount.devfs;
+
+# Jail Definitions
+
+wintermute {
+	$ip = 15;
+}
+
+neuromancer {
+	$ip = 16;
+}
+
+armitage {
+	$ip = 17;
+}
+
+finn {
+	$ip = 18;
+}
+
+hideo {
+	$ip = 19;
+}
+
+maelcum {
+	$ip = 20;
+}
+
+case {
+	$ip = 21;
+}
+
+molly {
+	$ip = 22;
+}
+</pre>
 
 </body>
 </html>
+
 
 
