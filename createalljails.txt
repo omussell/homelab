@@ -10,6 +10,6 @@ do
 	echo sendmail_outbound_enable=\"NO\" >> /usr/local/jails/$jail/etc/rc.conf
 	echo sendmail_msp_queue_enable=\"NO\" >> /usr/local/jails/$jail/etc/rc.conf
 
-cat ~/jails/listofjails.txt | sed "s/^/jail \=c /"
+cat ~/jails/listofjails.txt | sed "s/^/jail \-c /"
 
 
