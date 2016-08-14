@@ -417,6 +417,24 @@ Case - Molly
 - Web servers -- Apache
 </pre>
 
+<h2>
+Ansible Setup
+</h2>
+
+<pre>
+# Create the "ansible" user
+adduser -f filename
+ansible:::::::::password
+# Generate the SSH key for the ansible user
+ssh-keygen -N "" -f /home/ansible/.ssh/id_rsa
+su -m ansible -c 'ssh-keygen -N "" -f /home/ansible/.ssh/id_rsa'
+cat /home/ansible/.ssh/id_rsa.pub
+
+echo "ansible:::::::::$RANDOMPASSWORD" > /usr/local/jails/$JAILNAME/root/ansibleuser
+jexec $JAILENAME adduser -f /root/ansibleuser
+
+rm /usr/local/jails/$JAILNAME/root/ansibleuser
+</pre>
 </body>
 </html>
 
