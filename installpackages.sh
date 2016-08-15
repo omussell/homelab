@@ -42,9 +42,14 @@ jexec hideo echo "syslogd_flags=\"-a armitage -v -v\" >> /etc/rc.conf"
 jexec hideo touch /var/log/armitage.log
 
 # maelcum 
+jexec maelcum cp /etc/mail/access.sample /etc/mail/access
+jexec maelcum echo "Connect\:armitage\tOK" >> /etc/mail/access
 
 # case 
 
 # molly 
 
 jexec hideo service syslogd restart
+jexec maelcum makemap hash /etc/mail/access < /etc/mail/access
+jexec maelcum service sendmail restart
+
