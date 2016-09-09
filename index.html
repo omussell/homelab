@@ -304,10 +304,8 @@ sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/te
 It boots! But, it can't mount root on a device... yet....
 
 ***
-
-Got it to boot by changing ${NANO_DRIVE} to vtbd0 in the config file. Need to
-get it working by setting the variable properly. Also need to get the files
-and packages as part of the image.
+Got it to boot by changing the NANO_DRIVE variable from ad0 to vtbd0 in the
+nanobsd.sh file
 
 </pre>
 
