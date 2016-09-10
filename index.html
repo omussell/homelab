@@ -307,6 +307,10 @@ It boots! But, it can't mount root on a device... yet....
 Got it to boot by changing the NANO_DRIVE variable from ad0 to vtbd0 in the
 nanobsd.sh file
 
+Cloning NanoBSD vms
+zfs snapshot zroot/nanotest@1
+zfs clone zroot/nanotest@1 zroot/nanoclone
+
 </pre>
 
 <h2>
