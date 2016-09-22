@@ -1,0 +1,59 @@
+Summary
+---
+
+Create an infrastructure with an emphasis on security, resiliency and ease of 
+maintenance. 
+
+Goals
+---
+
+To ensure security, data and communications between components should be 
+encrypted.
+To provide resiliency, each component of the design should be able to withstand 
+failures and periods of high load.
+To allow ease of maintenance, components should have a sane configuration that 
+allows downtime without affecting performance of the system.
+
+- All changes to the base OS to achieve the desired state should be 
+independently reproducible and auditable
+- Configuration files should be stored in a version control system to be used 
+by a configuration management system and continuous deployment tools.
+- Data at rest and all communication channels should be encrypted
+
+Background
+---
+
+The implementation of a secure, resilient and easy to maintain system
+is seen as an imperative for many organisations, however, the 
+implementations seen thus far do not seem to take into account the human
+labour required in order to create and maintain such systems. The aim is to 
+"create an infrastructure with an emphasis on security, resiliency and ease of 
+maintenance", and the journey to attempt to achieve this goal is 
+documented here. 
+
+High-Level Design
+---
+
+router
+|
+firewall
+|
+load balancer + traffic management
+|
+firewall
+|
+frontend webserver x n
+|
+app server x n
+|
+data storage
+
+Detailed Design
+---
+
+Router Design
+Firewall Design
+Load Balancer and Traffic Management Design
+Frontend Web
+App server
+Data Storage
