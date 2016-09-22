@@ -50,10 +50,10 @@ data storage
 
 Detailed Design
 ---
-
+Gold Server Design
 Router Design
 Firewall Design
 Load Balancer and Traffic Management Design
-Frontend Web
-App server
-Data Storage
+Frontend Web Design
+App server Design
+Data Storage Design
