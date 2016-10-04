@@ -48,6 +48,11 @@ app server x n
 |
 data storage
 
+domain controller
+|
+exchange
+
+
 Detailed Design
 ---
 Gold Server Design
