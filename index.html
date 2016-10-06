@@ -310,45 +310,10 @@ nanobsd.sh file
 Cloning NanoBSD vms
 zfs snapshot zroot/nanotest@1
 zfs clone zroot/nanotest@1 zroot/nanoclone
+***
 
-nanobsdV2.conf
+nanobsdv.conf
 
-nano_name=nanobsdv2
-nano_src=/usr/src
-nano_kernel=generic
-nano_images=2
-
-conf_build='
-without_kldload=yes
-without_netgraph=yes
-without_pam=yes
-'
-conf_install='
-without_acpi=yes
-without_bluetooth=yes
-without_fortran=yes
-without_html=yes
-without_lpr=yes
-without_man=yes
-without_sendmail=yes
-without_sharedocs=yes
-without_examples=yes
-without_installlib=yes
-without_calendar=yes
-without_misc=yes
-without_share=yes
-'
-
-conf_world='
-without_bind=yes
-without_modules=yes
-without_kerberos=yes
-without_games=yes
-without_rescue=yes
-without_locales=yes
-without_syscons=yes
-without_info=yes
-'
 cust_nobeastie() (
 	touch ${nano_worlddir}/boot/loader.conf
 	echo "beastie_disable=\"yes\"" >> ${nano_worlddir}/boot/loader.conf
@@ -358,6 +323,15 @@ customize_cmd cust_install_files
 customize_cmd cust_nobeastie
 
 </pre>
+
+<h2>
+Jails setup in NanoBSD bhyve vm
+</h2>
+
+<pre>
+jail.conf | listofjails | newtemplate.sh | createalljails | startalljails.sh
+</pre>
+
 
 <h2>
 Jails Infrastructure
