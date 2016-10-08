@@ -475,5 +475,25 @@ Irssi IRC client with OTR for authentication
 
 </pre>
 
+<h2>
+SSH
+</h2>
+
+<pre>
+sshd_config
+X11Forwarding no
+IgnoreRhosts yes
+UseDNS yes
+PermitEmptyPasswords no
+MaxAuthTries 6
+PubKeyAuthentication yes
+PasswordAuthentication yes	# to allow kerberos
+PermitRootLogin no
+Protocol 2
+HashKnownHosts yes
+
+SSHFP records in DNS(SEC) to securely publish SSH key fingerprints
+
+
 </body>
 </html>

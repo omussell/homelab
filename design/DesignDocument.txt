@@ -31,6 +31,12 @@ labour required in order to create and maintain such systems. The aim is to
 maintenance", and the journey to attempt to achieve this goal is 
 documented here. 
 
+The design of the environment will be similar to the MIT Athena project and the 
+Distributed Computing Environment by the OSF. The end result should be that any 
+computer should be able to connect to the environment, after all, the 
+environment is there to provide a substrate for the enterprise to do its job.
+This means that users can use their own devices to connect, or for large enterprises a thin client could be used
+
 High-Level Design
 ---
 
