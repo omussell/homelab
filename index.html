@@ -322,7 +322,19 @@ cust_nobeastie() (
 customize_cmd cust_install_files
 customize_cmd cust_nobeastie
 
-</pre>
+Got internet and zfs working
+Check that the files are configured exactly as in the handbook
+For zfs, the NANO_MODULES variable needs zfs and opensolaris added e.g.
+NANO_MODULES="zfs opensolaris"
+Simply adding this to the conf file was causing errors, needed to
+build kernel and world again.
+Also, it kept saying the usual "filesystem is full error", but this time
+the file system really was full.
+Added "FlashDevice SanDisk 4G" in the conf file to give it 4GB instead 
+of 1GB.
+Compiled it again and it works now.
+
+<pre>
 
 <h2>
 Jails setup in NanoBSD bhyve vm
@@ -472,8 +484,36 @@ Irssi IRC client with OTR for authentication
 <a href="https://otr.im/clients.html">Irssi-OTR</a>
 <a href="https://en.wikipedia.org/wiki/irssi">Irssi</a>
 <a href="https://en.wikipedia.org/wiki/Off-the-Record_Messaging">OTR</a>
+DANE
 
 </pre>
+
+<h2>
+DNS
+</h2>
+
+<pre>
+Unbound working as an authoritative resolver for LAN. You need to run 
+unbound-control reload after changing the conf file, otherwise it wont work!
+You also need to change /etc/resolv.conf so that nameserver 127.0.0.1 
+appears ABOVE the bthomehub resolver, so that the local unbound server 
+is queried first before it goes to bthomehub. (in prod resolv.conf would just
+have the proper name servers, but this can stay for now)
+unbound.conf
+
+You also need to make sure that local-* is inside the server: block, 
+otherwise it doesn't work...
+server:
+	unblock-lan-zones: yes
+	username stuff...
+	interface: 0.0.0.0
+	local-zone: "local." static
+	local-data: "finn.local. A 192.168.1.18"
+	
+
+
+</pre>
+
 
 <h2>
 SSH
@@ -493,6 +533,7 @@ Protocol 2
 HashKnownHosts yes
 
 SSHFP records in DNS(SEC) to securely publish SSH key fingerprints
+Kerberos for password authentication
 
 
 </body>
