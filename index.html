@@ -324,6 +324,7 @@ customize_cmd cust_nobeastie
 
 Got internet and zfs working
 Check that the files are configured exactly as in the handbook
+Make sure to run ifconfig tap0 up and ifconfig bridge0 up
 For zfs, the NANO_MODULES variable needs zfs and opensolaris added e.g.
 NANO_MODULES="zfs opensolaris"
 Simply adding this to the conf file was causing errors, needed to
@@ -510,7 +511,20 @@ server:
 	local-zone: "local." static
 	local-data: "finn.local. A 192.168.1.18"
 	
+NSD (name server daemon) is an authoritative only, memory efficient, highly
+secure and simple to configure open source domain name server. NSD acts as 
+the authoritative name server, while Unbound acts as the validating, 
+resolving and caching DNS server.
 
+The Unbound servers act as validating, recursive and caching DNS servers
+that LAN clients can query. Then NSD is an authoritative server which
+can resolve internal LAN names only. NSD never goes to the internet,
+and its only job is to serve internal names to Unbound.
+
+Zones can be signed with the OpenDNSSEC tool. Private keys associated
+with DNSSEC signing are secured using HSM's (hardware security modules).
+This can be done using OpenHSM for testing, however, in production a 
+real HSM would be used.
 
 </pre>
 
