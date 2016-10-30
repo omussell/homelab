@@ -3,6 +3,8 @@ digraph disklayout {
 	<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
 		<TR>
 			<TD COLSPAN="6">MBR<BR/>Boot0</TD>
+		</TR>
+		<TR>
 			<TD ROWSPAN="2">Slice1</TD>
 			<TD ROWSPAN="2">Slice2</TD>
 			<TD ROWSPAN="2">Slice3</TD>
