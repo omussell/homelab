@@ -1,0 +1,12 @@
+digraph DNS {
+	Internet -> Unbound1;
+	Internet -> Unbound2;
+	Internet -> Unbound3;
+	NSDMaster -> NSDSlave;
+	Unbound1 -> NSDMaster;
+	Unbound2 -> NSDMaster;
+	Unbound3 -> NSDMaster;
+	Client -> Unbound1;
+	Client -> Unbound2;
+	Client -> Unbound3;
+}
