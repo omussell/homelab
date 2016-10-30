@@ -19,13 +19,13 @@ digraph SecureInfrastructure {
 
 subgraph cluster1 {
 	VC -> GS;
-label = "Control Machine";
-color=blue
-}
 	GS -> AHCT;
 	GS -> HIT;
 	AHCT -> DIR;
 	HIT -> DIR;
+label = "Control Machine";
+color=blue
+}
 subgraph cluster2 {
 	DIR -> AUTH;
 	DIR -> TIME;
@@ -35,6 +35,9 @@ subgraph cluster2 {
 label = "Master/Slave";
 }
 subgraph cluster3 {
+	AUTH -> NFS;
+	TIME -> NFS;
+	TIME -> FRS;
 	NFS -> CFA;
 	FRS -> CFA;
 label = "File Replication Servers";
