@@ -27,9 +27,6 @@ digraph SecureInfrastructure {
 	AUTH -> NFS;
 	TIME -> NFS;
 	TIME -> FRS;
-	AUTH -> NFS;
-	TIME -> NFS;
-	TIME -> FRS;
 	NFS -> CFA;
 	FRS -> CFA;
 	CFA -> COSU;

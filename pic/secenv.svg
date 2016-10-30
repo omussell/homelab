@@ -85,24 +85,14 @@
 <text text-anchor="middle" x="88" y="-301.9" font-family="Times Roman,serif" font-size="14.00">Network File Servers</text>
 </g>
 <!-- AUTH&#45;&gt;NFS -->
-<g id="edge22" class="edge"><title>AUTH&#45;&gt;NFS</title>
-<path fill="none" stroke="black" d="M82.0476,-359.831C81.2972,-352.131 81.0763,-342.974 81.3849,-334.417"/>
-<polygon fill="black" stroke="black" points="84.8792,-334.616 82.024,-324.413 77.8935,-334.17 84.8792,-334.616"/>
-</g>
-<!-- AUTH&#45;&gt;NFS -->
 <g id="edge16" class="edge"><title>AUTH&#45;&gt;NFS</title>
-<path fill="none" stroke="black" d="M93.9524,-359.831C94.7028,-352.131 94.9237,-342.974 94.6151,-334.417"/>
-<polygon fill="black" stroke="black" points="98.1065,-334.17 93.976,-324.413 91.1208,-334.616 98.1065,-334.17"/>
-</g>
-<!-- TIME&#45;&gt;NFS -->
-<g id="edge24" class="edge"><title>TIME&#45;&gt;NFS</title>
-<path fill="none" stroke="black" d="M200.925,-359.831C178.919,-350.287 152.786,-338.506 131.167,-328.401"/>
-<polygon fill="black" stroke="black" points="132.433,-325.129 121.894,-324.038 129.452,-331.463 132.433,-325.129"/>
+<path fill="none" stroke="black" d="M88,-359.831C88,-352.131 88,-342.974 88,-334.417"/>
+<polygon fill="black" stroke="black" points="91.5001,-334.413 88,-324.413 84.5001,-334.413 91.5001,-334.413"/>
 </g>
 <!-- TIME&#45;&gt;NFS -->
 <g id="edge18" class="edge"><title>TIME&#45;&gt;NFS</title>
-<path fill="none" stroke="black" d="M212.83,-359.831C192.503,-350.202 166.319,-338.295 143.154,-328.13"/>
-<polygon fill="black" stroke="black" points="144.339,-324.828 133.773,-324.038 141.54,-331.245 144.339,-324.828"/>
+<path fill="none" stroke="black" d="M206.878,-359.831C185.707,-350.245 159.552,-338.401 137.17,-328.266"/>
+<polygon fill="black" stroke="black" points="138.387,-324.975 127.834,-324.038 135.5,-331.351 138.387,-324.975"/>
 </g>
 <!-- FRS -->
 <g id="node9" class="node"><title>FRS</title>
@@ -110,14 +100,9 @@
 <text text-anchor="middle" x="274" y="-301.9" font-family="Times Roman,serif" font-size="14.00">File Replication Servers</text>
 </g>
 <!-- TIME&#45;&gt;FRS -->
-<g id="edge26" class="edge"><title>TIME&#45;&gt;FRS</title>
-<path fill="none" stroke="black" d="M247.861,-359.831C250.069,-351.877 253.424,-342.369 257.078,-333.572"/>
-<polygon fill="black" stroke="black" points="260.284,-334.975 261.119,-324.413 253.88,-332.149 260.284,-334.975"/>
-</g>
-<!-- TIME&#45;&gt;FRS -->
 <g id="edge20" class="edge"><title>TIME&#45;&gt;FRS</title>
-<path fill="none" stroke="black" d="M259.766,-359.831C263.444,-352.046 267.139,-342.773 270.054,-334.135"/>
-<polygon fill="black" stroke="black" points="273.45,-335.001 273.071,-324.413 266.764,-332.927 273.45,-335.001"/>
+<path fill="none" stroke="black" d="M253.813,-359.831C256.764,-351.962 260.286,-342.571 263.555,-333.853"/>
+<polygon fill="black" stroke="black" points="266.861,-335.006 267.095,-324.413 260.307,-332.548 266.861,-335.006"/>
 </g>
 <!-- CFA -->
 <g id="node10" class="node"><title>CFA</title>
@@ -125,12 +110,12 @@
 <text text-anchor="middle" x="181" y="-229.9" font-family="Times Roman,serif" font-size="14.00">Client File Access</text>
 </g>
 <!-- NFS&#45;&gt;CFA -->
-<g id="edge28" class="edge"><title>NFS&#45;&gt;CFA</title>
+<g id="edge22" class="edge"><title>NFS&#45;&gt;CFA</title>
 <path fill="none" stroke="black" d="M111.468,-287.831C123.033,-278.878 137.14,-267.956 149.618,-258.295"/>
 <polygon fill="black" stroke="black" points="151.775,-261.052 157.54,-252.163 147.49,-255.517 151.775,-261.052"/>
 </g>
 <!-- FRS&#45;&gt;CFA -->
-<g id="edge30" class="edge"><title>FRS&#45;&gt;CFA</title>
+<g id="edge24" class="edge"><title>FRS&#45;&gt;CFA</title>
 <path fill="none" stroke="black" d="M250.532,-287.831C238.967,-278.878 224.86,-267.956 212.382,-258.295"/>
 <polygon fill="black" stroke="black" points="214.51,-255.517 204.46,-252.163 210.225,-261.052 214.51,-255.517"/>
 </g>
@@ -140,7 +125,7 @@
 <text text-anchor="middle" x="181" y="-157.9" font-family="Times Roman,serif" font-size="14.00">Client OS Update</text>
 </g>
 <!-- CFA&#45;&gt;COSU -->
-<g id="edge32" class="edge"><title>CFA&#45;&gt;COSU</title>
+<g id="edge26" class="edge"><title>CFA&#45;&gt;COSU</title>
 <path fill="none" stroke="black" d="M181,-215.831C181,-208.131 181,-198.974 181,-190.417"/>
 <polygon fill="black" stroke="black" points="184.5,-190.413 181,-180.413 177.5,-190.413 184.5,-190.413"/>
 </g>
@@ -150,7 +135,7 @@
 <text text-anchor="middle" x="181" y="-85.9" font-family="Times Roman,serif" font-size="14.00">Client Configuration Management</text>
 </g>
 <!-- COSU&#45;&gt;CCM -->
-<g id="edge34" class="edge"><title>COSU&#45;&gt;CCM</title>
+<g id="edge28" class="edge"><title>COSU&#45;&gt;CCM</title>
 <path fill="none" stroke="black" d="M181,-143.831C181,-136.131 181,-126.974 181,-118.417"/>
 <polygon fill="black" stroke="black" points="184.5,-118.413 181,-108.413 177.5,-118.413 184.5,-118.413"/>
 </g>
@@ -160,7 +145,7 @@
 <text text-anchor="middle" x="52" y="-13.9" font-family="Times Roman,serif" font-size="14.00">Mail</text>
 </g>
 <!-- CCM&#45;&gt;MAIL -->
-<g id="edge36" class="edge"><title>CCM&#45;&gt;MAIL</title>
+<g id="edge30" class="edge"><title>CCM&#45;&gt;MAIL</title>
 <path fill="none" stroke="black" d="M148.448,-71.8314C130.103,-61.5924 107.145,-48.7788 88.2308,-38.2219"/>
 <polygon fill="black" stroke="black" points="89.7461,-35.0594 79.3083,-33.2418 86.3345,-41.1717 89.7461,-35.0594"/>
 </g>
@@ -170,7 +155,7 @@
 <text text-anchor="middle" x="132" y="-13.9" font-family="Times Roman,serif" font-size="14.00">Printing</text>
 </g>
 <!-- CCM&#45;&gt;PRNT -->
-<g id="edge38" class="edge"><title>CCM&#45;&gt;PRNT</title>
+<g id="edge32" class="edge"><title>CCM&#45;&gt;PRNT</title>
 <path fill="none" stroke="black" d="M168.635,-71.8314C163.049,-63.6232 156.337,-53.7606 150.193,-44.7323"/>
 <polygon fill="black" stroke="black" points="153.051,-42.7112 144.531,-36.4133 147.264,-46.6496 153.051,-42.7112"/>
 </g>
@@ -180,7 +165,7 @@
 <text text-anchor="middle" x="230" y="-13.9" font-family="Times Roman,serif" font-size="14.00">Monitoring</text>
 </g>
 <!-- CCM&#45;&gt;MONT -->
-<g id="edge40" class="edge"><title>CCM&#45;&gt;MONT</title>
+<g id="edge34" class="edge"><title>CCM&#45;&gt;MONT</title>
 <path fill="none" stroke="black" d="M193.365,-71.8314C198.951,-63.6232 205.663,-53.7606 211.807,-44.7323"/>
 <polygon fill="black" stroke="black" points="214.736,-46.6496 217.469,-36.4133 208.949,-42.7112 214.736,-46.6496"/>
 </g>
@@ -190,7 +175,7 @@
 <text text-anchor="middle" x="409" y="-13.9" font-family="Times Roman,serif" font-size="14.00">Client Application Management</text>
 </g>
 <!-- CCM&#45;&gt;CAM -->
-<g id="edge42" class="edge"><title>CCM&#45;&gt;CAM</title>
+<g id="edge36" class="edge"><title>CCM&#45;&gt;CAM</title>
 <path fill="none" stroke="black" d="M238.24,-71.9243C269.815,-61.9531 309.19,-49.5188 342.171,-39.104"/>
 <polygon fill="black" stroke="black" points="343.255,-42.4321 351.737,-36.0831 341.147,-35.757 343.255,-42.4321"/>
 </g>
