@@ -17,7 +17,12 @@ digraph SecureInfrastructure {
 	MONT [shape=box,label="Monitoring"];
 	CAM [ shape=box,label="Client Application Management"]; 
 
+subgraph cluster1 {
 	VC -> GS;
+label = "Control Machine";
+color=blue
+}
+subgraph cluster2 {
 	GS -> AHCT;
 	GS -> HIT;
 	AHCT -> DIR;
@@ -27,6 +32,8 @@ digraph SecureInfrastructure {
 	AUTH -> NFS;
 	TIME -> NFS;
 	TIME -> FRS;
+label = "Master/Slave";
+}
 	NFS -> CFA;
 	FRS -> CFA;
 	CFA -> COSU;
