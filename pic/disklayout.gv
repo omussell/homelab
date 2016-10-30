@@ -9,7 +9,9 @@ digraph disklayout {
 			<TD ROWSPAN="2" BGCOLOR="red">Slice2<BR/>inactive /</TD>
 			<TD ROWSPAN="2" BGCOLOR="orange">Slice3<BR/>/cfg</TD>
 		</TR>
+		<TR>
+			<TD COLSPAN="3" BGCOLOR="lightgrey">/etc</TD>
+			<TD COLSPAN="3" BGCOLOR="lightgrey">/var</TD>
+		</TR>
 	</TABLE>>];
-	abc -> etc
-	abc -> var
 }
