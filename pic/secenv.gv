@@ -34,4 +34,31 @@ digraph SecureInfrastructure {
 	CCM -> PRNT;
 	CCM -> MONT;
 	CCM -> CAM;
+
+	subgraph "controlmachine" { label="Control Machine"; 
+				VC;
+				}
+	
+	subgraph "masterslave" { label="Master/Slave Servers"; 
+				AHCT;
+				HIT;
+				DIR;
+				AUTH;
+				TIME;
+				}
+	
+	subgraph "filerepl" { label="File Replication Servers";
+				NFS;
+				FRS;
+				}
+
+	subgraph "clients" { label="Clients";
+				CFA;
+				COSU;
+				CCM;
+				MAIL;
+				PRNT;
+				MONT;
+				CAM;
+				}
 }
