@@ -263,7 +263,7 @@ NanoBSD
     Run Bhyve using the ZFS device for boot
     sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/testnano testnano
 
-    It boots! But, it can't mount root on a device... yet....
+    It boots! But, it cant mount root on a device... yet....
 
     ***
     Got it to boot by changing the NANO_DRIVE variable from ad0 to vtbd0 in the
@@ -308,6 +308,7 @@ Jails Infrastructure
     createalljails.sh
 
     cat /etc/jail.conf | grep -E \{$ | sed "s/{//" > ~/jails/listofjails.txt
+    #}}
 
     for jail in `cat ~/jails/listofjails.txt`
     do
@@ -441,7 +442,7 @@ DNS
     unbound.conf
 
     You also need to make sure that local-* is inside the server: block, 
-    otherwise it doesn't work...
+    otherwise it doesnt work...
     server:
         unblock-lan-zones: yes
         username stuff...
@@ -460,7 +461,7 @@ DNS
     and its only job is to serve internal names to Unbound.
 
     Zones can be signed with the OpenDNSSEC tool. Private keys associated
-    with DNSSEC signing are secured using HSM's (hardware security modules).
+    with DNSSEC signing are secured using HSMs (hardware security modules).
     This can be done using OpenHSM for testing, however, in production a 
     real HSM would be used.
 
