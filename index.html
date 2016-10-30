@@ -1,428 +1,138 @@
 <h1 id="homelab">Homelab</h1>
 <h2 id="hardware">Hardware</h2>
-<pre><code>Virtualisation Host
-Gigabyte Brix Pro GB-BXI7-4770R
-- Intel Core i7-4770R (quad core 3.2GHz)
-- 16GB RAM
-- 250GB mSATA SSD
-- 250GB 2.5 inch SSD
-
-NAS
-HP ProLiant G8 Microserver G1610T
-- Intel Celeron G1610T (dual core 2.3 GHz)
-- 16GB RAM
-- 2 x 250GB SSD
-- 2 x 3TB HDD
-
-Management
-Raspberry Pi 2 Model B
-- Quad core 1GB RAM
-- 8GB MicroSD (w/ NOOBS)</code></pre>
+<p>Virtualisation Host Gigabyte Brix Pro GB-BXI7-4770R - Intel Core i7-4770R (quad core 3.2GHz) - 16GB RAM - 250GB mSATA SSD - 250GB 2.5 inch SSD</p>
+<p>NAS HP ProLiant G8 Microserver G1610T - Intel Celeron G1610T (dual core 2.3 GHz) - 16GB RAM - 2 x 250GB SSD - 2 x 3TB HDD</p>
+<p>Management Raspberry Pi 2 Model B - Quad core 1GB RAM - 8GB MicroSD (w/ NOOBS)</p>
 <h2 id="automating-freebsd-jail-creation">Automating FreeBSD Jail Creation</h2>
-<pre><code>Creating the template:
-zfs create -o mountpoint=/usr/local/jails zroot/jails
-zfs create -p zroot/jails/template
-
-Download the base files into a new directory
-mkdir ~/jails
-fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/10.2-RELEASE/base.txz -o ~/jails
-fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/10.2-RELEASE/lib32.txz -o ~/jails
-fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/10.2-RELEASE/ports.txz -o ~/jails
-
-Extract the base files
-tar -xf ~/jails/base.txz -C /usr/local/jails/template
-tar -xf ~/jails/lib32.txz -C /usr/local/jails/template
-tar -xf ~/jails/ports.txz -C /usr/local/jails/template
-
-Copy files from host to template
-cp /etc/resolv.conf /usr/local/jails/template/etc/resolv.conf
-cp /etc/localtime /usr/local/jails/template/etc/localtime
-mkdir -p /usr/local/template/home/username/.ssh
-cp /home/username/.ssh/authorized_keys /usr/local/jails/template/home/username/.ssh
-
-When finished, take a snapshot
-zfs snapshot zroot/jails/template@1
-
-Edit /etc/jail.conf
-# Global settings applied to all jails
-
-interface = &quot;re0&quot;;
-host.hostname = &quot;$name&quot;;
-ip4.addr = 192.168.1.$ip;
-path = &quot;/usr/local/jails/$name&quot;;
-
-exec.start = &quot;/bin/sh /etc/rc&quot;;
-exec.stop = &quot;/bin/sh /etc/rc.shutdown&quot;;
-exec.clean;
-mount.devfs;
-
-# Jail Definitions
-testjail {
-    $ip = 15;
-}
-
-Run the jail
-jail -c testjail
-
-View running jails
-jls
-
-Login to the jail
-jexec $jailname sh</code></pre>
+<p>Creating the template: zfs create -o mountpoint=/usr/local/jails zroot/jails zfs create -p zroot/jails/template</p>
+<p>Download the base files into a new directory mkdir ~/jails fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/10.2-RELEASE/base.txz -o ~/jails fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/10.2-RELEASE/lib32.txz -o ~/jails fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/10.2-RELEASE/ports.txz -o ~/jails</p>
+<p>Extract the base files tar -xf ~/jails/base.txz -C /usr/local/jails/template tar -xf ~/jails/lib32.txz -C /usr/local/jails/template tar -xf ~/jails/ports.txz -C /usr/local/jails/template</p>
+<p>Copy files from host to template cp /etc/resolv.conf /usr/local/jails/template/etc/resolv.conf cp /etc/localtime /usr/local/jails/template/etc/localtime mkdir -p /usr/local/template/home/username/.ssh cp /home/username/.ssh/authorized_keys /usr/local/jails/template/home/username/.ssh</p>
+<p>When finished, take a snapshot zfs snapshot zroot/jails/template@1</p>
+<p>Edit /etc/jail.conf # Global settings applied to all jails</p>
+<p>interface = &quot;re0&quot;; host.hostname = &quot;<span class="math">$name&quot;; ip4.addr = 192.168.1.$</span>ip; path = &quot;/usr/local/jails/$name&quot;;</p>
+<p>exec.start = &quot;/bin/sh /etc/rc&quot;; exec.stop = &quot;/bin/sh /etc/rc.shutdown&quot;; exec.clean; mount.devfs;</p>
+<h1 id="jail-definitions">Jail Definitions</h1>
+<p>testjail { $ip = 15; }</p>
+<p>Run the jail jail -c testjail</p>
+<p>View running jails jls</p>
+<p>Login to the jail jexec $jailname sh</p>
 <h2 id="new-template-script">New Template Script</h2>
-<pre><code>#! /bin/sh
-
-# Create mountpoint
-zfs create -o mountpoint=/usr/local/jails zroot/jails
-zfs create -p zroot/jails/template
-
-# Copy pre-downloaded base files
-scp -r &quot;user@freenas:/mnt/SSD_storage/jails/*.txz&quot; /tmp
-
-# Extract the files to the template location
-tar -xf /tmp/base.txz -C /usr/local/jails/template
-tar -xf /tmp/lib32.txz -C /usr/local/jails/template
-tar -xf /tmp/ports.txz -C /usr/local/jails/template
-
-# Copy files from host/hypervisor to template
-cp /etc/resolv.conf /usr/local/jails/template/etc/resolv.conf
-cp /etc/localtime /usr/local/jails/template/etc/localtime
-mkdir -p /usr/local/template/home/user/.ssh
-cp /home/user/.ssh/authorized_keys /usr/local/jails/template/home/user/.ssh
-
-# Create the snapshot
-zfs snapshot zroot/jails/template@1
-
-# Copy the pre-configured jail.conf file
-scp -r &quot;user@freenas:/mnt/SSD_storage/jails/jail.conf&quot; /usr/local/jails/template/etc/
-
-echo &quot;Run the jails using jail -c jailname&quot;
-echo &quot;View running jails with jls&quot;
-echo &quot;Log into the jail using jexec jailname sh&quot;</code></pre>
+<h1 id="binsh">! /bin/sh</h1>
+<h1 id="create-mountpoint">Create mountpoint</h1>
+<p>zfs create -o mountpoint=/usr/local/jails zroot/jails zfs create -p zroot/jails/template</p>
+<h1 id="copy-pre-downloaded-base-files">Copy pre-downloaded base files</h1>
+<p>scp -r &quot;user@freenas:/mnt/SSD_storage/jails/*.txz&quot; /tmp</p>
+<h1 id="extract-the-files-to-the-template-location">Extract the files to the template location</h1>
+<p>tar -xf /tmp/base.txz -C /usr/local/jails/template tar -xf /tmp/lib32.txz -C /usr/local/jails/template tar -xf /tmp/ports.txz -C /usr/local/jails/template</p>
+<h1 id="copy-files-from-hosthypervisor-to-template">Copy files from host/hypervisor to template</h1>
+<p>cp /etc/resolv.conf /usr/local/jails/template/etc/resolv.conf cp /etc/localtime /usr/local/jails/template/etc/localtime mkdir -p /usr/local/template/home/user/.ssh cp /home/user/.ssh/authorized_keys /usr/local/jails/template/home/user/.ssh</p>
+<h1 id="create-the-snapshot">Create the snapshot</h1>
+<p>zfs snapshot zroot/jails/template@1</p>
+<h1 id="copy-the-pre-configured-jail.conf-file">Copy the pre-configured jail.conf file</h1>
+<p>scp -r &quot;user@freenas:/mnt/SSD_storage/jails/jail.conf&quot; /usr/local/jails/template/etc/</p>
+<p>echo &quot;Run the jails using jail -c jailname&quot; echo &quot;View running jails with jls&quot; echo &quot;Log into the jail using jexec jailname sh&quot;</p>
 <h2 id="new-jail-creation-script">New Jail Creation Script</h2>
-<pre><code>#! /bin/sh
-read -p &quot;Enter jail name:&quot; hostname
-zfs clone zroot/jails/template@1 zroot/jails/$hostname
-echo hostname=\&quot;$hostname\&quot; &gt; /usr/local/jails/$hostname/etc/rc.conf
-# Disable sendmail to speed up start time
-echo sendmail_submit_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$hostname/etc/rc.conf
-echo sendmail_outbound_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$hostname/etc/rc.conf
-echo sendmail_msp_queue_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$hostname/etc/rc.conf</code></pre>
+<h1 id="binsh-1">! /bin/sh</h1>
+<p>read -p &quot;Enter jail name:&quot; hostname zfs clone zroot/jails/template@1 zroot/jails/<span class="math">$hostname echo hostname=\&quot;$</span>hostname&quot; &gt; /usr/local/jails/<span class="math">$hostname/etc/rc.conf # Disable sendmail to speed up start time echo sendmail_submit_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$</span>hostname/etc/rc.conf echo sendmail_outbound_enable=&quot;NO&quot; &gt;&gt; /usr/local/jails/<span class="math">$hostname/etc/rc.conf echo sendmail_msp_queue_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$</span>hostname/etc/rc.conf</p>
 <h2 id="automating-bhyve-vm-creation">Automating Bhyve VM Creation</h2>
-<pre><code>Edit /etc/sysctl.conf
-net.link.tap.up_on_open=1
-
-Edit /boot/loader.conf
-vmm_load=&quot;YES&quot;
-nmdm_load=&quot;YES&quot;
-if_bridge_load=&quot;YES&quot;
-if_tap_load=&quot;YES&quot;
-
-Edit /etc/rc.conf
-cloned_interfaces=&quot;bridge0 tap0&quot;
-ifconfig_bridge0=&quot;addm re0 addm tap0&quot;
-
-Create ZFS volume
-zfs create -V16G -o volmode=dev zroot/testvm
-
-Download the installation image
-fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/ISO-IMAGES/10.2/FreeBSD-10.2-RELEASE-amd64-disc1.iso 
-
-Start the VM
-sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/testvm -i -I FreeBSD-10.2-RELEASE-amd64-disc1.iso testvm
-
-Install as normal, following the menu options</code></pre>
+<p>Edit /etc/sysctl.conf net.link.tap.up_on_open=1</p>
+<p>Edit /boot/loader.conf vmm_load=&quot;YES&quot; nmdm_load=&quot;YES&quot; if_bridge_load=&quot;YES&quot; if_tap_load=&quot;YES&quot;</p>
+<p>Edit /etc/rc.conf cloned_interfaces=&quot;bridge0 tap0&quot; ifconfig_bridge0=&quot;addm re0 addm tap0&quot;</p>
+<p>Create ZFS volume zfs create -V16G -o volmode=dev zroot/testvm</p>
+<p>Download the installation image fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/ISO-IMAGES/10.2/FreeBSD-10.2-RELEASE-amd64-disc1.iso</p>
+<p>Start the VM sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/testvm -i -I FreeBSD-10.2-RELEASE-amd64-disc1.iso testvm</p>
+<p>Install as normal, following the menu options</p>
 <h2 id="new-vm-creation-script">New VM Creation Script</h2>
-<pre><code>#! /bin/sh
-read -p &quot;Enter hostname: &quot; hostname
-zfs create -V16G -o volmode=dev zroot/$hostname
-sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/$hostname -i -I ~/FreeBSD-10.2-RELEASE-amd64-disc1.iso $hostname</code></pre>
+<h1 id="binsh-2">! /bin/sh</h1>
+<p>read -p &quot;Enter hostname: &quot; hostname zfs create -V16G -o volmode=dev zroot/<span class="math"><em>h</em><em>o</em><em>s</em><em>t</em><em>n</em><em>a</em><em>m</em><em>e</em><em>s</em><em>h</em> / <em>u</em><em>s</em><em>r</em> / <em>s</em><em>h</em><em>a</em><em>r</em><em>e</em> / <em>e</em><em>x</em><em>a</em><em>m</em><em>p</em><em>l</em><em>e</em><em>s</em> / <em>b</em><em>h</em><em>y</em><em>v</em><em>e</em> / <em>v</em><em>m</em><em>r</em><em>u</em><em>n</em>. <em>s</em><em>h</em> − <em>c</em>1 − <em>m</em>512<em>M</em> − <em>t</em><em>t</em><em>a</em><em>p</em>0 − <em>d</em> / <em>d</em><em>e</em><em>v</em> / <em>z</em><em>v</em><em>o</em><em>l</em> / <em>z</em><em>r</em><em>o</em><em>o</em><em>t</em> / </span>hostname -i -I ~/FreeBSD-10.2-RELEASE-amd64-disc1.iso $hostname</p>
 <h2 id="creating-a-linux-guest">Creating a Linux guest</h2>
-<pre><code>Create a file for the hard disk
-truncate -s 16G linux.img
-
-Create the file to map the virtual devices for kernel load
-cat device.map (use the full path)
-(hd0) /root/linux.img
-(cd0) /root/linux.iso
-
-Load the kernel
-grub-bhyve -m device.map -r cd0 -M 1024M linuxguest
-
-Grub should start, choose install as normal
-
-Start the VM
-bhyve -A -H -P -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,tap0 -s 3:0,virtio-blk,/root/linux.img -l com1,/dev/nmdm0A -c 1 -m 512M linuxguest
-
-Access through the serial console
-cu -l /dev/nmdm0B</code></pre>
+<p>Create a file for the hard disk truncate -s 16G linux.img</p>
+<p>Create the file to map the virtual devices for kernel load cat device.map (use the full path) (hd0) /root/linux.img (cd0) /root/linux.iso</p>
+<p>Load the kernel grub-bhyve -m device.map -r cd0 -M 1024M linuxguest</p>
+<p>Grub should start, choose install as normal</p>
+<p>Start the VM bhyve -A -H -P -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,tap0 -s 3:0,virtio-blk,/root/linux.img -l com1,/dev/nmdm0A -c 1 -m 512M linuxguest</p>
+<p>Access through the serial console cu -l /dev/nmdm0B</p>
 <h2 id="backing-up-vms">Backing up VMs</h2>
-<pre><code>In the FreeNAS web interface, create a new user
-Account
-Add User
-Fill in the fields
-Allow sudo
-Ensure the public key is pasted into the SSH key field
-
-Connect to the NAS over SSH
-# sysctl vfs.usermount=1
-# echo vfs.usermount=1 &gt;&gt; /etc/sysctl.conf
-# zfs create SSD_storage/backup
-# zfs allow -u user create,mount,receive SSD_storage/backup
-
-Allow user to send snapshots
-# zfs allow -u user send,snapshot zroot
-
-Create the snapshot
-$ zfs snapshot zroot/testvm@1
-
-Send the snapshot to the NAS
-$ zfs send zroot/testvm@1 | ssh user@freenas zfs recv -dvu SSD_storage/backup
-
-After a full snapshot is taken, incremental backups can be performed
-$ zfs send -i zroot/testvm@1 zroot/testvm@2 | ssh user@freenas zfs recv -dvu SSD_storage/backup</code></pre>
+<p>In the FreeNAS web interface, create a new user Account Add User Fill in the fields Allow sudo Ensure the public key is pasted into the SSH key field</p>
+<p>Connect to the NAS over SSH # sysctl vfs.usermount=1 # echo vfs.usermount=1 &gt;&gt; /etc/sysctl.conf # zfs create SSD_storage/backup # zfs allow -u user create,mount,receive SSD_storage/backup</p>
+<p>Allow user to send snapshots # zfs allow -u user send,snapshot zroot</p>
+<p>Create the snapshot $ zfs snapshot zroot/testvm@1</p>
+<p>Send the snapshot to the NAS $ zfs send zroot/testvm@1 | ssh user@freenas zfs recv -dvu SSD_storage/backup</p>
+<p>After a full snapshot is taken, incremental backups can be performed $ zfs send -i zroot/testvm@1 zroot/testvm@2 | ssh user@freenas zfs recv -dvu SSD_storage/backup</p>
 <h2 id="pfsense-in-a-vm">pfSense in a VM</h2>
-<pre><code>Download the pfSense disk image from the website using fetch
-fetch https://frafiles.pfsense.org/mirror/downloads/pfSense-CE-2.3.1-RELEASE-2g-amd64-nanobsd.img.gz -o ~/pfSense.img.gz
-
-Create the storage
-zfs create -V2G -o volmode=dev zroot/pfsense
-
-Unzip the file, and redirect output to the storage via dd
-gzip -dc pfSense.img.gz | dd of=/dev/zvol/zroot/pfsense obs=64k
-
-Load the kernel and start the boot process
-bhyveload -c /dev/nmdm0A -d /dev/zvol/zroot/pfsense -m 256MB pfsense
-
-Start the VM
-/usr/sbin/bhyve -c 1 -m 256 -A -H -P -s 0:0,hostbridge -s 1:0,virtio-net,tap0 -s 3:0,ahci-hd,/dev/zvol/zroot/pfsense -s 4:1,lpc -l com1,/dev/nmdm0A pfsense
-
-Connect to the VM via the serial connection with nmdm
-cu -l /dev/nmdm0B
-
-Perform initial configuration through the shell to assign the network interfaces
-
-Once done, use the IP address to access through the web console 
-
-When finished, you can shutdown/reboot
-
-To de-allocate the resources, you need to destroy the VM
-bhyvectl --destroy --vm=pfsense</code></pre>
+<p>Download the pfSense disk image from the website using fetch fetch https://frafiles.pfsense.org/mirror/downloads/pfSense-CE-2.3.1-RELEASE-2g-amd64-nanobsd.img.gz -o ~/pfSense.img.gz</p>
+<p>Create the storage zfs create -V2G -o volmode=dev zroot/pfsense</p>
+<p>Unzip the file, and redirect output to the storage via dd gzip -dc pfSense.img.gz | dd of=/dev/zvol/zroot/pfsense obs=64k</p>
+<p>Load the kernel and start the boot process bhyveload -c /dev/nmdm0A -d /dev/zvol/zroot/pfsense -m 256MB pfsense</p>
+<p>Start the VM /usr/sbin/bhyve -c 1 -m 256 -A -H -P -s 0:0,hostbridge -s 1:0,virtio-net,tap0 -s 3:0,ahci-hd,/dev/zvol/zroot/pfsense -s 4:1,lpc -l com1,/dev/nmdm0A pfsense</p>
+<p>Connect to the VM via the serial connection with nmdm cu -l /dev/nmdm0B</p>
+<p>Perform initial configuration through the shell to assign the network interfaces</p>
+<p>Once done, use the IP address to access through the web console</p>
+<p>When finished, you can shutdown/reboot</p>
+<p>To de-allocate the resources, you need to destroy the VM bhyvectl --destroy --vm=pfsense</p>
 <h2 id="nanobsd">NanoBSD</h2>
-<pre><code>NanoBSD docs
-PDF: NanoBSD, ZFS and Jails
-
-cd to NanoBSD build directory
-cd /usr/src/tools/tools/nanobsd
-
-Run the build script, using default values for now
-sh nanobsd.sh
-
-Wait a while for buildworld to finish
-
-Go to output directory
-cd /usr/obj/nanobsd.full
-
-Create a new ZFS device
-zfs create -V5G -o volmode=dev zroot/testnano
-
-Copy the NanoBSD full image to the ZFS device
-dd if=_.disk.full of=/dev/zvol/zroot/testnano
-
-Run Bhyve using the ZFS device for boot
-sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/testnano testnano
-
-It boots! But, it can&#39;t mount root on a device... yet....
-
-***
-Got it to boot by changing the NANO_DRIVE variable from ad0 to vtbd0 in the
-nanobsd.sh file
-
-Cloning NanoBSD vms
-zfs snapshot zroot/nanotest@1
-zfs clone zroot/nanotest@1 zroot/nanoclone
-***
-
-nanobsdv.conf
-
-cust_nobeastie() (
-    touch ${nano_worlddir}/boot/loader.conf
-    echo &quot;beastie_disable=\&quot;yes\&quot;&quot; &gt;&gt; ${nano_worlddir}/boot/loader.conf
-)
-
-customize_cmd cust_install_files
-customize_cmd cust_nobeastie
-
-Got internet and zfs working
-Check that the files are configured exactly as in the handbook
-Make sure to run ifconfig tap0 up and ifconfig bridge0 up
-For zfs, the NANO_MODULES variable needs zfs and opensolaris added e.g.
-NANO_MODULES=&quot;zfs opensolaris&quot;
-Simply adding this to the conf file was causing errors, needed to
-build kernel and world again.
-Also, it kept saying the usual &quot;filesystem is full error&quot;, but this time
-the file system really was full.
-Added &quot;FlashDevice SanDisk 4G&quot; in the conf file to give it 4GB instead 
-of 1GB.
-Compiled it again and it works now.</code></pre>
+<p>NanoBSD docs PDF: NanoBSD, ZFS and Jails</p>
+<p>cd to NanoBSD build directory cd /usr/src/tools/tools/nanobsd</p>
+<p>Run the build script, using default values for now sh nanobsd.sh</p>
+<p>Wait a while for buildworld to finish</p>
+<p>Go to output directory cd /usr/obj/nanobsd.full</p>
+<p>Create a new ZFS device zfs create -V5G -o volmode=dev zroot/testnano</p>
+<p>Copy the NanoBSD full image to the ZFS device dd if=_.disk.full of=/dev/zvol/zroot/testnano</p>
+<p>Run Bhyve using the ZFS device for boot sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/testnano testnano</p>
+<p>It boots! But, it cant mount root on a device... yet....</p>
+<hr />
+<p>Got it to boot by changing the NANO_DRIVE variable from ad0 to vtbd0 in the nanobsd.sh file</p>
+<p>Cloning NanoBSD vms zfs snapshot zroot/nanotest@1 zfs clone zroot/nanotest@1 zroot/nanoclone <em>*</em></p>
+<p>nanobsdv.conf</p>
+<p>cust_nobeastie() ( touch ${nano_worlddir}/boot/loader.conf echo &quot;beastie_disable=&quot;yes&quot;&quot; &gt;&gt; ${nano_worlddir}/boot/loader.conf )</p>
+<p>customize_cmd cust_install_files customize_cmd cust_nobeastie</p>
+<p>Got internet and zfs working Check that the files are configured exactly as in the handbook Make sure to run ifconfig tap0 up and ifconfig bridge0 up For zfs, the NANO_MODULES variable needs zfs and opensolaris added e.g. NANO_MODULES=&quot;zfs opensolaris&quot; Simply adding this to the conf file was causing errors, needed to build kernel and world again. Also, it kept saying the usual &quot;filesystem is full error&quot;, but this time the file system really was full. Added &quot;FlashDevice SanDisk 4G&quot; in the conf file to give it 4GB instead of 1GB. Compiled it again and it works now.</p>
 <h2 id="jails-setup-in-nanobsd-bhyve-vm">Jails setup in NanoBSD bhyve vm</h2>
-<pre><code>jail.conf | listofjails | newtemplate.sh | createalljails | startalljails.sh</code></pre>
+<p>jail.conf | listofjails | newtemplate.sh | createalljails | startalljails.sh</p>
 <h2 id="jails-infrastructure">Jails Infrastructure</h2>
-<pre><code>createalljails.sh
-
-cat /etc/jail.conf | grep -E \{$ | sed &quot;s/{//&quot; &gt; ~/jails/listofjails.txt
-
-for jail in `cat ~/jails/listofjails.txt`
-do
-    zfs clone zroot/jails/template@1 zroot/jails/$jail
-    echo hostname=$jail &gt; /usr/local/jails/$jail/etc/rc.conf
-
-    # Disable sendmail to speed up start time
-    echo sendmail_submit_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$jail/etc/rc.conf
-    echo sendmail_outbound_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$jail/etc/rc.conf
-    echo sendmail_msp_queue_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$jail/etc/rc.conf
-
-cat ~/jails/listofjails.txt | sed &quot;s/^/jail \-c /&quot;</code></pre>
+<p>createalljails.sh</p>
+<p>cat /etc/jail.conf | grep -E {$ | sed &quot;s/{//&quot; &gt; ~/jails/listofjails.txt</p>
+<p>for jail in <code>cat ~/jails/listofjails.txt</code> do zfs clone zroot/jails/template@1 zroot/jails/<span class="math"><em>j</em><em>a</em><em>i</em><em>l</em><em>e</em><em>c</em><em>h</em><em>o</em><em>h</em><em>o</em><em>s</em><em>t</em><em>n</em><em>a</em><em>m</em><em>e</em> = </span>jail &gt; /usr/local/jails/$jail/etc/rc.conf</p>
+<pre><code># Disable sendmail to speed up start time
+echo sendmail_submit_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$jail/etc/rc.conf
+echo sendmail_outbound_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$jail/etc/rc.conf
+echo sendmail_msp_queue_enable=\&quot;NO\&quot; &gt;&gt; /usr/local/jails/$jail/etc/rc.conf</code></pre>
+<p>cat ~/jails/listofjails.txt | sed &quot;s/^/jail -c /&quot;</p>
 <h2 id="etcjail.conf">/etc/jail.conf</h2>
-<pre><code># Global settings applied to all jails
-
-interface = &quot;re0&quot;;
-host.hostname = &quot;$name&quot;;
-ip4.addr = 192.168.1.$ip;
-path = &quot;/usr/local/jails/$name&quot;;
-
-exec.start = &quot;/bin/sh /etc/rc&quot;;
-exec.stop = &quot;/bin/sh /etc/rc.shutdown&quot;;
-exec.clean;
-mount.devfs;
-
-# Jail Definitions
-
-wintermute {
-    $ip = 15;
-}
-
-neuromancer {
-    $ip = 16;
-}
-
-armitage {
-    $ip = 17;
-}
-
-finn {
-    $ip = 18;
-}
-
-hideo {
-    $ip = 19;
-}
-
-maelcum {
-    $ip = 20;
-}
-
-case {
-    $ip = 21;
-}
-
-molly {
-    $ip = 22;
-}</code></pre>
+<h1 id="global-settings-applied-to-all-jails">Global settings applied to all jails</h1>
+<p>interface = &quot;re0&quot;; host.hostname = &quot;<span class="math">$name&quot;; ip4.addr = 192.168.1.$</span>ip; path = &quot;/usr/local/jails/$name&quot;;</p>
+<p>exec.start = &quot;/bin/sh /etc/rc&quot;; exec.stop = &quot;/bin/sh /etc/rc.shutdown&quot;; exec.clean; mount.devfs;</p>
+<h1 id="jail-definitions-1">Jail Definitions</h1>
+<p>wintermute { $ip = 15; }</p>
+<p>neuromancer { $ip = 16; }</p>
+<p>armitage { $ip = 17; }</p>
+<p>finn { $ip = 18; }</p>
+<p>hideo { $ip = 19; }</p>
+<p>maelcum { $ip = 20; }</p>
+<p>case { $ip = 21; }</p>
+<p>molly { $ip = 22; }</p>
 <h2 id="jail-names">Jail names</h2>
-<pre><code>Armitage
-- Version control - Git
-- Host install tools - Ansible, shell scripts
-- Ad hoc change tools - Ansible, shell scripts
-
-Wintermute - Neuromancer
-- Directory servers -- DNS, NIS, LDAP
-- Authentication servers -- NIS, Kerberos 
-- Time Synchronisation -- NTP
-- Host IP addressing -- DHCP
-
-Finn
-- Network File servers -- NFS
-- File Replication servers -- Git, Ansible, SUP
-
-Maelcum
-- Mail -- SMTP
-
-Hideo
-- Logging -- Syslogd
-- Security -- OPIE, SSH, PKI
-- Performance monitoring -- collectd
-
-Case - Molly
-- Web servers -- Apache</code></pre>
+<p>Armitage - Version control - Git - Host install tools - Ansible, shell scripts - Ad hoc change tools - Ansible, shell scripts</p>
+<p>Wintermute - Neuromancer - Directory servers -- DNS, NIS, LDAP - Authentication servers -- NIS, Kerberos - Time Synchronisation -- NTP - Host IP addressing -- DHCP</p>
+<p>Finn - Network File servers -- NFS - File Replication servers -- Git, Ansible, SUP</p>
+<p>Maelcum - Mail -- SMTP</p>
+<p>Hideo - Logging -- Syslogd - Security -- OPIE, SSH, PKI - Performance monitoring -- collectd</p>
+<p>Case - Molly - Web servers -- Apache</p>
 <h2 id="ansible-setup">Ansible Setup</h2>
-<pre><code># Create the &quot;ansible&quot; user
-adduser -f filename
-ansible:::::::::password
-# Generate the SSH key for the ansible user
-ssh-keygen -N &quot;&quot; -f /home/ansible/.ssh/id_rsa
-su -m ansible -c &#39;ssh-keygen -N &quot;&quot; -f /home/ansible/.ssh/id_rsa&#39;
-cat /home/ansible/.ssh/id_rsa.pub
-
-echo &quot;ansible:::::::::$RANDOMPASSWORD&quot; &gt; /usr/local/jails/$JAILNAME/root/ansibleuser
-jexec $JAILENAME adduser -f /root/ansibleuser
-
-rm /usr/local/jails/$JAILNAME/root/ansibleuser</code></pre>
+<h1 id="create-the-ansible-user">Create the &quot;ansible&quot; user</h1>
+<p>adduser -f filename ansible:::::::::password # Generate the SSH key for the ansible user ssh-keygen -N &quot;&quot; -f /home/ansible/.ssh/id_rsa su -m ansible -c 'ssh-keygen -N &quot;&quot; -f /home/ansible/.ssh/id_rsa' cat /home/ansible/.ssh/id_rsa.pub</p>
+<p>echo &quot;ansible:::::::::<span class="math">$RANDOMPASSWORD&quot; &gt; /usr/local/jails/$</span>JAILNAME/root/ansibleuser jexec $JAILENAME adduser -f /root/ansibleuser</p>
+<p>rm /usr/local/jails/$JAILNAME/root/ansibleuser</p>
 <h2 id="crypto">Crypto</h2>
-<pre><code>Supersingular isogeny Diffie-Hellman key exchange (SIDH)
-Efficient algorithms for SIDH (PDF)
-SIDH library
-
-Instant Messaging client
-Irssi IRC client with OTR for authentication
-Irssi-OTR
-Irssi
-OTR
-DANE</code></pre>
+<p>Supersingular isogeny Diffie-Hellman key exchange (SIDH) Efficient algorithms for SIDH (PDF) SIDH library</p>
+<p>Instant Messaging client Irssi IRC client with OTR for authentication Irssi-OTR Irssi OTR DANE</p>
 <h2 id="dns">DNS</h2>
-<pre><code>Unbound working as an authoritative resolver for LAN. You need to run 
-unbound-control reload after changing the conf file, otherwise it wont work!
-You also need to change /etc/resolv.conf so that nameserver 127.0.0.1 
-appears ABOVE the bthomehub resolver, so that the local unbound server 
-is queried first before it goes to bthomehub. (in prod resolv.conf would just
-have the proper name servers, but this can stay for now)
-unbound.conf
-
-You also need to make sure that local-* is inside the server: block, 
-otherwise it doesn&#39;t work...
-server:
-    unblock-lan-zones: yes
-    username stuff...
-    interface: 0.0.0.0
-    local-zone: &quot;local.&quot; static
-    local-data: &quot;finn.local. A 192.168.1.18&quot;
-
-NSD (name server daemon) is an authoritative only, memory efficient, highly
-secure and simple to configure open source domain name server. NSD acts as 
-the authoritative name server, while Unbound acts as the validating, 
-resolving and caching DNS server.
-
-The Unbound servers act as validating, recursive and caching DNS servers
-that LAN clients can query. Then NSD is an authoritative server which
-can resolve internal LAN names only. NSD never goes to the internet,
-and its only job is to serve internal names to Unbound.
-
-Zones can be signed with the OpenDNSSEC tool. Private keys associated
-with DNSSEC signing are secured using HSM&#39;s (hardware security modules).
-This can be done using OpenHSM for testing, however, in production a 
-real HSM would be used.</code></pre>
+<p>Unbound working as an authoritative resolver for LAN. You need to run unbound-control reload after changing the conf file, otherwise it wont work! You also need to change /etc/resolv.conf so that nameserver 127.0.0.1 appears ABOVE the bthomehub resolver, so that the local unbound server is queried first before it goes to bthomehub. (in prod resolv.conf would just have the proper name servers, but this can stay for now) unbound.conf</p>
+<p>You also need to make sure that local-* is inside the server: block, otherwise it doesn't work... server: unblock-lan-zones: yes username stuff... interface: 0.0.0.0 local-zone: &quot;local.&quot; static local-data: &quot;finn.local. A 192.168.1.18&quot;</p>
+<p>NSD (name server daemon) is an authoritative only, memory efficient, highly secure and simple to configure open source domain name server. NSD acts as the authoritative name server, while Unbound acts as the validating, resolving and caching DNS server.</p>
+<p>The Unbound servers act as validating, recursive and caching DNS servers that LAN clients can query. Then NSD is an authoritative server which can resolve internal LAN names only. NSD never goes to the internet, and its only job is to serve internal names to Unbound.</p>
+<p>Zones can be signed with the OpenDNSSEC tool. Private keys associated with DNSSEC signing are secured using HSM's (hardware security modules). This can be done using OpenHSM for testing, however, in production a real HSM would be used.</p>
 <h2 id="ssh">SSH</h2>
-<pre><code>sshd_config
-X11Forwarding no
-IgnoreRhosts yes
-UseDNS yes
-PermitEmptyPasswords no
-MaxAuthTries 6
-PubKeyAuthentication yes
-PasswordAuthentication yes  # to allow kerberos
-PermitRootLogin no
-Protocol 2
-HashKnownHosts yes
-
-SSHFP records in DNS(SEC) to securely publish SSH key fingerprints
-Kerberos for password authentication</code></pre>
+<p>sshd_config X11Forwarding no IgnoreRhosts yes UseDNS yes PermitEmptyPasswords no MaxAuthTries 6 PubKeyAuthentication yes PasswordAuthentication yes # to allow kerberos PermitRootLogin no Protocol 2 HashKnownHosts yes</p>
+<p>SSHFP records in DNS(SEC) to securely publish SSH key fingerprints Kerberos for password authentication</p>
