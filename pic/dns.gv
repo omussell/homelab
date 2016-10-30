@@ -1,8 +1,8 @@
 digraph SecureInfrastructure {
-	VC [label="Version Control"];
-	GS [label="Gold Server"];
-	AHCT [label="Ad-Hoc Change Tools"];
-	HIT [label="Host Install Tools"];
+	VC [shape=box,label="Version Control"];
+	GS [shape=box,label="Gold Server"];
+	AHCT [shape=box,label="Ad-Hoc Change Tools"];
+	HIT [shape=box,label="Host Install Tools"];
 	VC -> GS;
 	GS -> AHCT;
 	GS -> HIT;
