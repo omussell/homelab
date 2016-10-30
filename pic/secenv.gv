@@ -1,4 +1,6 @@
 digraph SecureInfrastructure {
+	size="8,6"; ratio=fill; node[fontsize=24];
+	
 	VC [shape=box,label="Version Control"];
 	GS [shape=box,label="Gold Server"];
 	AHCT [shape=box,label="Ad-Hoc Change Tools"];
@@ -39,7 +41,7 @@ digraph SecureInfrastructure {
 				VC;
 				}
 	
-	subgraph "masterslave" { label="Master/Slave Servers"; 
+	subgraph "masterslave" { label="Master Slave Servers"; 
 				AHCT;
 				HIT;
 				DIR;
