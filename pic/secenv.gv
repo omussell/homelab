@@ -22,11 +22,11 @@ subgraph cluster1 {
 label = "Control Machine";
 color=blue
 }
-subgraph cluster2 {
 	GS -> AHCT;
 	GS -> HIT;
 	AHCT -> DIR;
 	HIT -> DIR;
+subgraph cluster2 {
 	DIR -> AUTH;
 	DIR -> TIME;
 	AUTH -> NFS;
@@ -34,12 +34,18 @@ subgraph cluster2 {
 	TIME -> FRS;
 label = "Master/Slave";
 }
+subgraph cluster3 {
 	NFS -> CFA;
 	FRS -> CFA;
+label = "File Replication Servers";
+}
+subgraph cluster4 {
 	CFA -> COSU;
 	COSU -> CCM;
 	CCM -> MAIL;
 	CCM -> PRNT;
 	CCM -> MONT;
 	CCM -> CAM;
+label = "Clients";
+}
 }
