@@ -1,6 +1,6 @@
 digraph SecureInfrastructure {
 	size="8,6"; ratio=fill; node[fontsize=24];
-	
+/*	
 	VC [shape=box,label="Version Control"];
 	GS [shape=box,label="Gold Server"];
 	AHCT [shape=box,label="Ad-Hoc Change Tools"];
@@ -17,7 +17,7 @@ digraph SecureInfrastructure {
 	PRNT [shape=box,label="Printing"];
 	MONT [shape=box,label="Monitoring"];
 	CAM [ shape=box,label="Client Application Management"]; 
-
+*/
 	VC -> GS;
 	GS -> AHCT;
 	GS -> HIT;
