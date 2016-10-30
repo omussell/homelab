@@ -5,9 +5,9 @@ digraph disklayout {
 			<TD COLSPAN="6">MBR<BR/>Boot0</TD>
 		</TR>
 		<TR>
-			<TD ROWSPAN="2">Slice1</TD>
-			<TD ROWSPAN="2">Slice2</TD>
-			<TD ROWSPAN="2">Slice3</TD>
+			<TD ROWSPAN="2">Slice1<BR/>active /</TD>
+			<TD ROWSPAN="2">Slice2<BR/>inactive /</TD>
+			<TD ROWSPAN="2">Slice3<BR/>/cfg</TD>
 		</TR>
 	</TABLE>>];
 }
