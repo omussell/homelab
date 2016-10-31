@@ -48,11 +48,11 @@ This means that users can use their own devices to connect, or for large enterpr
 High-Level Design
 ---
 
-Control Machine
-Primary/Secondary
-Data Storage
-Clients
-[a](/pic/secenv.svg)
+- Control Machine
+- Primary/Secondary
+- Data Storage
+- Clients
+(/homelab/pic/secenv.svg)
 
 Detailed Design
 ---
