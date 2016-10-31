@@ -52,7 +52,7 @@ High-Level Design
 - Primary/Secondary
 - Data Storage
 - Clients
-(/homelab/pic/secenv.svg)
+!(/homelab/pic/secenv.svg)
 
 Detailed Design
 ---
