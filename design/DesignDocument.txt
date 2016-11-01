@@ -50,6 +50,7 @@ High-Level Design
 - Clients
 
 <img src="/homelab/pic/secenv.svg">
+<img src="/homelab/pic/disklayout.svg">
 
 Key features of NanoBSD:
 
