@@ -20,9 +20,9 @@ Background
 ---
 
 The design of the environment will be similar to the MIT Athena project and the 
-Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: "Bootstrapping an Infrastructure" and "Why Order Matters: Turing Equivalence in Automated Systems Administration".
+Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: "Bootstrapping an Infrastructure" and "Why Order Matters: Turing Equivalence in Automated Systems Administration". Additionally, a paper written by Paul Schenkeveld, "Building servers with NanoBSD, ZFS and jails" served as inspiration for the use of NanoBSD as the operating system due to its unique properties.
 
-This project aims to extend the work of infrastructures.org, by emphasising security and producing a working implementation that can be used by anyone.
+This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.
 
 The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others.
 
@@ -40,20 +40,32 @@ In addition, a "server" can take many forms, it could be a Jail/Zone/Container, 
 
 Also, while the envisioned configuration is a closed network, where nothing is accessible via the normal internet, there is no requirement for this to be so. If you want end-users to be able to access your network from home or via BYOD they can.
 
-The end result should be that any 
-computer should be able to connect to the environment, after all, the 
-environment is there to provide a substrate for the enterprise to do its job.
-This means that users can use their own devices to connect, or for large enterprises a thin client could be used
-
 High-Level Design
 ---
 
 - Control Machine
+- Gold server
 - Primary/Secondary
 - Data Storage
 - Clients
 
 <img src="/homelab/pic/secenv.svg">
+
+Key features of NanoBSD:
+- Offline build of complete system images
+- Dual system images
+- Read-only root filesystem
+- Separate storage of modified configuration files, which is shared between the two system images.
+
+Key features of Jails:
+- A process and all descendants are restricted to a chrooted directory tree
+- Does not rely on virtualisation, so performance penalty is mitigated
+- Easy to update or upgrade individual jails
+
+Key features of ZFS:
+- Data integrity using checksums
+- Pooled storage, where all disks added to the pool are available to all filesystems
+- High performance with multiple caching mechanisms
 
 Detailed Design
 ---
