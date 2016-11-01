@@ -52,17 +52,20 @@ High-Level Design
 <img src="/homelab/pic/secenv.svg">
 
 Key features of NanoBSD:
+
 - Offline build of complete system images
 - Dual system images
 - Read-only root filesystem
 - Separate storage of modified configuration files, which is shared between the two system images.
 
 Key features of Jails:
+
 - A process and all descendants are restricted to a chrooted directory tree
 - Does not rely on virtualisation, so performance penalty is mitigated
 - Easy to update or upgrade individual jails
 
 Key features of ZFS:
+
 - Data integrity using checksums
 - Pooled storage, where all disks added to the pool are available to all filesystems
 - High performance with multiple caching mechanisms
@@ -76,3 +79,8 @@ Load Balancer and Traffic Management Design
 Frontend Web Design
 App server Design
 Data Storage Design
+
+Control machine config, Git, SSH, 2FA?
+Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
+Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
+Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
