@@ -70,6 +70,21 @@ Key features of ZFS:
 - Data integrity using checksums
 - Pooled storage, where all disks added to the pool are available to all filesystems
 - High performance with multiple caching mechanisms
+- Snapshots
+
+The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside.
+
+The advantages of this setup are numerous:
+
+- Fast booting
+- Hardware fault-tolerance
+- Independence of system and data storage
+- 
+
+
+This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware. This comes at the cost of higher complexity and more difficult maintenance.
+
+The Control Machine is the computer on which the version controlled infrastructure code is stored. It is a central location reachable by the adminstrators to make changes to the code that makes up the infrastructure. The Control Machine is the root from which the infrastructure grows. It generates the Gold Server specification. Changes to the Gold Server are only allowed to originate from the Control Machine. This is done via Git clone over SSH.
 
 Detailed Design
 ---
