@@ -52,39 +52,42 @@ High-Level Design
 <img src="/homelab/pic/secenv.svg">
 <img src="/homelab/pic/disklayout.svg">
 
-Key features of NanoBSD:
+The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside.
+
+The advantages of this setup are numerous:
+
+NanoBSD:
 
 - Offline build of complete system images
 - Dual system images
 - Read-only root filesystem
 - Separate storage of modified configuration files, which is shared between the two system images.
 
-Key features of Jails:
+Jails:
 
 - A process and all descendants are restricted to a chrooted directory tree
 - Does not rely on virtualisation, so performance penalty is mitigated
 - Easy to update or upgrade individual jails
 
-Key features of ZFS:
+ZFS:
 
 - Data integrity using checksums
 - Pooled storage, where all disks added to the pool are available to all filesystems
 - High performance with multiple caching mechanisms
 - Snapshots
 
-The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside.
-
-The advantages of this setup are numerous:
-
-- Fast booting
-- Hardware fault-tolerance
-- Independence of system and data storage
-- 
-
-
 This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware. This comes at the cost of higher complexity and more difficult maintenance.
 
 The Control Machine is the computer on which the version controlled infrastructure code is stored. It is a central location reachable by the adminstrators to make changes to the code that makes up the infrastructure. The Control Machine is the root from which the infrastructure grows. It generates the Gold Server specification. Changes to the Gold Server are only allowed to originate from the Control Machine. This is done via Git clone over SSH.
+
+The Gold Server contains all of the configuration files needed by the other servers. Changes to the infrastructure propagate from the Gold Server.
+
+Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. 
+Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SSH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.
+
+KerberizedNFSv4 for client file access.
+
+
 
 Detailed Design
 ---
