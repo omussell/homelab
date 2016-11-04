@@ -103,3 +103,17 @@ Control machine config, Git, SSH, 2FA?
 Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
 Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
 Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
+
+
+SSH
+---
+TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+Transport Layer Security version 1.2 or above
+Elliptic-Curve Diffie-Hellman Ephemeral
+Elliptic-Curve Digital Signature Algorithm
+Advanced Encryption Standard 256 bit
+Galois/Counter Mode
+Secure Hashing Algorithm 384 bit
+
+
+
