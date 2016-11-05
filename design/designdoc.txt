@@ -30,10 +30,11 @@ Decentralised - Each site is independent and can function without a connection t
 Headquarters - Main site(s), connected to other sites
 
 In any of these scenarios, the administrators can provide end-users with access to the network in multiple ways:
-Thick client
-Thin client
-BYOD
-Web access only
+
+- Thick client
+- Thin client
+- BYOD
+- Web access only
 
 
 In addition, a "server" can take many forms, it could be a Jail/Zone/Container, virtual machine, physical or cloud.
@@ -114,6 +115,30 @@ Elliptic-Curve Digital Signature Algorithm
 Advanced Encryption Standard 256 bit
 Galois/Counter Mode
 Secure Hashing Algorithm 384 bit
+
+Designing for Operations
+---
+
+- Configuration: The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems
+
+- Startup and shutdown: Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.
+
+- Queue draining: All requests are going through the load balancer, individual nodes can be put into drain mode.
+- Software upgrades: For app upgrades, snapshot current, update app, restart jail with new updated app jail. For OS upgrades, build new offline image, update slice 2, reboot. 
+- Backups and restores: Config files / OS files / data files
+- Redundancy: OS, hard drive, zfs, multiple app servers with master/slave, database replication, multiple load balancers
+- Replicated databases
+- Hot swaps
+- Toggles for individual features
+- Graceful degradation
+- Access controls and rate limits
+- Data import controls
+- Monitoring
+- Auditing
+- Debug instrumentation
+- Exception collection
+
+
 
 
 
