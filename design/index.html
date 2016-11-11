@@ -3,6 +3,7 @@
 <li>Graphics created with DOT</li>
 <li>Hosted on Github Pages</li>
 </ul>
+<p>!! needs cleanup !!</p>
 <h1 id="bootstrapping-a-secure-infrastructure">Bootstrapping a Secure Infrastructure</h1>
 <h2 id="summary">Summary</h2>
 <p>Create an infrastructure with an emphasis on security, resiliency and ease of maintenance.</p>
@@ -10,8 +11,7 @@
 <p>Produce a working implementation of a secure, resilient and easy to maintain infrastructure. This will be published in the form of version-controlled configuration documents, with the philosophy and background of the chosen configuration documented here. Anyone should be able to download the vendor supplied base operating system, and the configuration documents should convert that base OS into the desired state. The process by which this conversion is achieved could be as simple as a shell script, or as complicated as a configuration management tool backed by continuous deployment pipelines. In addition, the infrastructure should be flexible enough to be deployed in multiple configurations based on the decisions of the Infrastructure Architects and business owners. It should also be portable to other operating systems with only a little massage of the configuration code.</p>
 <h2 id="background">Background</h2>
 <p>The design of the environment will be similar to the MIT Athena project and the Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: &quot;Bootstrapping an Infrastructure&quot; and &quot;Why Order Matters: Turing Equivalence in Automated Systems Administration&quot;. Additionally, a paper written by Paul Schenkeveld, &quot;Building servers with NanoBSD, ZFS and jails&quot; served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
-<p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.</p>
-<p>The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others.</p>
+<p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone. !! The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.</p>
 <p>Decentralised - Each site is independent and can function without a connection to the internet. Headquarters - Main site(s), connected to other sites</p>
 <p>In any of these scenarios, the administrators can provide end-users with access to the network in multiple ways:</p>
 <ul>
@@ -21,8 +21,7 @@
 <li>Web access only</li>
 </ul>
 <p>In addition, a &quot;server&quot; can take many forms, it could be a Jail/Zone/Container, virtual machine, physical or cloud.</p>
-<p>Also, while the envisioned configuration is a closed network, where nothing is accessible via the normal internet, there is no requirement for this to be so. If you want end-users to be able to access your network from home or via BYOD they can.</p>
-<h2 id="high-level-design">High-Level Design</h2>
+<p>Also, while the envisioned configuration is a closed network, where nothing is accessible via the normal internet, there is no requirement for this to be so. If you want end-users to be able to access your network from home or via BYOD they can. !! High-Level Design ---</p>
 <ul>
 <li>Control Machine</li>
 <li>Gold server</li>
@@ -31,8 +30,8 @@
 <li>Clients</li>
 </ul>
 <img src="/homelab/pic/secenv.svg"> <img src="/homelab/pic/disklayout.svg">
-<p>The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside.</p>
-<p>The advantages of this setup are numerous:</p>
+<p>The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.</p>
+<p>The advantages of this setup are:</p>
 <p>NanoBSD:</p>
 <ul>
 <li>Offline build of complete system images</li>
@@ -53,32 +52,44 @@
 <li>High performance with multiple caching mechanisms</li>
 <li>Snapshots</li>
 </ul>
-<p>This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware. This comes at the cost of higher complexity and more difficult maintenance.</p>
-<p>The Control Machine is the computer on which the version controlled infrastructure code is stored. It is a central location reachable by the adminstrators to make changes to the code that makes up the infrastructure. The Control Machine is the root from which the infrastructure grows. It generates the Gold Server specification. Changes to the Gold Server are only allowed to originate from the Control Machine. This is done via Git clone over SSH.</p>
+<p>This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded software is removed. This comes at the cost of higher complexity and more difficult maintenance. !! The Control Machine is the computer on which the version controlled infrastructure code is stored. It is a central location reachable by the adminstrators to make changes to the code that makes up the infrastructure. The Control Machine is the root from which the infrastructure grows. It generates the Gold Server specification. Changes to the Gold Server are only allowed to originate from the Control Machine. This is done via Git clone over SSH.</p>
 <p>The Gold Server contains all of the configuration files needed by the other servers. Changes to the infrastructure propagate from the Gold Server.</p>
 <p>Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SSH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.</p>
 <p>KerberizedNFSv4 for client file access.</p>
 <h2 id="detailed-design">Detailed Design</h2>
 <p>Gold Server Design Router Design Firewall Design Load Balancer and Traffic Management Design Frontend Web Design App server Design Data Storage Design</p>
-<p>Control machine config, Git, SSH, 2FA? Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH. Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.<br />Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP</p>
-<h2 id="ssh">SSH</h2>
+<p>Control machine config, Git, SSH, 2FA? Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH. Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.<br />Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP !!</p>
+<h2 id="tls">TLS</h2>
 <p>TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 Transport Layer Security version 1.2 or above Elliptic-Curve Diffie-Hellman Ephemeral Elliptic-Curve Digital Signature Algorithm Advanced Encryption Standard 256 bit Galois/Counter Mode Secure Hashing Algorithm 384 bit</p>
 <h2 id="designing-for-operations">Designing for Operations</h2>
 <ul>
-<li><p>Configuration: The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems</p></li>
-<li><p>Startup and shutdown: Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.</p></li>
-<li>Queue draining: All requests are going through the load balancer, individual nodes can be put into drain mode.</li>
-<li>Software upgrades: For app upgrades, snapshot current, update app, restart jail with new updated app jail. For OS upgrades, build new offline image, update slice 2, reboot.</li>
-<li>Backups and restores: Config files / OS files / data files</li>
-<li>Redundancy: OS, hard drive, zfs, multiple app servers with master/slave, database replication, multiple load balancers</li>
+<li>Configuration</li>
+<li>Startup and shutdown</li>
+<li>Queue draining</li>
+<li>Software upgrades</li>
+<li>Backups and restores</li>
+<li>Redundancy</li>
 <li>Replicated databases</li>
 <li>Hot swaps</li>
-<li>Toggles for individual features</li>
-<li>Graceful degradation</li>
 <li>Access controls and rate limits</li>
-<li>Data import controls</li>
 <li>Monitoring</li>
-<li>Auditing</li>
-<li>Debug instrumentation</li>
-<li><p>Exception collection</p></li>
+<li>Auditing !!</li>
+<li><p>Configuration: The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems</p></li>
+<li><p>Startup and shutdown: Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.</p></li>
+<li><p>Queue draining: All requests are going through the load balancer, individual nodes can be put into drain mode.</p></li>
+<li><p>Software upgrades: For app upgrades, snapshot current, update app, restart jail with new updated app jail. For OS upgrades, build new offline image, update slice 2, reboot.</p></li>
+<li><p>Backups and restores: Config files / OS files / data files</p>
+How to backup and restore:
+<ul>
+<li>Kerberos principals, groups etc.</li>
+<li>LDAP data</li>
+<li>DNS records/zones</li>
+<li>HSM data Calculate the latency/data limits required to perform above backups/restores</li>
+</ul></li>
+<li><p>Redundancy: OS, hard drive, zfs, multiple core servers with master/slave, database replication, multiple load balancers. Services are behind a load balancer</p></li>
+<li><p>Replicated databases</p></li>
+<li><p>Hot swaps: Physical components should be hot swappable. Service components should also be hot swappable.</p></li>
+<li>Access controls and rate limits: If a service provides an API, that API should include an Access Control List</li>
+<li>Monitoring</li>
+<li><p>Auditing !!</p></li>
 </ul>
