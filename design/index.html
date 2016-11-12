@@ -91,5 +91,16 @@ How to backup and restore:
 <li><p>Hot swaps: Physical components should be hot swappable. Service components should also be hot swappable.</p></li>
 <li>Access controls and rate limits: If a service provides an API, that API should include an Access Control List</li>
 <li>Monitoring</li>
-<li><p>Auditing !!</p></li>
+<li><p>Auditing</p></li>
 </ul>
+<h2 id="scaling">Scaling</h2>
+<p>AKF Scaling Cube</p>
+<ul>
+<li>Replicate the entire system (horizontal duplication)</li>
+<li>Split the system into individual functions, services or resources (functional or service splits)</li>
+<li>Split the system into individual chunks (lookup or formulaic splits)</li>
+</ul>
+<p>Horizontal - Many replicas behind a load balancer. If each transaction can be completed independently on all replicas, the performance improvement is proportional to the number of replicas, for example, adding more replicas, disk spindles or network connections.</p>
+<p>!!</p>
+<h2 id="user-access">User Access</h2>
+<p>Documents Applications Email Instant Messaging Working remotely</p>

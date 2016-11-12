@@ -161,4 +161,26 @@ Designing for Operations
 - Access controls and rate limits: If a service provides an API, that API should include an Access Control List
 - Monitoring
 - Auditing
+
+Scaling
+---
+AKF Scaling Cube
+
+- Replicate the entire system (horizontal duplication)
+- Split the system into individual functions, services or resources (functional or service splits)
+- Split the system into individual chunks (lookup or formulaic splits)
+
+Horizontal - Many replicas behind a load balancer. If each transaction can be completed independently on all replicas, the performance improvement is proportional to the number of replicas, for example, adding more replicas, disk spindles or network connections.
+
+
 !!
+
+User Access
+---
+
+Documents
+Applications
+Email
+Instant Messaging
+Working remotely
+
