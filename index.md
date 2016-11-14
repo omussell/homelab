@@ -483,6 +483,28 @@ SSH
     SSHFP records in DNS(SEC) to securely publish SSH key fingerprints
     Kerberos for password authentication
 
+SSH with X.509 v3 Certificate Support (PKIX-SSH)
+---
+
+    Running inside a jail for testing
+
+    fetch http://roumenpetrov.info/secsh/src/pkixssh-9.2.tar.xz
+    tar -xvf pkixssh-9.2.tar.xz
+    vi Makefile.in
+    Uncomment the SHELL variable line
+    ./configure
+    make
+    make install
+    Follow the instructions in README.privsep
+    mkdir /var/empty/
+    chown root:sys /var/empty/
+    chmod 755 /var/empty/
+    pw groupadd sshd
+    pw usermod sshd -c 'sshd privsep' -d /var/empty -s /bin/false sshd
+    The default install location was /usr/local/bin
+    Test generating a key:
+    /usr/local/bin/ssh-keygen -b 384 -t ecdsa -f /etc/ssh/ssh_host_key -N ""
+
 
 
 
