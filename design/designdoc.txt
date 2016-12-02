@@ -22,11 +22,12 @@ Produce a working implementation of a secure, resilient and easy to maintain inf
 Background
 ---
 
-The design of the environment will be similar to the MIT Athena project and the Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: "Bootstrapping an Infrastructure" and "Why Order Matters: Turing Equivalence in Automated Systems Administration". Additionally, a paper written by Paul Schenkeveld, "Building servers with NanoBSD, ZFS and jails" served as inspiration for the use of NanoBSD as the operating system due to its unique properties.
+The design of the environment will be similar to the MIT Athena project and the Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: "Bootstrapping an Infrastructure" and "Why Order Matters: Turing Equivalence in Automated Systems Administration". Additionally, a paper by Paul Schenkeveld, "Building servers with NanoBSD, ZFS and jails" served as inspiration for the use of NanoBSD as the operating system due to its unique properties.
 
 This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.
 
 !!
+
 The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.
 
 Decentralised - Each site is independent and can function without a connection to the internet. 
@@ -141,6 +142,18 @@ Designing for Operations
 !!
 
 - Configuration: The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems
+	- NanoBSD, conf file
+	- Jails, conf file
+	- Kerberos
+	- OpenDNSSEC
+	- SoftHSM
+	- NSD
+	- Unbound
+	- OpenLDAP
+	- OpenNTP
+	- OpenSSH
+	- Configuration Management
+	- NFS
 
 - Startup and shutdown: Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.
 
@@ -164,8 +177,8 @@ Designing for Operations
 - Hot swaps: Physical components should be hot swappable. Service components should also be hot swappable.
 
 - Access controls and rate limits: If a service provides an API, that API should include an Access Control List
-- Monitoring
-- Auditing
+- Monitoring: Configuration management tools typically monitor the OS / Application code is correct. Use normal network monitoring tools to monitor up/down, latency etc...
+- Auditing: Logging to central servers
 
 Scaling
 ---
@@ -182,11 +195,11 @@ Horizontal - Many replicas behind a load balancer. If each transaction can be co
 
 User Access
 ---
-Documents
-Applications
-Email
-Instant Messaging
-Working remotely
+- Documents
+- Applications
+- Email
+- Instant Messaging
+- Working remotely
 
 
 Authorisation / Access Control Lists

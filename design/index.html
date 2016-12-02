@@ -10,9 +10,10 @@
 <h2 id="end-goal">End Goal</h2>
 <p>Produce a working implementation of a secure, resilient and easy to maintain infrastructure. This will be published in the form of version-controlled configuration documents, with the philosophy and background of the chosen configuration documented here. Anyone should be able to download the vendor supplied base operating system, and the configuration documents should convert that base OS into the desired state. The process by which this conversion is achieved could be as simple as a shell script, or as complicated as a configuration management tool backed by continuous deployment pipelines. In addition, the infrastructure should be flexible enough to be deployed in multiple configurations based on the decisions of the Infrastructure Architects and business owners. It should also be portable to other operating systems with only a little massage of the configuration code.</p>
 <h2 id="background">Background</h2>
-<p>The design of the environment will be similar to the MIT Athena project and the Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: &quot;Bootstrapping an Infrastructure&quot; and &quot;Why Order Matters: Turing Equivalence in Automated Systems Administration&quot;. Additionally, a paper written by Paul Schenkeveld, &quot;Building servers with NanoBSD, ZFS and jails&quot; served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
+<p>The design of the environment will be similar to the MIT Athena project and the Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: &quot;Bootstrapping an Infrastructure&quot; and &quot;Why Order Matters: Turing Equivalence in Automated Systems Administration&quot;. Additionally, a paper by Paul Schenkeveld, &quot;Building servers with NanoBSD, ZFS and jails&quot; served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
 <p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.</p>
-<p>!! The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.</p>
+<p>!!</p>
+<p>The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.</p>
 <p>Decentralised - Each site is independent and can function without a connection to the internet.</p>
 <p>Headquarters - Main site(s), connected to other sites</p>
 <p>In any of these scenarios, the administrators can provide end-users with access to the network in multiple ways:</p>
@@ -90,7 +91,21 @@
 </ul>
 <p>!!</p>
 <ul>
-<li><p>Configuration: The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems</p></li>
+<li>Configuration: The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems
+<ul>
+<li>NanoBSD, conf file</li>
+<li>Jails, conf file</li>
+<li>Kerberos</li>
+<li>OpenDNSSEC</li>
+<li>SoftHSM</li>
+<li>NSD</li>
+<li>Unbound</li>
+<li>OpenLDAP</li>
+<li>OpenNTP</li>
+<li>OpenSSH</li>
+<li>Configuration Management</li>
+<li>NFS</li>
+</ul></li>
 <li><p>Startup and shutdown: Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.</p></li>
 <li><p>Queue draining: All requests are going through the load balancer, individual nodes can be put into drain mode.</p></li>
 <li><p>Software upgrades: For app upgrades, snapshot current, update app, restart jail with new updated app jail. For OS upgrades, build new offline image, update slice 2, reboot.</p></li>
@@ -106,8 +121,8 @@ How to backup and restore:
 <li><p>Replicated databases</p></li>
 <li><p>Hot swaps: Physical components should be hot swappable. Service components should also be hot swappable.</p></li>
 <li>Access controls and rate limits: If a service provides an API, that API should include an Access Control List</li>
-<li>Monitoring</li>
-<li><p>Auditing</p></li>
+<li>Monitoring: Configuration management tools typically monitor the OS / Application code is correct. Use normal network monitoring tools to monitor up/down, latency etc...</li>
+<li><p>Auditing: Logging to central servers</p></li>
 </ul>
 <h2 id="scaling">Scaling</h2>
 <p>AKF Scaling Cube</p>
@@ -119,7 +134,13 @@ How to backup and restore:
 <p>Horizontal - Many replicas behind a load balancer. If each transaction can be completed independently on all replicas, the performance improvement is proportional to the number of replicas, for example, adding more replicas, disk spindles or network connections.</p>
 <p>!!</p>
 <h2 id="user-access">User Access</h2>
-<p>Documents Applications Email Instant Messaging Working remotely</p>
+<ul>
+<li>Documents</li>
+<li>Applications</li>
+<li>Email</li>
+<li>Instant Messaging</li>
+<li>Working remotely</li>
+</ul>
 <h2 id="authorisation-access-control-lists">Authorisation / Access Control Lists</h2>
 <p>You can control access to objects using the ACL authorisation mechanism.</p>
 <h2 id="role-based-access-control-shared-administration-sudo">Role-Based Access Control / Shared Administration (sudo)</h2>
