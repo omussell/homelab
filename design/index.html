@@ -11,8 +11,10 @@
 <p>Produce a working implementation of a secure, resilient and easy to maintain infrastructure. This will be published in the form of version-controlled configuration documents, with the philosophy and background of the chosen configuration documented here. Anyone should be able to download the vendor supplied base operating system, and the configuration documents should convert that base OS into the desired state. The process by which this conversion is achieved could be as simple as a shell script, or as complicated as a configuration management tool backed by continuous deployment pipelines. In addition, the infrastructure should be flexible enough to be deployed in multiple configurations based on the decisions of the Infrastructure Architects and business owners. It should also be portable to other operating systems with only a little massage of the configuration code.</p>
 <h2 id="background">Background</h2>
 <p>The design of the environment will be similar to the MIT Athena project and the Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: &quot;Bootstrapping an Infrastructure&quot; and &quot;Why Order Matters: Turing Equivalence in Automated Systems Administration&quot;. Additionally, a paper written by Paul Schenkeveld, &quot;Building servers with NanoBSD, ZFS and jails&quot; served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
-<p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone. !! The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.</p>
-<p>Decentralised - Each site is independent and can function without a connection to the internet. Headquarters - Main site(s), connected to other sites</p>
+<p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.</p>
+<p>!! The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.</p>
+<p>Decentralised - Each site is independent and can function without a connection to the internet.</p>
+<p>Headquarters - Main site(s), connected to other sites</p>
 <p>In any of these scenarios, the administrators can provide end-users with access to the network in multiple ways:</p>
 <ul>
 <li>Thick client</li>
@@ -21,7 +23,9 @@
 <li>Web access only</li>
 </ul>
 <p>In addition, a &quot;server&quot; can take many forms, it could be a Jail/Zone/Container, virtual machine, physical or cloud.</p>
-<p>Also, while the envisioned configuration is a closed network, where nothing is accessible via the normal internet, there is no requirement for this to be so. If you want end-users to be able to access your network from home or via BYOD they can. !! High-Level Design ---</p>
+<p>Also, while the envisioned configuration is a closed network, where nothing is accessible via the normal internet, there is no requirement for this to be so. If you want end-users to be able to access your network from home or via BYOD they can.</p>
+<p>!!</p>
+<h2 id="high-level-design">High-Level Design</h2>
 <ul>
 <li>Control Machine</li>
 <li>Gold server</li>
@@ -58,9 +62,18 @@
 <p>KerberizedNFSv4 for client file access.</p>
 <h2 id="detailed-design">Detailed Design</h2>
 <p>Gold Server Design Router Design Firewall Design Load Balancer and Traffic Management Design Frontend Web Design App server Design Data Storage Design</p>
-<p>Control machine config, Git, SSH, 2FA? Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH. Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.<br />Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP !!</p>
+<p>Control machine config, Git, SSH, 2FA? Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH. Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.<br />Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP</p>
+<p>!!</p>
 <h2 id="tls">TLS</h2>
-<p>TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 Transport Layer Security version 1.2 or above Elliptic-Curve Diffie-Hellman Ephemeral Elliptic-Curve Digital Signature Algorithm Advanced Encryption Standard 256 bit Galois/Counter Mode Secure Hashing Algorithm 384 bit</p>
+<ul>
+<li>TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384</li>
+<li>Transport Layer Security version 1.2 or above</li>
+<li>Elliptic-Curve Diffie-Hellman Ephemeral</li>
+<li>Elliptic-Curve Digital Signature Algorithm</li>
+<li>Advanced Encryption Standard 256 bit</li>
+<li>Galois/Counter Mode</li>
+<li>Secure Hashing Algorithm 384 bit</li>
+</ul>
 <h2 id="designing-for-operations">Designing for Operations</h2>
 <ul>
 <li>Configuration</li>
@@ -73,7 +86,10 @@
 <li>Hot swaps</li>
 <li>Access controls and rate limits</li>
 <li>Monitoring</li>
-<li>Auditing !!</li>
+<li>Auditing</li>
+</ul>
+<p>!!</p>
+<ul>
 <li><p>Configuration: The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems</p></li>
 <li><p>Startup and shutdown: Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.</p></li>
 <li><p>Queue draining: All requests are going through the load balancer, individual nodes can be put into drain mode.</p></li>
@@ -104,3 +120,12 @@ How to backup and restore:
 <p>!!</p>
 <h2 id="user-access">User Access</h2>
 <p>Documents Applications Email Instant Messaging Working remotely</p>
+<h2 id="authorisation-access-control-lists">Authorisation / Access Control Lists</h2>
+<p>You can control access to objects using the ACL authorisation mechanism.</p>
+<h2 id="role-based-access-control-shared-administration-sudo">Role-Based Access Control / Shared Administration (sudo)</h2>
+<h2 id="domain-naming-service">Domain Naming Service</h2>
+<h2 id="directory-service-ldap">Directory Service (LDAP)</h2>
+<h2 id="time-service">Time Service</h2>
+<h2 id="authentication">Authentication</h2>
+<h2 id="logging-auditing">Logging / Auditing</h2>
+<h2 id="rpc-admin-service">RPC / Admin service</h2>

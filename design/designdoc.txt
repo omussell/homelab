@@ -12,8 +12,7 @@ Bootstrapping a Secure Infrastructure
 Summary
 ---
 
-Create an infrastructure with an emphasis on security, resiliency and ease of 
-maintenance. 
+Create an infrastructure with an emphasis on security, resiliency and ease of maintenance. 
 
 End Goal
 ---
@@ -23,14 +22,15 @@ Produce a working implementation of a secure, resilient and easy to maintain inf
 Background
 ---
 
-The design of the environment will be similar to the MIT Athena project and the 
-Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: "Bootstrapping an Infrastructure" and "Why Order Matters: Turing Equivalence in Automated Systems Administration". Additionally, a paper written by Paul Schenkeveld, "Building servers with NanoBSD, ZFS and jails" served as inspiration for the use of NanoBSD as the operating system due to its unique properties.
+The design of the environment will be similar to the MIT Athena project and the Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: "Bootstrapping an Infrastructure" and "Why Order Matters: Turing Equivalence in Automated Systems Administration". Additionally, a paper written by Paul Schenkeveld, "Building servers with NanoBSD, ZFS and jails" served as inspiration for the use of NanoBSD as the operating system due to its unique properties.
 
 This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.
+
 !!
 The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.
 
 Decentralised - Each site is independent and can function without a connection to the internet. 
+
 Headquarters - Main site(s), connected to other sites
 
 In any of these scenarios, the administrators can provide end-users with access to the network in multiple ways:
@@ -44,7 +44,9 @@ In any of these scenarios, the administrators can provide end-users with access 
 In addition, a "server" can take many forms, it could be a Jail/Zone/Container, virtual machine, physical or cloud.
 
 Also, while the envisioned configuration is a closed network, where nothing is accessible via the normal internet, there is no requirement for this to be so. If you want end-users to be able to access your network from home or via BYOD they can.
+
 !!
+
 High-Level Design
 ---
 
@@ -108,17 +110,18 @@ Control machine config, Git, SSH, 2FA?
 Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
 Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
 Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
+
 !!
 
 TLS
 ---
-TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
-Transport Layer Security version 1.2 or above
-Elliptic-Curve Diffie-Hellman Ephemeral
-Elliptic-Curve Digital Signature Algorithm
-Advanced Encryption Standard 256 bit
-Galois/Counter Mode
-Secure Hashing Algorithm 384 bit
+- TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+- Transport Layer Security version 1.2 or above
+- Elliptic-Curve Diffie-Hellman Ephemeral
+- Elliptic-Curve Digital Signature Algorithm
+- Advanced Encryption Standard 256 bit
+- Galois/Counter Mode
+- Secure Hashing Algorithm 384 bit
 
 Designing for Operations
 ---
@@ -134,7 +137,9 @@ Designing for Operations
 - Access controls and rate limits
 - Monitoring
 - Auditing
+
 !!
+
 - Configuration: The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems
 
 - Startup and shutdown: Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.
@@ -177,10 +182,34 @@ Horizontal - Many replicas behind a load balancer. If each transaction can be co
 
 User Access
 ---
-
 Documents
 Applications
 Email
 Instant Messaging
 Working remotely
 
+
+Authorisation / Access Control Lists
+---
+You can control access to objects using the ACL authorisation mechanism. 
+
+Role-Based Access Control / Shared Administration (sudo)
+---
+
+Domain Naming Service
+---
+
+Directory Service (LDAP)
+---
+
+Time Service
+---
+
+Authentication
+---
+
+Logging / Auditing
+---
+
+RPC / Admin service
+---
