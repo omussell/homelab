@@ -1,3 +1,7 @@
+% Bootstrapping a Secure Infrastructure
+% Oliver Mussell
+% 2016
+
 - Produced in Markdown with Vim, converted to HTML by Pandoc.
 - Graphics created with DOT
 - Hosted on Github Pages
@@ -5,8 +9,6 @@
 !! 
 needs cleanup
 !!
-
-% Bootstrapping a Secure Infrastructure
 
 Summary
 ===
