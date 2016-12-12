@@ -1,7 +1,7 @@
 Homelab
 =======
 
-[Bootstrapping a Secure Infrastructure](/design)
+[Bootstrapping a Secure Infrastructure](/homelab/design)
 
 
 Hardware
