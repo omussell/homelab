@@ -1,13 +1,12 @@
-% Produced in Markdown with Vim, converted to HTML by Pandoc.
-% Graphics created with DOT
-% Hosted on Github Pages
+- Produced in Markdown with Vim, converted to HTML by Pandoc.
+- Graphics created with DOT
+- Hosted on Github Pages
 
 !! 
 needs cleanup
 !!
 
-Bootstrapping a Secure Infrastructure
-===
+% Bootstrapping a Secure Infrastructure
 
 Summary
 ===
