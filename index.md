@@ -1,7 +1,7 @@
 Homelab
 =======
 
-[Bootstrapping a Secure Infrastructure](omussell.github.io/homelab/design)
+[Bootstrapping a Secure Infrastructure](/design)
 
 
 Hardware
