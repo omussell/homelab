@@ -1,16 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Graphics created with DOT" />
+  <title>Produced in Markdown with Vim, converted to HTML by Pandoc.</title>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Produced in Markdown with Vim, converted to HTML by Pandoc.</h1>
+<h2 class="author">Graphics created with DOT</h2>
+<h3 class="date">Hosted on Github Pages</h3>
+</div>
+<div id="TOC">
 <ul>
-<li>Produced in Markdown with Vim, converted to HTML by Pandoc.</li>
-<li>Graphics created with DOT</li>
-<li>Hosted on Github Pages</li>
+<li><a href="#bootstrapping-a-secure-infrastructure">Bootstrapping a Secure Infrastructure</a></li>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#end-goal">End Goal</a></li>
+<li><a href="#background">Background</a></li>
+<li><a href="#high-level-design">High-Level Design</a></li>
+<li><a href="#experimental">Experimental</a></li>
+<li><a href="#detailed-design">Detailed Design</a><ul>
+<li><a href="#authorisation-access-control-lists">Authorisation / Access Control Lists</a></li>
+<li><a href="#role-based-access-control-shared-administration-sudo">Role-Based Access Control / Shared Administration (sudo)</a></li>
+<li><a href="#domain-naming-service">Domain Naming Service</a></li>
+<li><a href="#directory-service-ldap">Directory Service (LDAP)</a></li>
+<li><a href="#time-service">Time Service</a></li>
+<li><a href="#authentication">Authentication</a></li>
+<li><a href="#logging-auditing">Logging / Auditing</a></li>
+<li><a href="#rpc-admin-service">RPC / Admin service</a></li>
+</ul></li>
+<li><a href="#designing-for-operations">Designing for Operations</a></li>
+<li><a href="#scaling">Scaling</a></li>
+<li><a href="#user-access">User Access</a><ul>
+<li><a href="#overview">Overview</a></li>
+</ul></li>
 </ul>
+</div>
 <p>!! needs cleanup !!</p>
-<h1 id="bootstrapping-a-secure-infrastructure">Bootstrapping a Secure Infrastructure</h1>
-<h2 id="summary">Summary</h2>
+<h1 id="bootstrapping-a-secure-infrastructure"><a href="#TOC">Bootstrapping a Secure Infrastructure</a></h1>
+<h1 id="summary"><a href="#TOC">Summary</a></h1>
 <p>Create an infrastructure with an emphasis on security, resiliency and ease of maintenance.</p>
-<h2 id="end-goal">End Goal</h2>
+<h1 id="end-goal"><a href="#TOC">End Goal</a></h1>
 <p>Produce a working implementation of a secure, resilient and easy to maintain infrastructure. This will be published in the form of version-controlled configuration documents, with the philosophy and background of the chosen configuration documented here. Anyone should be able to download the vendor supplied base operating system, and the configuration documents should convert that base OS into the desired state. The process by which this conversion is achieved could be as simple as a shell script, or as complicated as a configuration management tool backed by continuous deployment pipelines. In addition, the infrastructure should be flexible enough to be deployed in multiple configurations based on the decisions of the Infrastructure Architects and business owners. It should also be portable to other operating systems with only a little massage of the configuration code.</p>
-<h2 id="background">Background</h2>
-<p>The design of the environment will be similar to the MIT Athena project and the Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: &quot;Bootstrapping an Infrastructure&quot; and &quot;Why Order Matters: Turing Equivalence in Automated Systems Administration&quot;. Additionally, a paper by Paul Schenkeveld, &quot;Building servers with NanoBSD, ZFS and jails&quot; served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
+<h1 id="background"><a href="#TOC">Background</a></h1>
+<p>The design of the environment will be similar to <a href="https://en.wikipedia.org/wiki/Project_Athena">Project Athena</a> at MIT and the <a href="https://en.wikipedia.org/wiki/Distributed_Computing_Environment">Distributed Computing Environment</a> by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: “Bootstrapping an Infrastructure” and “Why Order Matters: Turing Equivalence in Automated Systems Administration”. Additionally, a paper by Paul Schenkeveld, “Building servers with NanoBSD, ZFS and Jails” served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
 <p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.</p>
 <p>!!</p>
 <p>The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.</p>
@@ -23,10 +58,10 @@
 <li>BYOD</li>
 <li>Web access only</li>
 </ul>
-<p>In addition, a &quot;server&quot; can take many forms, it could be a Jail/Zone/Container, virtual machine, physical or cloud.</p>
+<p>In addition, a “server” can take many forms, it could be a Jail/Zone/Container, virtual machine, physical or cloud.</p>
 <p>Also, while the envisioned configuration is a closed network, where nothing is accessible via the normal internet, there is no requirement for this to be so. If you want end-users to be able to access your network from home or via BYOD they can.</p>
 <p>!!</p>
-<h2 id="high-level-design">High-Level Design</h2>
+<h1 id="high-level-design"><a href="#TOC">High-Level Design</a></h1>
 <ul>
 <li>Control Machine</li>
 <li>Gold server</li>
@@ -57,25 +92,29 @@
 <li>High performance with multiple caching mechanisms</li>
 <li>Snapshots</li>
 </ul>
-<p>This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded software is removed. This comes at the cost of higher complexity and more difficult maintenance. !! The Control Machine is the computer on which the version controlled infrastructure code is stored. It is a central location reachable by the adminstrators to make changes to the code that makes up the infrastructure. The Control Machine is the root from which the infrastructure grows. It generates the Gold Server specification. Changes to the Gold Server are only allowed to originate from the Control Machine. This is done via Git clone over SSH.</p>
+<p>This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded software is removed. This comes at the cost of higher complexity and more difficult maintenance.</p>
+<p>!!</p>
+<p>The Control Machine is the computer on which the version controlled infrastructure code is stored. It is a central location reachable by the adminstrators to make changes to the code that makes up the infrastructure. The Control Machine is the root from which the infrastructure grows. It generates the Gold Server specification. Changes to the Gold Server are only allowed to originate from the Control Machine. This is done via Git clone over SSH.</p>
 <p>The Gold Server contains all of the configuration files needed by the other servers. Changes to the infrastructure propagate from the Gold Server.</p>
 <p>Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SSH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.</p>
 <p>KerberizedNFSv4 for client file access.</p>
-<h2 id="detailed-design">Detailed Design</h2>
+<p>!!</p>
+<h1 id="experimental"><a href="#TOC">Experimental</a></h1>
+<p>Features that aren’t production ready, but would be interesting to implement: SSH using X509v3 certificates, signed by a central CA (or validated with DANE?) TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)</p>
+<h1 id="detailed-design"><a href="#TOC">Detailed Design</a></h1>
 <p>Gold Server Design Router Design Firewall Design Load Balancer and Traffic Management Design Frontend Web Design App server Design Data Storage Design</p>
 <p>Control machine config, Git, SSH, 2FA? Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH. Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.<br />Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP</p>
+<h2 id="authorisation-access-control-lists"><a href="#TOC">Authorisation / Access Control Lists</a></h2>
+<p>You can control access to objects using the ACL authorisation mechanism.</p>
+<h2 id="role-based-access-control-shared-administration-sudo"><a href="#TOC">Role-Based Access Control / Shared Administration (sudo)</a></h2>
+<h2 id="domain-naming-service"><a href="#TOC">Domain Naming Service</a></h2>
+<h2 id="directory-service-ldap"><a href="#TOC">Directory Service (LDAP)</a></h2>
+<h2 id="time-service"><a href="#TOC">Time Service</a></h2>
+<h2 id="authentication"><a href="#TOC">Authentication</a></h2>
+<h2 id="logging-auditing"><a href="#TOC">Logging / Auditing</a></h2>
+<h2 id="rpc-admin-service"><a href="#TOC">RPC / Admin service</a></h2>
 <p>!!</p>
-<h2 id="tls">TLS</h2>
-<ul>
-<li>TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384</li>
-<li>Transport Layer Security version 1.2 or above</li>
-<li>Elliptic-Curve Diffie-Hellman Ephemeral</li>
-<li>Elliptic-Curve Digital Signature Algorithm</li>
-<li>Advanced Encryption Standard 256 bit</li>
-<li>Galois/Counter Mode</li>
-<li>Secure Hashing Algorithm 384 bit</li>
-</ul>
-<h2 id="designing-for-operations">Designing for Operations</h2>
+<h1 id="designing-for-operations"><a href="#TOC">Designing for Operations</a></h1>
 <ul>
 <li>Configuration</li>
 <li>Startup and shutdown</li>
@@ -121,10 +160,10 @@ How to backup and restore:
 <li><p>Replicated databases</p></li>
 <li><p>Hot swaps: Physical components should be hot swappable. Service components should also be hot swappable.</p></li>
 <li>Access controls and rate limits: If a service provides an API, that API should include an Access Control List</li>
-<li>Monitoring: Configuration management tools typically monitor the OS / Application code is correct. Use normal network monitoring tools to monitor up/down, latency etc...</li>
+<li>Monitoring: Configuration management tools typically monitor the OS / Application code is correct. Use normal network monitoring tools to monitor up/down, latency etc…</li>
 <li><p>Auditing: Logging to central servers</p></li>
 </ul>
-<h2 id="scaling">Scaling</h2>
+<h1 id="scaling"><a href="#TOC">Scaling</a></h1>
 <p>AKF Scaling Cube</p>
 <ul>
 <li>Replicate the entire system (horizontal duplication)</li>
@@ -133,20 +172,25 @@ How to backup and restore:
 </ul>
 <p>Horizontal - Many replicas behind a load balancer. If each transaction can be completed independently on all replicas, the performance improvement is proportional to the number of replicas, for example, adding more replicas, disk spindles or network connections.</p>
 <p>!!</p>
-<h2 id="user-access">User Access</h2>
+<h1 id="user-access"><a href="#TOC">User Access</a></h1>
 <ul>
 <li>Documents</li>
 <li>Applications</li>
 <li>Email</li>
 <li>Instant Messaging</li>
-<li>Working remotely</li>
+<li><p>Working remotely</p></li>
+<li>Documents - Access documents through a website? Should be bound by authentication/authorisation. Version controlled documents. Like Sharepoint, but not terrible.</li>
+<li>Applications - web-access only preferred, TLS available, bound by authentication/authorisation.</li>
+<li>Email - How does ProtonMail do it? Usually a lot of protections and anti-spam required, but if orgs are able to authoritativly validate each other, you are only able to receive emails from those orgs that have been validated, everything else is binned. Or if an org does spam, its quick to pinpoint and can be made untrusted.</li>
+<li>Instant Messaging - IRC with OTR, e.g. irc with PGP support.</li>
+<li><p>Working remotely - won’t happen in a super-secure infra, but less secure may allow it. Could be done like MIT, with public SSH servers that require Kerberos name+pass and the user certificate. Then you could get X forwarded over SSH or instead of SSH, an SSL/TLS VPN that gives access to the internal network.</p></li>
 </ul>
-<h2 id="authorisation-access-control-lists">Authorisation / Access Control Lists</h2>
-<p>You can control access to objects using the ACL authorisation mechanism.</p>
-<h2 id="role-based-access-control-shared-administration-sudo">Role-Based Access Control / Shared Administration (sudo)</h2>
-<h2 id="domain-naming-service">Domain Naming Service</h2>
-<h2 id="directory-service-ldap">Directory Service (LDAP)</h2>
-<h2 id="time-service">Time Service</h2>
-<h2 id="authentication">Authentication</h2>
-<h2 id="logging-auditing">Logging / Auditing</h2>
-<h2 id="rpc-admin-service">RPC / Admin service</h2>
+<h2 id="overview"><a href="#TOC">Overview</a></h2>
+<p>Check against Digital Ocean writing guide and rubric for correctness. Assumption, that you have the necessary computing resources to build and use these servers Network switches are set up and computers can communicate and/or connect to internet</p>
+<p>In the beginning, a computer will need to be connected to the public internet in order to download the operating system files, and other software required to build the initial systems. This will act as the control machine.</p>
+<p>Why IPv6? pros and cons. Router Advertisements requirements, and security for Neighbour Discovery protocol should be discussed Why CARP,</p>
+<p>The main prerequisite for the infrastructure is an IPv6 capable router. The router will act as the gateway between the open internet and the internal infrastructure. It is preferable to have two identical routers, managed via CARP. The router would also be responsible for NTP from upstream NTP sources, and DHCPv6 if required. Router Advertisement messages will be sent to computers in the infrastructure in order for them to generate their IP address via SLAAC. The routers may also have firewall software configured, if specific hardware firewalls are not used.</p>
+<p>Then, the DNS, Authentication, Directory, Domain Naming, Time, Admin services are configured. This allows other systems in the infrastructure to find host naming information, authentication/authorisation information, correct time, etc.</p>
+<p>From there, the application servers can pull information they need from the secure infra.</p>
+</body>
+</html>

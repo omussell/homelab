@@ -1,6 +1,6 @@
-- Produced in Markdown with Vim, converted to HTML by Pandoc.
-- Graphics created with DOT
-- Hosted on Github Pages
+% Produced in Markdown with Vim, converted to HTML by Pandoc.
+% Graphics created with DOT
+% Hosted on Github Pages
 
 !! 
 needs cleanup
@@ -10,21 +10,24 @@ Bootstrapping a Secure Infrastructure
 ===
 
 Summary
----
+===
 
 Create an infrastructure with an emphasis on security, resiliency and ease of maintenance. 
 
 End Goal
----
+===
 
 Produce a working implementation of a secure, resilient and easy to maintain infrastructure. This will be published in the form of version-controlled configuration documents, with the philosophy and background of the chosen configuration documented here. Anyone should be able to download the vendor supplied base operating system, and the configuration documents should convert that base OS into the desired state. The process by which this conversion is achieved could be as simple as a shell script, or as complicated as a configuration management tool backed by continuous deployment pipelines. In addition, the infrastructure should be flexible enough to be deployed in multiple configurations based on the decisions of the Infrastructure Architects and business owners. It should also be portable to other operating systems with only a little massage of the configuration code.
 
 Background
----
+===
 
-The design of the environment will be similar to the MIT Athena project and the Distributed Computing Environment by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: "Bootstrapping an Infrastructure" and "Why Order Matters: Turing Equivalence in Automated Systems Administration". Additionally, a paper by Paul Schenkeveld, "Building servers with NanoBSD, ZFS and jails" served as inspiration for the use of NanoBSD as the operating system due to its unique properties.
+The design of the environment will be similar to [Project Athena] at MIT and the [Distributed Computing Environment] by the OSF. Inspiration for this project comes from the infrastructures.org website, specifically their papers: "Bootstrapping an Infrastructure" and "Why Order Matters: Turing Equivalence in Automated Systems Administration". Additionally, a paper by Paul Schenkeveld, "Building servers with NanoBSD, ZFS and Jails" served as inspiration for the use of NanoBSD as the operating system due to its unique properties.
 
 This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.
+
+[Project Athena]: https://en.wikipedia.org/wiki/Project_Athena
+[Distributed Computing Environment]: https://en.wikipedia.org/wiki/Distributed_Computing_Environment
 
 !!
 
@@ -49,7 +52,7 @@ Also, while the envisioned configuration is a closed network, where nothing is a
 !!
 
 High-Level Design
----
+===
 
 - Control Machine
 - Gold server
@@ -85,7 +88,9 @@ ZFS:
 - Snapshots
 
 This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded software is removed. This comes at the cost of higher complexity and more difficult maintenance.
+
 !!
+
 The Control Machine is the computer on which the version controlled infrastructure code is stored. It is a central location reachable by the adminstrators to make changes to the code that makes up the infrastructure. The Control Machine is the root from which the infrastructure grows. It generates the Gold Server specification. Changes to the Gold Server are only allowed to originate from the Control Machine. This is done via Git clone over SSH.
 
 The Gold Server contains all of the configuration files needed by the other servers. Changes to the infrastructure propagate from the Gold Server.
@@ -95,10 +100,17 @@ Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KI
 
 KerberizedNFSv4 for client file access.
 
+!!
+
+Experimental
+===
+Features that aren't production ready, but would be interesting to implement:
+SSH using X509v3 certificates, signed by a central CA (or validated with DANE?)
+TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)
 
 
 Detailed Design
----
+===
 Gold Server Design
 Router Design
 Firewall Design
@@ -112,20 +124,36 @@ Gold server, how are changes propagated? git repo hosted on this server, which e
 Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
 Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
 
+Authorisation / Access Control Lists
+---
+You can control access to objects using the ACL authorisation mechanism. 
+
+Role-Based Access Control / Shared Administration (sudo)
+---
+
+Domain Naming Service
+---
+
+Directory Service (LDAP)
+---
+
+Time Service
+---
+
+Authentication
+---
+
+Logging / Auditing
+---
+
+RPC / Admin service
+---
+
+
 !!
 
-TLS
----
-- TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
-- Transport Layer Security version 1.2 or above
-- Elliptic-Curve Diffie-Hellman Ephemeral
-- Elliptic-Curve Digital Signature Algorithm
-- Advanced Encryption Standard 256 bit
-- Galois/Counter Mode
-- Secure Hashing Algorithm 384 bit
-
 Designing for Operations
----
+===
 
 - Configuration
 - Startup and shutdown
@@ -181,7 +209,7 @@ Designing for Operations
 - Auditing: Logging to central servers
 
 Scaling
----
+===
 AKF Scaling Cube
 
 - Replicate the entire system (horizontal duplication)
@@ -194,35 +222,35 @@ Horizontal - Many replicas behind a load balancer. If each transaction can be co
 !!
 
 User Access
----
+===
 - Documents
 - Applications
 - Email
 - Instant Messaging
 - Working remotely
 
+- Documents - Access documents through a website? Should be bound by authentication/authorisation. Version controlled documents. Like Sharepoint, but not terrible.
+- Applications - web-access only preferred, TLS available, bound by authentication/authorisation. 
+- Email - How does ProtonMail do it? Usually a lot of protections and anti-spam required, but if orgs are able to authoritativly validate each other, you are only able to receive emails from those orgs that have been validated, everything else is binned. Or if an org does spam, its quick to pinpoint and can be made untrusted.
+- Instant Messaging - IRC with OTR, e.g. irc with PGP support.
+- Working remotely - won't happen in a super-secure infra, but less secure may allow it. Could be done like MIT, with public SSH servers that require Kerberos name+pass and the user certificate. Then you could get X forwarded over SSH or instead of SSH, an SSL/TLS VPN that gives access to the internal network.
 
-Authorisation / Access Control Lists
----
-You can control access to objects using the ACL authorisation mechanism. 
-
-Role-Based Access Control / Shared Administration (sudo)
----
-
-Domain Naming Service
+Overview
 ---
 
-Directory Service (LDAP)
----
+Check against Digital Ocean writing guide and rubric for correctness.
+Assumption, that you have the necessary computing resources to build and use these servers
+Network switches are set up and computers can communicate and/or connect to internet
 
-Time Service
----
+In the beginning, a computer will need to be connected to the public internet in order to download the operating system files, and other software required to build the initial systems. This will act as the control machine.
 
-Authentication
----
+Why IPv6? pros and cons. Router Advertisements requirements, and security for Neighbour Discovery protocol should be discussed
+Why CARP, 
 
-Logging / Auditing
----
 
-RPC / Admin service
----
+ The main prerequisite for the infrastructure is an IPv6 capable router. The router will act as the gateway between the open internet and the internal infrastructure. It is preferable to have two identical routers, managed via CARP. The router would also be responsible for NTP from upstream NTP sources, and DHCPv6 if required. Router Advertisement messages will be sent to computers in the infrastructure in order for them to generate their IP address via SLAAC. The routers may also have firewall software configured, if specific hardware firewalls are not used.
+
+Then, the DNS, Authentication, Directory, Domain Naming, Time, Admin services are configured. This allows other systems in the infrastructure to find host naming information, authentication/authorisation information, correct time, etc.
+
+From there, the application servers can pull information they need from the secure infra.
+
