@@ -1,6 +1,9 @@
 Homelab
 =======
 
+[Bootstrapping a Secure Infrastructure](omussell.github.io/homelab/design)
+
+
 Hardware
 --------
 
@@ -296,6 +299,19 @@ NanoBSD
     Added "FlashDevice SanDisk 4G" in the conf file to give it 4GB instead 
     of 1GB.
     Compiled it again and it works now.
+
+    Base system:
+    Hostname + IP
+    Change root password using OPIE
+    Create admin user with random password
+    Create SSH keys
+    Remove root login access
+    Setup security: 
+	TCP wrapper
+	Firewall
+	IDS
+    Pull config from gold server
+    Start jails/applications
 
 Jails setup in NanoBSD bhyve vm
 -------------------------------

@@ -1,4 +1,5 @@
 <h1 id="homelab">Homelab</h1>
+<p><a href="omussell.github.io/homelab/design">Bootstrapping a Secure Infrastructure</a></p>
 <h2 id="hardware">Hardware</h2>
 <pre><code>Virtualisation Host
 Gigabyte Brix Pro GB-BXI7-4770R
@@ -264,7 +265,20 @@ Also, it kept saying the usual &quot;filesystem is full error&quot;, but this ti
 the file system really was full.
 Added &quot;FlashDevice SanDisk 4G&quot; in the conf file to give it 4GB instead 
 of 1GB.
-Compiled it again and it works now.</code></pre>
+Compiled it again and it works now.
+
+Base system:
+Hostname + IP
+Change root password using OPIE
+Create admin user with random password
+Create SSH keys
+Remove root login access
+Setup security: 
+TCP wrapper
+Firewall
+IDS
+Pull config from gold server
+Start jails/applications</code></pre>
 <h2 id="jails-setup-in-nanobsd-bhyve-vm">Jails setup in NanoBSD bhyve vm</h2>
 <pre><code>jail.conf | listofjails | newtemplate.sh | createalljails | startalljails.sh</code></pre>
 <h2 id="jails-infrastructure">Jails Infrastructure</h2>
