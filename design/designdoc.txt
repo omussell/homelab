@@ -58,11 +58,11 @@ Also, while the envisioned configuration is a closed network, where nothing is a
 High-Level Design
 ===
 
-- Control Machine
-- Gold server
-- Primary/Secondary
-- Data Storage
-- Clients
+- Control Machine - Stores operating system images and configuration files in version control. Used to create the Gold server. 
+- Gold server - In the form of a created system image
+- Infrastructure servers - Provides directory, domain names, authentication/authorisation services
+- Data storage - Provide clients with access to their data/files via network file systems.
+- Clients - End use
 
 <img src="/homelab/pic/secenv.svg">
 <img src="/homelab/pic/disklayout.svg">
@@ -93,11 +93,9 @@ ZFS:
 
 This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded software is removed. This comes at the cost of higher complexity and more difficult maintenance.
 
+Scaling this sytem is also straightfortward. For horizontal scaling, multiple servers can be put in place. For vertical scaling, the applications in jails can be split onto dedicated servers. 
+
 !!
-
-The Control Machine is the computer on which the version controlled infrastructure code is stored. It is a central location reachable by the adminstrators to make changes to the code that makes up the infrastructure. The Control Machine is the root from which the infrastructure grows. It generates the Gold Server specification. Changes to the Gold Server are only allowed to originate from the Control Machine. This is done via Git clone over SSH.
-
-The Gold Server contains all of the configuration files needed by the other servers. Changes to the infrastructure propagate from the Gold Server.
 
 Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. 
 Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SSH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.
@@ -115,18 +113,62 @@ TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DA
 
 Detailed Design
 ===
-Gold Server Design
-Router Design
-Firewall Design
-Load Balancer and Traffic Management Design
-Frontend Web Design
-App server Design
-Data Storage Design
 
 Control machine config, Git, SSH, 2FA?
 Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
 Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
 Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
+
+IPv6
+---
+### IPsec ###
+### KINK ###
+
+OS
+---
+### FreeBSD ###
+### NanoBSD ###
+### Jails ###
+### ZFS ###
+
+DNS
+---
+### DNSSEC ###
+### DANE ###
+
+
+LDAP
+---
+### LDAPS ###
+### S/MIME or PGP ###
+
+Kerberos
+---
+
+
+NTP
+---
+
+
+NFS
+---
+### KerberizedNFSv4
+
+Application Servers
+---
+### NGINX ###
+
+
+Security and Crypto
+---
+### TLS ###
+### SSH ###
+### HSM ###
+### Passwords ###
+### TCP Wrapper ###
+### IDS ###
+### Firewalls ###
+
 
 Authorisation / Access Control Lists
 ---
@@ -142,9 +184,6 @@ Directory Service (LDAP)
 ---
 
 Time Service
----
-
-Authentication
 ---
 
 Logging / Auditing
