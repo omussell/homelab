@@ -29,7 +29,7 @@ This project aims to extend the work of infrastructures.org and Paul Schenkeveld
 
 [infrastructures.org]: http://www.infrastructures.org
 [Bootstrapping an Infrastructure]: http://www.infrastructures.org/papers/bootstrap/bootstrap.html
-[Why Order Matters: Turing Equivalence in Automated Systems Administration]: http://infrastructures.org/papers/turing/turing.html
+[Why Order Matters: Turing Equivalence in Automated Systems Administration]: http://www.infrastructures.org/papers/turing/turing.html
 [Project Athena]: https://en.wikipedia.org/wiki/Project_Athena
 [Distributed Computing Environment]: https://en.wikipedia.org/wiki/Distributed_Computing_Environment
 
@@ -93,7 +93,7 @@ ZFS:
 
 This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded software is removed. This comes at the cost of higher complexity and more difficult maintenance.
 
-Scaling this sytem is also straightfortward. For horizontal scaling, multiple servers can be put in place. For vertical scaling, the applications in jails can be split onto dedicated servers. 
+The DNS, NTP, Auth, LDAP services are required by all derivative applications.
 
 !!
 
@@ -121,8 +121,29 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 
 IPv6
 ---
+
+IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4. The much larger address space, 2^128, allows more devices on the same subnet. The standard subnet size of 2^64 equates to the square of the entire IPv4 address space. Using Stateless address autoconfiguration ([SLAAC]), IPv6 hosts can configure themselves automatically when connected to an IPv6 network using the [Neighbor Discovery Protocol] (NDP) via ICMPv6 router discovery messages. The IPv6 router will be allocated a subnet by the ISP and configured with the first 64 bits of the 128-bit address. [Duplicate Address Detection] and [Neighbor Unreachability Detection] serve as error handling for the address autoconfiguration. Since the IPv6 addresses are generated from the prefix on the router, it is possible to renumber an entire network by changing the prefix on the router.
+
+IPv6 address are mapped to hostnames in DNS using [AAAA resource records]. Reverse resolution uses the ip6.arpa domain.
+
+[SLAAC]: https://tools.ietf.org/html/rfc4862
+[Neighbor Discovery Protocol]: https://tools.ietf.org/html/rfc4861
+[Duplicate Address Detection]: https://tools.ietf.org/html/rfc4862#section-5.4
+[Neighbor Unreachability Detection]: https://tools.ietf.org/html/rfc4861#section-7.3
+[AAAA resource records]: https://tools.ietf.org/html/rfc3596
+
+
+### SEND ###
 ### IPsec ###
+Security associations via IKE or KINK
+
+
 ### KINK ###
+[Kerberized Internet Negotiation of Keys] (KINK) defines a protocol to establish and maintain security associations using the Kerberos authentication system. The central key management provided by Kerberos is efficient because it limits computational cost and limits complexity versus IKE's necessity of using public key cryptography. Initial authentication to the KDC may be performed using asymmetric keys via the [Public Key Cryptography for Initial Authentication in Kerberos] (PKINIT) protocol.
+
+
+[Kerberized Internet Negotiation of Keys]: https://tools.ietf.org/html/rfc4430
+[Public Key Cryptography for Initial Authentication in Kerberos]: https://tools.ietf.org/html/rfc4556
 
 OS
 ---
