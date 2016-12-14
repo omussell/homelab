@@ -149,13 +149,52 @@ OS
 ---
 ### FreeBSD ###
 ### NanoBSD ###
+### Host Install Tools ###
+### Ad-Hoc Change Tools ###
+rsync. zfs send/receive.
 ### Jails ###
 ### ZFS ###
 
 DNS
 ---
+DNS is required to provide hostname to IP mapping. 
+
+
+
+DNS can also be used to secure email.
+
+Since SMTP was designed to be transmitted in plaintext, encryption in the form of [STARTTLS] or [Opportunistic TLS] was developed to secure email communication. However, [it is known] to be [vulnerable to downgrade attacks], since the initial handshake occurs in plain text, so an attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.  
+
+The Electronic Frontier Foundation ([EFF]) has created a project called [STARTTLS Everywhere] in an effort to enforce TLS between popular email domains, with the help of [Let's Encrypt] to serve certificates.
+
+However, this is only to serve as an [intermediate solution] until [DNSSEC and DANE] see widespread adoption.
+
+Our implementation includes DNSSEC and DANE, and so email protection will be available. However, since the infrastructure is not designed to be publicly accessible, some unique challenges surrounding maintenance of the DNS and CA root domains require solutions and also how to securely send between organisations needs to be determined.
+
 ### DNSSEC ###
+Domain Name System Security Extensions or [DNSSEC]
+
+
 ### DANE ###
+DNS-Based Authentication of Named Entities or [DANE] allows certificates, used by TLS, to be bound to DNS names using DNSSEC. 
+
+
+While DANE can be used to validate the connection between mail exchangers, the emails themselves are still unencrypted. S/MIME and OpenPGP allow emails to be encrypted. There are also standards in place to store DANE bind
+
+[STARTTLS]: https://tools.ietf.org/html/rfc3207
+[Opportunistic TLS]: https://en.wikipedia.org/wiki/Opportunistic_TLS
+[it is known]: https://blog.fillipo.io/the-sad-state-of-smtp-encryption/
+[vulnerable to downgrade attacks]: https://en.wikipedia.org/wiki/Opportunistic_TLS#Weaknesses_and_mitigations
+[EFF]: https://www.eff.org
+[STARTTLS Everywhere]: https://github.com/EFForg/starttls-everywhere
+[Let's Encrypt]: https://letsencrypt.org
+[intermediate solution]: https://github.com/EFForg/starttls-everywhere#alternatives
+[DNSSEC and DANE]: https://tools.ietf.org/html/draft-ietf-dane-smtp-with-dane-10
+[DNSSEC]:
+[DANE]:
+
+### DNSSEC ###
+
 
 
 LDAP
