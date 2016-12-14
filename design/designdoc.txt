@@ -159,9 +159,16 @@ DNS
 ---
 DNS is required to provide hostname to IP mapping. 
 
+### DNSSEC ###
+[DNSSEC]
 
 
-DNS can also be used to secure email.
+### DANE ###
+DNS-Based Authentication of Named Entities or [DANE] allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server's certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.
+
+DANE is implemented by placing TLSA records in the DNS.
+
+TLS via DANE can be used to secure websites over HTTPS, email via the [OpenPGP] and [S/MIME] extensions, instant messaging (XMPP, IRC) and others via SRV records.
 
 Since SMTP was designed to be transmitted in plaintext, encryption in the form of [STARTTLS] or [Opportunistic TLS] was developed to secure email communication. However, [it is known] to be [vulnerable to downgrade attacks], since the initial handshake occurs in plain text, so an attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.  
 
@@ -170,14 +177,6 @@ The Electronic Frontier Foundation ([EFF]) has created a project called [STARTTL
 However, this is only to serve as an [intermediate solution] until [DNSSEC and DANE] see widespread adoption.
 
 Our implementation includes DNSSEC and DANE, and so email protection will be available. However, since the infrastructure is not designed to be publicly accessible, some unique challenges surrounding maintenance of the DNS and CA root domains require solutions and also how to securely send between organisations needs to be determined.
-
-### DNSSEC ###
-Domain Name System Security Extensions or [DNSSEC]
-
-
-### DANE ###
-DNS-Based Authentication of Named Entities or [DANE] allows certificates, used by TLS, to be bound to DNS names using DNSSEC. 
-
 
 While DANE can be used to validate the connection between mail exchangers, the emails themselves are still unencrypted. S/MIME and OpenPGP allow emails to be encrypted. There are also standards in place to store DANE bind
 
@@ -191,10 +190,9 @@ While DANE can be used to validate the connection between mail exchangers, the e
 [intermediate solution]: https://github.com/EFForg/starttls-everywhere#alternatives
 [DNSSEC and DANE]: https://tools.ietf.org/html/draft-ietf-dane-smtp-with-dane-10
 [DNSSEC]:
-[DANE]:
-
-### DNSSEC ###
-
+[DANE]: https://tools.ietf.org/html/rfc6698
+[OpenPGP]:
+[S/MIME]: 
 
 
 LDAP

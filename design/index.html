@@ -36,7 +36,6 @@
 <li><a href="#dns">DNS</a><ul>
 <li><a href="#dnssec">DNSSEC</a></li>
 <li><a href="#dane">DANE</a></li>
-<li><a href="#dnssec-1">DNSSEC</a></li>
 </ul></li>
 <li><a href="#ldap">LDAP</a><ul>
 <li><a href="#ldaps">LDAPS</a></li>
@@ -158,18 +157,18 @@
 <p>rsync. zfs send/receive. ### Jails ### ### ZFS ###</p>
 <h2 id="dns"><a href="#TOC">DNS</a></h2>
 <p>DNS is required to provide hostname to IP mapping.</p>
-<p>DNS can also be used to secure email.</p>
+<h3 id="dnssec"><a href="#TOC">DNSSEC</a></h3>
+<p>[DNSSEC]</p>
+<h3 id="dane"><a href="#TOC">DANE</a></h3>
+<p>DNS-Based Authentication of Named Entities or [DANE] allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server’s certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.</p>
+<p>DANE is implemented by placing TLSA records in the DNS.</p>
+<p>TLS via DANE can be used to secure websites over HTTPS, email via the [OpenPGP] and [S/MIME] extensions, instant messaging (XMPP, IRC) and others via SRV records.</p>
 <p>Since SMTP was designed to be transmitted in plaintext, encryption in the form of <a href="https://tools.ietf.org/html/rfc3207">STARTTLS</a> or <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS">Opportunistic TLS</a> was developed to secure email communication. However, <a href="https://blog.fillipo.io/the-sad-state-of-smtp-encryption/">it is known</a> to be <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS#Weaknesses_and_mitigations">vulnerable to downgrade attacks</a>, since the initial handshake occurs in plain text, so an attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.</p>
 <p>The Electronic Frontier Foundation (<a href="https://www.eff.org">EFF</a>) has created a project called <a href="https://github.com/EFForg/starttls-everywhere">STARTTLS Everywhere</a> in an effort to enforce TLS between popular email domains, with the help of <a href="https://letsencrypt.org">Let’s Encrypt</a> to serve certificates.</p>
 <p>However, this is only to serve as an <a href="https://github.com/EFForg/starttls-everywhere#alternatives">intermediate solution</a> until <a href="https://tools.ietf.org/html/draft-ietf-dane-smtp-with-dane-10">DNSSEC and DANE</a> see widespread adoption.</p>
 <p>Our implementation includes DNSSEC and DANE, and so email protection will be available. However, since the infrastructure is not designed to be publicly accessible, some unique challenges surrounding maintenance of the DNS and CA root domains require solutions and also how to securely send between organisations needs to be determined.</p>
-<h3 id="dnssec"><a href="#TOC">DNSSEC</a></h3>
-<p>Domain Name System Security Extensions or [DNSSEC]</p>
-<h3 id="dane"><a href="#TOC">DANE</a></h3>
-<p>DNS-Based Authentication of Named Entities or [DANE] allows certificates, used by TLS, to be bound to DNS names using DNSSEC.</p>
 <p>While DANE can be used to validate the connection between mail exchangers, the emails themselves are still unencrypted. S/MIME and OpenPGP allow emails to be encrypted. There are also standards in place to store DANE bind</p>
-<p>[DNSSEC]: [DANE]:</p>
-<h3 id="dnssec-1"><a href="#TOC">DNSSEC</a></h3>
+<p>[DNSSEC]: [DANE]: https://tools.ietf.org/html/rfc6698 [OpenPGP]: [S/MIME]:</p>
 <h2 id="ldap"><a href="#TOC">LDAP</a></h2>
 <h3 id="ldaps"><a href="#TOC">LDAPS</a></h3>
 <h3 id="smime-or-pgp"><a href="#TOC">S/MIME or PGP</a></h3>
