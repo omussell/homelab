@@ -32,6 +32,8 @@
 <li><a href="#nanobsd">NanoBSD</a></li>
 <li><a href="#host-install-tools">Host Install Tools</a></li>
 <li><a href="#ad-hoc-change-tools">Ad-Hoc Change Tools</a></li>
+<li><a href="#jails">Jails</a></li>
+<li><a href="#zfs">ZFS</a></li>
 </ul></li>
 <li><a href="#dns">DNS</a><ul>
 <li><a href="#dnssec">DNSSEC</a></li>
@@ -84,7 +86,7 @@
 <h1 id="end-goal"><a href="#TOC">End Goal</a></h1>
 <p>Produce a working implementation of a secure, resilient and easy to maintain infrastructure. This will be published in the form of version-controlled configuration documents, with the philosophy and background of the chosen configuration documented here. Anyone should be able to download the vendor supplied base operating system, and the configuration documents should convert that base OS into the desired state. The process by which this conversion is achieved could be as simple as a shell script, or as complicated as a configuration management tool backed by continuous deployment pipelines. In addition, the infrastructure should be flexible enough to be deployed in multiple configurations based on the decisions of the Infrastructure Architects and business owners. It should also be portable to other operating systems with only a little massage of the configuration code.</p>
 <h1 id="background"><a href="#TOC">Background</a></h1>
-<p>The design of the environment will be similar to <a href="https://en.wikipedia.org/wiki/Project_Athena">Project Athena</a> at MIT and the <a href="https://en.wikipedia.org/wiki/Distributed_Computing_Environment">Distributed Computing Environment</a> by the OSF. Inspiration for this project comes from the <a href="http://www.infrastructures.org">infrastructures.org</a> website, specifically their papers: <a href="http://www.infrastructures.org/papers/bootstrap/bootstrap.html">Bootstrapping an Infrastructure</a> and <a href="http://www.infrastructures.org/papers/turing/turing.html">Why Order Matters: Turing Equivalence in Automated Systems Administration</a>. Additionally, a paper by Paul Schenkeveld, “Building servers with NanoBSD, ZFS and Jails” served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
+<p>The design of the environment will be similar to <a href="https://en.wikipedia.org/wiki/Project_Athena">Project Athena</a> at MIT and the <a href="https://en.wikipedia.org/wiki/Distributed_Computing_Environment">Distributed Computing Environment</a> by the OSF. Inspiration for this project comes from the <a href="http://www.infrastructures.org">infrastructures.org</a> website, specifically their papers: <a href="http://www.infrastructures.org/papers/bootstrap/bootstrap.html">Bootstrapping an Infrastructure</a> and <a href="http://www.infrastructures.org/papers/turing/turing.html">Why Order Matters: Turing Equivalence in Automated Systems Administration</a>. Additionally, a paper by Paul Schenkeveld, <a href="https://2010.asiabsdcon.org/papers/abc2010-P4A-paper.pdf">Building servers with NanoBSD, ZFS and Jails</a> served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
 <p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.</p>
 <p>!!</p>
 <p>The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.</p>
@@ -131,7 +133,7 @@
 <li>High performance with multiple caching mechanisms</li>
 <li>Snapshots</li>
 </ul>
-<p>This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded software is removed. This comes at the cost of higher complexity and more difficult maintenance.</p>
+<p>This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.</p>
 <p>The DNS, NTP, Auth, LDAP services are required by all derivative applications.</p>
 <p>!!</p>
 <p>Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SSH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.</p>
@@ -154,21 +156,35 @@
 <h3 id="nanobsd"><a href="#TOC">NanoBSD</a></h3>
 <h3 id="host-install-tools"><a href="#TOC">Host Install Tools</a></h3>
 <h3 id="ad-hoc-change-tools"><a href="#TOC">Ad-Hoc Change Tools</a></h3>
-<p>rsync. zfs send/receive. ### Jails ### ### ZFS ###</p>
+<p>rsync. zfs send/receive.</p>
+<h3 id="jails"><a href="#TOC">Jails</a></h3>
+<h3 id="zfs"><a href="#TOC">ZFS</a></h3>
 <h2 id="dns"><a href="#TOC">DNS</a></h2>
 <p>DNS is required to provide hostname to IP mapping.</p>
 <h3 id="dnssec"><a href="#TOC">DNSSEC</a></h3>
-<p>[DNSSEC]</p>
+<p><a href="https://tools.ietf.org/html/rfc2535">DNSSEC</a></p>
 <h3 id="dane"><a href="#TOC">DANE</a></h3>
-<p>DNS-Based Authentication of Named Entities or [DANE] allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server’s certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.</p>
+<p>DNS-Based Authentication of Named Entities or <a href="https://tools.ietf.org/html/rfc6698">DANE</a> allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server’s certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.</p>
 <p>DANE is implemented by placing TLSA records in the DNS.</p>
-<p>TLS via DANE can be used to secure websites over HTTPS, email via the [OpenPGP] and [S/MIME] extensions, instant messaging (XMPP, IRC) and others via SRV records.</p>
+<p>TLS via DANE can be used to secure websites over HTTPS, email via the <a href="https://tools.ietf.org/html/rfc7929">OpenPGP</a> and <a href="https://tools.ietf.org/html/draft-ietf-dane-smime-14">S/MIME</a> extensions, instant messaging (XMPP, IRC) and others via SRV records.</p>
 <p>Since SMTP was designed to be transmitted in plaintext, encryption in the form of <a href="https://tools.ietf.org/html/rfc3207">STARTTLS</a> or <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS">Opportunistic TLS</a> was developed to secure email communication. However, <a href="https://blog.fillipo.io/the-sad-state-of-smtp-encryption/">it is known</a> to be <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS#Weaknesses_and_mitigations">vulnerable to downgrade attacks</a>, since the initial handshake occurs in plain text, so an attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.</p>
 <p>The Electronic Frontier Foundation (<a href="https://www.eff.org">EFF</a>) has created a project called <a href="https://github.com/EFForg/starttls-everywhere">STARTTLS Everywhere</a> in an effort to enforce TLS between popular email domains, with the help of <a href="https://letsencrypt.org">Let’s Encrypt</a> to serve certificates.</p>
 <p>However, this is only to serve as an <a href="https://github.com/EFForg/starttls-everywhere#alternatives">intermediate solution</a> until <a href="https://tools.ietf.org/html/draft-ietf-dane-smtp-with-dane-10">DNSSEC and DANE</a> see widespread adoption.</p>
 <p>Our implementation includes DNSSEC and DANE, and so email protection will be available. However, since the infrastructure is not designed to be publicly accessible, some unique challenges surrounding maintenance of the DNS and CA root domains require solutions and also how to securely send between organisations needs to be determined.</p>
 <p>While DANE can be used to validate the connection between mail exchangers, the emails themselves are still unencrypted. S/MIME and OpenPGP allow emails to be encrypted. There are also standards in place to store DANE bind</p>
-<p>[DNSSEC]: [DANE]: https://tools.ietf.org/html/rfc6698 [OpenPGP]: [S/MIME]:</p>
+<p>A brilliant guide to setting up DNSSEC+DANE to guarantee secure email between organisations is <a href="nccoe.nist.gov/sites/default/files/library/sp1800/dns-secure-email-sp1800-6-draft.pdf">published by NIST</a>. It shows the experiments carried out by Microsoft Corporation, NLnet Laboratories, Secure64, Internet Systems Consortium and Fraunhofer IAO. The configuration of their respective MUA, MTA and DNS services, including:</p>
+<ul>
+<li>[Thunderbird]</li>
+<li>[Dovecot]</li>
+<li>[Postfix]</li>
+<li>[Outlook]</li>
+<li>[Exchange]</li>
+<li>[NSD]</li>
+<li>[Unbound]</li>
+<li>[OpenDNSSEC]</li>
+<li>[ISC BIND]</li>
+</ul>
+<p>[Thunderbird]: [Dovecot]: [Postfix]: [Outlook]: [Exchange]: [NSD]: [Unbound]: [OpenDNSSEC]: [ISC BIND]:</p>
 <h2 id="ldap"><a href="#TOC">LDAP</a></h2>
 <h3 id="ldaps"><a href="#TOC">LDAPS</a></h3>
 <h3 id="smime-or-pgp"><a href="#TOC">S/MIME or PGP</a></h3>

@@ -23,13 +23,14 @@ Produce a working implementation of a secure, resilient and easy to maintain inf
 Background
 ===
 
-The design of the environment will be similar to [Project Athena] at MIT and the [Distributed Computing Environment] by the OSF. Inspiration for this project comes from the [infrastructures.org] website, specifically their papers: [Bootstrapping an Infrastructure] and [Why Order Matters: Turing Equivalence in Automated Systems Administration]. Additionally, a paper by Paul Schenkeveld, "Building servers with NanoBSD, ZFS and Jails" served as inspiration for the use of NanoBSD as the operating system due to its unique properties.
+The design of the environment will be similar to [Project Athena] at MIT and the [Distributed Computing Environment] by the OSF. Inspiration for this project comes from the [infrastructures.org] website, specifically their papers: [Bootstrapping an Infrastructure] and [Why Order Matters: Turing Equivalence in Automated Systems Administration]. Additionally, a paper by Paul Schenkeveld, [Building servers with NanoBSD, ZFS and Jails] served as inspiration for the use of NanoBSD as the operating system due to its unique properties.
 
 This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.
 
 [infrastructures.org]: http://www.infrastructures.org
 [Bootstrapping an Infrastructure]: http://www.infrastructures.org/papers/bootstrap/bootstrap.html
 [Why Order Matters: Turing Equivalence in Automated Systems Administration]: http://www.infrastructures.org/papers/turing/turing.html
+[Building servers with NanoBSD, ZFS and Jails]: https://2010.asiabsdcon.org/papers/abc2010-P4A-paper.pdf
 [Project Athena]: https://en.wikipedia.org/wiki/Project_Athena
 [Distributed Computing Environment]: https://en.wikipedia.org/wiki/Distributed_Computing_Environment
 
@@ -91,7 +92,7 @@ ZFS:
 - High performance with multiple caching mechanisms
 - Snapshots
 
-This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded software is removed. This comes at the cost of higher complexity and more difficult maintenance.
+This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.
 
 The DNS, NTP, Auth, LDAP services are required by all derivative applications.
 
@@ -152,6 +153,7 @@ OS
 ### Host Install Tools ###
 ### Ad-Hoc Change Tools ###
 rsync. zfs send/receive.
+
 ### Jails ###
 ### ZFS ###
 
@@ -180,6 +182,19 @@ Our implementation includes DNSSEC and DANE, and so email protection will be ava
 
 While DANE can be used to validate the connection between mail exchangers, the emails themselves are still unencrypted. S/MIME and OpenPGP allow emails to be encrypted. There are also standards in place to store DANE bind
 
+A brilliant guide to setting up DNSSEC+DANE to guarantee secure email between organisations is [published by NIST]. It shows the experiments carried out by Microsoft Corporation, NLnet Laboratories, Secure64, Internet Systems Consortium and Fraunhofer IAO. The configuration of their respective MUA, MTA and DNS services, including: 
+
+- [Thunderbird]
+- [Dovecot]
+- [Postfix]
+- [Outlook]
+- [Exchange]
+- [NSD]
+- [Unbound]
+- [OpenDNSSEC]
+- [ISC BIND]
+
+
 [STARTTLS]: https://tools.ietf.org/html/rfc3207
 [Opportunistic TLS]: https://en.wikipedia.org/wiki/Opportunistic_TLS
 [it is known]: https://blog.fillipo.io/the-sad-state-of-smtp-encryption/
@@ -189,11 +204,20 @@ While DANE can be used to validate the connection between mail exchangers, the e
 [Let's Encrypt]: https://letsencrypt.org
 [intermediate solution]: https://github.com/EFForg/starttls-everywhere#alternatives
 [DNSSEC and DANE]: https://tools.ietf.org/html/draft-ietf-dane-smtp-with-dane-10
-[DNSSEC]:
+[DNSSEC]: https://tools.ietf.org/html/rfc2535
 [DANE]: https://tools.ietf.org/html/rfc6698
-[OpenPGP]:
-[S/MIME]: 
-
+[OpenPGP]: https://tools.ietf.org/html/rfc7929
+[S/MIME]: https://tools.ietf.org/html/draft-ietf-dane-smime-14
+[published by NIST]: nccoe.nist.gov/sites/default/files/library/sp1800/dns-secure-email-sp1800-6-draft.pdf
+[Thunderbird]:
+[Dovecot]:
+[Postfix]:
+[Outlook]:
+[Exchange]:
+[NSD]:
+[Unbound]:
+[OpenDNSSEC]:
+[ISC BIND]:
 
 LDAP
 ---
