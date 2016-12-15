@@ -182,7 +182,7 @@ Our implementation includes DNSSEC and DANE, and so email protection will be ava
 
 While DANE can be used to validate the connection between mail exchangers, the emails themselves are still unencrypted. S/MIME and OpenPGP allow emails to be encrypted. There are also standards in place to store DANE bind
 
-A brilliant guide to setting up DNSSEC+DANE to guarantee secure email between organisations is [published by NIST]. It shows the experiments carried out by Microsoft Corporation, NLnet Laboratories, Secure64, Internet Systems Consortium and Fraunhofer IAO. The configuration of their respective MUA, MTA and DNS services, including: 
+A brilliant guide to setting up DNSSEC+DANE to guarantee secure email between organisations is [published by NIST]. It shows the experiments carried out by Microsoft Corporation, NLnet Laboratories, Secure64, Internet Systems Consortium and Fraunhofer IAO, and includes the configuration required for their respective MUA, MTA and DNS services, including: 
 
 - [Thunderbird]
 - [Dovecot]
@@ -209,15 +209,15 @@ A brilliant guide to setting up DNSSEC+DANE to guarantee secure email between or
 [OpenPGP]: https://tools.ietf.org/html/rfc7929
 [S/MIME]: https://tools.ietf.org/html/draft-ietf-dane-smime-14
 [published by NIST]: nccoe.nist.gov/sites/default/files/library/sp1800/dns-secure-email-sp1800-6-draft.pdf
-[Thunderbird]:
-[Dovecot]:
-[Postfix]:
-[Outlook]:
-[Exchange]:
-[NSD]:
-[Unbound]:
-[OpenDNSSEC]:
-[ISC BIND]:
+[Thunderbird]: https://www.mozilla.org/en-GB/thunderbird/
+[Dovecot]: https://www.dovecot.org
+[Postfix]: https://www.postfix.org
+[Outlook]: https://en.wikipedia.org/wiki/Microsoft_Outlook
+[Exchange]: https://en.wikipedia.org/wiki/Microsoft_Exchange_Server
+[NSD]: https://www.nlnetlabs.nl/projects/nsd/
+[Unbound]: unbound.net
+[OpenDNSSEC]: https://www.opendnssec.org
+[ISC BIND]: https://www.isc.org/downloads/bind/
 
 LDAP
 ---
