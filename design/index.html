@@ -30,19 +30,15 @@
 <li><a href="#os">OS</a><ul>
 <li><a href="#freebsd">FreeBSD</a></li>
 <li><a href="#nanobsd">NanoBSD</a></li>
-<li><a href="#host-install-tools">Host Install Tools</a></li>
-<li><a href="#ad-hoc-change-tools">Ad-Hoc Change Tools</a></li>
 <li><a href="#jails">Jails</a></li>
 <li><a href="#zfs">ZFS</a></li>
+<li><a href="#host-install-tools">Host Install Tools</a></li>
+<li><a href="#ad-hoc-change-tools">Ad-Hoc Change Tools</a></li>
 </ul></li>
 <li><a href="#dns">DNS</a><ul>
 <li><a href="#dnssec">DNSSEC</a></li>
 <li><a href="#dane">DANE</a></li>
 <li><a href="#dane-for-email-security">DANE for Email Security</a></li>
-</ul></li>
-<li><a href="#ldap">LDAP</a><ul>
-<li><a href="#ldaps">LDAPS</a></li>
-<li><a href="#smime-or-pgp">S/MIME or PGP</a></li>
 </ul></li>
 <li><a href="#kerberos">Kerberos</a></li>
 <li><a href="#ntp">NTP</a></li>
@@ -112,30 +108,6 @@
 <li>Clients - End use</li>
 </ul>
 <img src="/homelab/pic/secenv.svg"> <img src="/homelab/pic/disklayout.svg">
-<p>The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.</p>
-<p>The advantages of this setup are:</p>
-<p>NanoBSD:</p>
-<ul>
-<li>Offline build of complete system images</li>
-<li>Dual system images</li>
-<li>Read-only root filesystem</li>
-<li>Separate storage of modified configuration files, which is shared between the two system images.</li>
-</ul>
-<p>Jails:</p>
-<ul>
-<li>A process and all descendants are restricted to a chrooted directory tree</li>
-<li>Does not rely on virtualisation, so performance penalty is mitigated</li>
-<li>Easy to update or upgrade individual jails</li>
-</ul>
-<p>ZFS:</p>
-<ul>
-<li>Data integrity using checksums</li>
-<li>Pooled storage, where all disks added to the pool are available to all filesystems</li>
-<li>High performance with multiple caching mechanisms</li>
-<li>Snapshots</li>
-</ul>
-<p>This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.</p>
-<p>The DNS, NTP, Auth, LDAP services are required by all derivative applications.</p>
 <p>!!</p>
 <p>Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SSH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.</p>
 <p>KerberizedNFSv4 for client file access.</p>
@@ -153,17 +125,36 @@
 <h3 id="kink"><a href="#TOC">KINK</a></h3>
 <p><a href="https://tools.ietf.org/html/rfc4430">Kerberized Internet Negotiation of Keys</a> (KINK) defines a protocol to establish and maintain security associations using the Kerberos authentication system. The central key management provided by Kerberos is efficient because it limits computational cost and limits complexity versus IKE’s necessity of using public key cryptography. Initial authentication to the KDC may be performed using asymmetric keys via the <a href="https://tools.ietf.org/html/rfc4556">Public Key Cryptography for Initial Authentication in Kerberos</a> (PKINIT) protocol.</p>
 <h2 id="os"><a href="#TOC">OS</a></h2>
+<p>The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.</p>
 <h3 id="freebsd"><a href="#TOC">FreeBSD</a></h3>
 <h3 id="nanobsd"><a href="#TOC">NanoBSD</a></h3>
+<ul>
+<li>Offline build of complete system images</li>
+<li>Dual system images</li>
+<li>Read-only root filesystem</li>
+<li>Separate storage of modified configuration files, which is shared between the two system images.</li>
+</ul>
+<p>This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.</p>
+<h3 id="jails"><a href="#TOC">Jails</a></h3>
+<ul>
+<li>A process and all descendants are restricted to a chrooted directory tree</li>
+<li>Does not rely on virtualisation, so performance penalty is mitigated</li>
+<li>Easy to update or upgrade individual jails</li>
+</ul>
+<h3 id="zfs"><a href="#TOC">ZFS</a></h3>
+<ul>
+<li>Data integrity using checksums</li>
+<li>Pooled storage, where all disks added to the pool are available to all filesystems</li>
+<li>High performance with multiple caching mechanisms</li>
+<li>Snapshots</li>
+</ul>
 <h3 id="host-install-tools"><a href="#TOC">Host Install Tools</a></h3>
 <h3 id="ad-hoc-change-tools"><a href="#TOC">Ad-Hoc Change Tools</a></h3>
 <p>rsync. zfs send/receive.</p>
-<h3 id="jails"><a href="#TOC">Jails</a></h3>
-<h3 id="zfs"><a href="#TOC">ZFS</a></h3>
 <h2 id="dns"><a href="#TOC">DNS</a></h2>
 <p>DNS is required to provide hostname to IP mapping.</p>
 <h3 id="dnssec"><a href="#TOC">DNSSEC</a></h3>
-<p>The DNS Security Extensions or <a href="https://tools.ietf.org/html/rfc2535">DNSSEC</a> add protection for DNS records by allowing resolvers and applications to authenticate the data they receive from DNS servers. [DNS resolution starts at the root], and works down the nameservers until the desired domain name is reached. DNSSEC builds upon this model by creating a chain of trust from the root zone.</p>
+<p>The DNS Security Extensions or <a href="https://tools.ietf.org/html/rfc2535">DNSSEC</a> add protection for DNS records by allowing resolvers and applications to authenticate the data they receive from DNS servers. <a href="https://blog.cloudflare.com/dnssec-an-introduction/%20LDAP%20---%20###%20LDAPS%20###%20###%20S/MIME%20or%20PGP%20###">DNS resolution starts at the root</a>, and works down the nameservers until the desired domain name is reached. DNSSEC builds upon this model by creating a chain of trust from the root zone.</p>
 <h3 id="dane"><a href="#TOC">DANE</a></h3>
 <p>DNS-Based Authentication of Named Entities or <a href="https://tools.ietf.org/html/rfc6698">DANE</a> allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server’s certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.</p>
 <p>DANE is implemented by placing TLSA records in the DNS.</p>
@@ -186,9 +177,6 @@
 <li><a href="https://www.opendnssec.org">OpenDNSSEC</a></li>
 <li><a href="https://www.isc.org/downloads/bind/">ISC BIND</a></li>
 </ul>
-<h2 id="ldap"><a href="#TOC">LDAP</a></h2>
-<h3 id="ldaps"><a href="#TOC">LDAPS</a></h3>
-<h3 id="smime-or-pgp"><a href="#TOC">S/MIME or PGP</a></h3>
 <h2 id="kerberos"><a href="#TOC">Kerberos</a></h2>
 <h2 id="ntp"><a href="#TOC">NTP</a></h2>
 <h2 id="nfs"><a href="#TOC">NFS</a></h2>

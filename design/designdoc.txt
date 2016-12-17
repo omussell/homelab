@@ -68,34 +68,6 @@ High-Level Design
 <img src="/homelab/pic/secenv.svg">
 <img src="/homelab/pic/disklayout.svg">
 
-The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
-
-The advantages of this setup are:
-
-NanoBSD:
-
-- Offline build of complete system images
-- Dual system images
-- Read-only root filesystem
-- Separate storage of modified configuration files, which is shared between the two system images.
-
-Jails:
-
-- A process and all descendants are restricted to a chrooted directory tree
-- Does not rely on virtualisation, so performance penalty is mitigated
-- Easy to update or upgrade individual jails
-
-ZFS:
-
-- Data integrity using checksums
-- Pooled storage, where all disks added to the pool are available to all filesystems
-- High performance with multiple caching mechanisms
-- Snapshots
-
-This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.
-
-The DNS, NTP, Auth, LDAP services are required by all derivative applications.
-
 !!
 
 Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. 
@@ -110,7 +82,6 @@ Experimental
 Features that aren't production ready, but would be interesting to implement:
 SSH using X509v3 certificates, signed by a central CA (or validated with DANE?)
 TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)
-
 
 Detailed Design
 ===
@@ -135,6 +106,7 @@ IPv6 address are mapped to hostnames in DNS using [AAAA resource records]. Rever
 
 
 ### SEND ###
+
 ### IPsec ###
 Security associations via IKE or KINK
 
@@ -148,14 +120,41 @@ Security associations via IKE or KINK
 
 OS
 ---
+
+The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
+
 ### FreeBSD ###
+
 ### NanoBSD ###
+
+- Offline build of complete system images
+- Dual system images
+- Read-only root filesystem
+- Separate storage of modified configuration files, which is shared between the two system images.
+
+This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.
+
+
+### Jails ###
+
+- A process and all descendants are restricted to a chrooted directory tree
+- Does not rely on virtualisation, so performance penalty is mitigated
+- Easy to update or upgrade individual jails
+
+### ZFS ###
+
+- Data integrity using checksums
+- Pooled storage, where all disks added to the pool are available to all filesystems
+- High performance with multiple caching mechanisms
+- Snapshots
+
+
+
 ### Host Install Tools ###
+
 ### Ad-Hoc Change Tools ###
 rsync. zfs send/receive.
 
-### Jails ###
-### ZFS ###
 
 DNS
 ---
@@ -220,7 +219,7 @@ A guide to setting up DNSSEC+DANE to guarantee secure email between organisation
 [Unbound]: unbound.net
 [OpenDNSSEC]: https://www.opendnssec.org
 [ISC BIND]: https://www.isc.org/downloads/bind/
-
+[DNS resolution starts at the root]: https://blog.cloudflare.com/dnssec-an-introduction/
 LDAP
 ---
 ### LDAPS ###
