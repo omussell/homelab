@@ -162,7 +162,8 @@ DNS
 DNS is required to provide hostname to IP mapping. 
 
 ### DNSSEC ###
-[DNSSEC]
+The DNS Security Extensions or [DNSSEC] add protection for DNS records by allowing resolvers and applications to authenticate the data they receive from DNS servers. [DNS resolution starts at the root], and works down the nameservers until the desired domain name is reached. DNSSEC builds upon this model by creating a chain of trust from the root zone.
+
 
 
 ### DANE ###
@@ -172,7 +173,8 @@ DANE is implemented by placing TLSA records in the DNS.
 
 TLS via DANE can be used to secure websites over HTTPS, email via the [OpenPGP] and [S/MIME] extensions, instant messaging (XMPP, IRC) and others via SRV records.
 
-Since SMTP was designed to be transmitted in plaintext, encryption in the form of [STARTTLS] or [Opportunistic TLS] was developed to secure email communication. However, [it is known] to be [vulnerable to downgrade attacks], since the initial handshake occurs in plain text, so an attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.  
+### DANE for Email Security ###
+Since SMTP was designed to be transmitted in plaintext, encryption in the form of [STARTTLS] or [Opportunistic TLS] was developed to secure email communication. However, [it is known] to be [vulnerable to downgrade attacks], since the initial handshake occurs in plain text. An attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.  
 
 The Electronic Frontier Foundation ([EFF]) has created a project called [STARTTLS Everywhere] in an effort to enforce TLS between popular email domains, with the help of [Let's Encrypt] to serve certificates.
 
