@@ -124,6 +124,7 @@ OS
 The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
 
 ### FreeBSD ###
+[FreeBSD] is an advanced computer operating system used to power modern servers. Its advanced networking, security, and storage features have made FreeBSD the platform of choice for embedded networking and storage devices, and powers many of the [busiest web sites].
 
 ### NanoBSD ###
 
@@ -154,6 +155,10 @@ This also gives administrators the flexibility to compile a custom kernel/image 
 
 ### Ad-Hoc Change Tools ###
 rsync. zfs send/receive.
+
+[FreeBSD]: https://www.freebsd.org
+[busiest web sites]: https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/nutshell.html#introduction-nutshell-users
+
 
 
 DNS
