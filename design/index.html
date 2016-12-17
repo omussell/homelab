@@ -40,6 +40,10 @@
 <li><a href="#dane">DANE</a></li>
 <li><a href="#dane-for-email-security">DANE for Email Security</a></li>
 </ul></li>
+<li><a href="#ldap">LDAP</a><ul>
+<li><a href="#ldaps">LDAPS</a></li>
+<li><a href="#smime-or-pgp">S/MIME or PGP</a></li>
+</ul></li>
 <li><a href="#kerberos">Kerberos</a></li>
 <li><a href="#ntp">NTP</a></li>
 <li><a href="#nfs">NFS</a><ul>
@@ -154,29 +158,32 @@
 <h2 id="dns"><a href="#TOC">DNS</a></h2>
 <p>DNS is required to provide hostname to IP mapping.</p>
 <h3 id="dnssec"><a href="#TOC">DNSSEC</a></h3>
-<p>The DNS Security Extensions or <a href="https://tools.ietf.org/html/rfc2535">DNSSEC</a> add protection for DNS records by allowing resolvers and applications to authenticate the data they receive from DNS servers. <a href="https://blog.cloudflare.com/dnssec-an-introduction/%20LDAP%20---%20###%20LDAPS%20###%20###%20S/MIME%20or%20PGP%20###">DNS resolution starts at the root</a>, and works down the nameservers until the desired domain name is reached. DNSSEC builds upon this model by creating a chain of trust from the root zone.</p>
+<p>The DNS Security Extensions or <a href="https://tools.ietf.org/html/rfc2535">DNSSEC</a> add protection for DNS records by allowing resolvers and applications to authenticate the data they receive from DNS servers. <a href="https://blog.cloudflare.com/dnssec-an-introduction/">DNS resolution starts at the root</a>, and works down the nameservers until the desired domain name is reached. DNSSEC builds upon this model by creating a chain of trust from the root zone.</p>
 <h3 id="dane"><a href="#TOC">DANE</a></h3>
 <p>DNS-Based Authentication of Named Entities or <a href="https://tools.ietf.org/html/rfc6698">DANE</a> allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server’s certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.</p>
 <p>DANE is implemented by placing TLSA records in the DNS.</p>
 <p>TLS via DANE can be used to secure websites over HTTPS, email via the <a href="https://tools.ietf.org/html/rfc7929">OpenPGP</a> and <a href="https://tools.ietf.org/html/draft-ietf-dane-smime-14">S/MIME</a> extensions, instant messaging (XMPP, IRC) and others via SRV records.</p>
 <h3 id="dane-for-email-security"><a href="#TOC">DANE for Email Security</a></h3>
-<p>Since SMTP was designed to be transmitted in plaintext, encryption in the form of <a href="https://tools.ietf.org/html/rfc3207">STARTTLS</a> or <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS">Opportunistic TLS</a> was developed to secure email communication. However, <a href="https://blog.fillipo.io/the-sad-state-of-smtp-encryption/">it is known</a> to be <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS#Weaknesses_and_mitigations">vulnerable to downgrade attacks</a>, since the initial handshake occurs in plain text. An attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.</p>
+<p>Since SMTP was designed to be transmitted in plaintext, encryption in the form of <a href="https://tools.ietf.org/html/rfc3207">STARTTLS</a> or <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS">Opportunistic TLS</a> was developed to secure email communication. However, <a href="https://blog.filipo.io/the-sad-state-of-smtp-encryption/">it is known</a> to be <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS#Weaknesses_and_mitigations">vulnerable to downgrade attacks</a>, since the initial handshake occurs in plain text. An attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.</p>
 <p>The Electronic Frontier Foundation (<a href="https://www.eff.org">EFF</a>) has created a project called <a href="https://github.com/EFForg/starttls-everywhere">STARTTLS Everywhere</a> in an effort to enforce TLS between popular email domains, with the help of <a href="https://letsencrypt.org">Let’s Encrypt</a> to serve certificates.</p>
 <p>However, this is only to serve as an <a href="https://github.com/EFForg/starttls-everywhere#alternatives">intermediate solution</a> until <a href="https://tools.ietf.org/html/draft-ietf-dane-smtp-with-dane-10">DNSSEC and DANE</a> see widespread adoption.</p>
 <p>Our implementation includes DNSSEC and DANE, and so email protection will be available. However, since the infrastructure is not designed to be publicly accessible, some unique challenges surrounding maintenance of the DNS and CA root domains require solutions and also how to securely send between organisations needs to be determined.</p>
 <p>While DANE can be used to validate the connection between mail exchangers, the emails themselves are still unencrypted. S/MIME and OpenPGP allow emails to be encrypted. There are also standards in place to store DANE bind</p>
-<p>A guide to setting up DNSSEC+DANE to guarantee secure email between organisations is <a href="nccoe.nist.gov/sites/default/files/library/sp1800/dns-secure-email-sp1800-6-draft.pdf">published by NIST</a>. It shows the experiments carried out by Microsoft Corporation, NLnet Laboratories, Secure64, Internet Systems Consortium and Fraunhofer IAO, and includes the configuration required for their respective MUA, MTA and DNS services, including:</p>
+<p>A guide to setting up DNSSEC+DANE to guarantee secure email between organisations is <a href="http://nccoe.nist.gov/sites/default/files/library/sp1800/dns-secure-email-sp1800-6-draft.pdf">published by NIST</a>. It shows the experiments carried out by Microsoft Corporation, NLnet Laboratories, Secure64, Internet Systems Consortium and Fraunhofer IAO, and includes the configuration required for their respective MUA, MTA and DNS services, including:</p>
 <ul>
 <li><a href="https://www.mozilla.org/en-GB/thunderbird/">Thunderbird</a></li>
 <li><a href="https://www.dovecot.org">Dovecot</a></li>
-<li><a href="https://www.postfix.org">Postfix</a></li>
+<li><a href="http://www.postfix.org">Postfix</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Microsoft_Outlook">Outlook</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Microsoft_Exchange_Server">Exchange</a></li>
 <li><a href="https://www.nlnetlabs.nl/projects/nsd/">NSD</a></li>
-<li><a href="unbound.net">Unbound</a></li>
+<li><a href="http://unbound.net">Unbound</a></li>
 <li><a href="https://www.opendnssec.org">OpenDNSSEC</a></li>
 <li><a href="https://www.isc.org/downloads/bind/">ISC BIND</a></li>
 </ul>
+<h2 id="ldap"><a href="#TOC">LDAP</a></h2>
+<h3 id="ldaps"><a href="#TOC">LDAPS</a></h3>
+<h3 id="smime-or-pgp"><a href="#TOC">S/MIME or PGP</a></h3>
 <h2 id="kerberos"><a href="#TOC">Kerberos</a></h2>
 <h2 id="ntp"><a href="#TOC">NTP</a></h2>
 <h2 id="nfs"><a href="#TOC">NFS</a></h2>

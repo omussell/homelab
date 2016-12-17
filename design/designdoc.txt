@@ -198,7 +198,7 @@ A guide to setting up DNSSEC+DANE to guarantee secure email between organisation
 
 [STARTTLS]: https://tools.ietf.org/html/rfc3207
 [Opportunistic TLS]: https://en.wikipedia.org/wiki/Opportunistic_TLS
-[it is known]: https://blog.fillipo.io/the-sad-state-of-smtp-encryption/
+[it is known]: https://blog.filipo.io/the-sad-state-of-smtp-encryption/
 [vulnerable to downgrade attacks]: https://en.wikipedia.org/wiki/Opportunistic_TLS#Weaknesses_and_mitigations
 [EFF]: https://www.eff.org
 [STARTTLS Everywhere]: https://github.com/EFForg/starttls-everywhere
@@ -209,17 +209,21 @@ A guide to setting up DNSSEC+DANE to guarantee secure email between organisation
 [DANE]: https://tools.ietf.org/html/rfc6698
 [OpenPGP]: https://tools.ietf.org/html/rfc7929
 [S/MIME]: https://tools.ietf.org/html/draft-ietf-dane-smime-14
-[published by NIST]: nccoe.nist.gov/sites/default/files/library/sp1800/dns-secure-email-sp1800-6-draft.pdf
+[published by NIST]: http://nccoe.nist.gov/sites/default/files/library/sp1800/dns-secure-email-sp1800-6-draft.pdf
 [Thunderbird]: https://www.mozilla.org/en-GB/thunderbird/
 [Dovecot]: https://www.dovecot.org
-[Postfix]: https://www.postfix.org
+[Postfix]: http://www.postfix.org
 [Outlook]: https://en.wikipedia.org/wiki/Microsoft_Outlook
 [Exchange]: https://en.wikipedia.org/wiki/Microsoft_Exchange_Server
 [NSD]: https://www.nlnetlabs.nl/projects/nsd/
-[Unbound]: unbound.net
+[Unbound]: http://unbound.net
 [OpenDNSSEC]: https://www.opendnssec.org
 [ISC BIND]: https://www.isc.org/downloads/bind/
 [DNS resolution starts at the root]: https://blog.cloudflare.com/dnssec-an-introduction/
+
+
+
+
 LDAP
 ---
 ### LDAPS ###
