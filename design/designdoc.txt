@@ -184,7 +184,7 @@ Our implementation includes DNSSEC and DANE, and so email protection will be ava
 
 While DANE can be used to validate the connection between mail exchangers, the emails themselves are still unencrypted. S/MIME and OpenPGP allow emails to be encrypted. There are also standards in place to store DANE bind
 
-A brilliant guide to setting up DNSSEC+DANE to guarantee secure email between organisations is [published by NIST]. It shows the experiments carried out by Microsoft Corporation, NLnet Laboratories, Secure64, Internet Systems Consortium and Fraunhofer IAO, and includes the configuration required for their respective MUA, MTA and DNS services, including: 
+A guide to setting up DNSSEC+DANE to guarantee secure email between organisations is [published by NIST]. It shows the experiments carried out by Microsoft Corporation, NLnet Laboratories, Secure64, Internet Systems Consortium and Fraunhofer IAO, and includes the configuration required for their respective MUA, MTA and DNS services, including: 
 
 - [Thunderbird]
 - [Dovecot]
