@@ -110,20 +110,6 @@
 <h1 id="background"><a href="#TOC">Background</a></h1>
 <p>The design of the environment will be similar to <a href="https://en.wikipedia.org/wiki/Project_Athena">Project Athena</a> at MIT and the <a href="https://en.wikipedia.org/wiki/Distributed_Computing_Environment">Distributed Computing Environment</a> by the OSF. Inspiration for this project comes from the <a href="http://www.infrastructures.org">infrastructures.org</a> website, specifically their papers: <a href="http://www.infrastructures.org/papers/bootstrap/bootstrap.html">Bootstrapping an Infrastructure</a> and <a href="http://www.infrastructures.org/papers/turing/turing.html">Why Order Matters: Turing Equivalence in Automated Systems Administration</a>. Additionally, a paper by Paul Schenkeveld, <a href="https://2010.asiabsdcon.org/papers/abc2010-P4A-paper.pdf">Building servers with NanoBSD, ZFS and Jails</a> served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
 <p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.</p>
-<p>!!</p>
-<p>The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.</p>
-<p>Decentralised - Each site is independent and can function without a connection to the internet.</p>
-<p>Headquarters - Main site(s), connected to other sites</p>
-<p>In any of these scenarios, the administrators can provide end-users with access to the network in multiple ways:</p>
-<ul>
-<li>Thick client</li>
-<li>Thin client</li>
-<li>BYOD</li>
-<li>Web access only</li>
-</ul>
-<p>In addition, a “server” can take many forms, it could be a Jail/Zone/Container, virtual machine, physical or cloud.</p>
-<p>Also, while the envisioned configuration is a closed network, where nothing is accessible via the normal internet, there is no requirement for this to be so. If you want end-users to be able to access your network from home or via BYOD they can.</p>
-<p>!!</p>
 <h1 id="high-level-design"><a href="#TOC">High-Level Design</a></h1>
 <ul>
 <li>Control Machine - Stores operating system images and configuration files in version control. Used to create the Gold server.</li>
@@ -138,7 +124,11 @@
 <p>KerberizedNFSv4 for client file access.</p>
 <p>!!</p>
 <h1 id="experimental"><a href="#TOC">Experimental</a></h1>
-<p>Features that aren’t production ready, but would be interesting to implement: SSH using X509v3 certificates, signed by a central CA (or validated with DANE?) TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)</p>
+<p>Features that aren’t production ready, but would be interesting to implement:</p>
+<ul>
+<li>SSH using X509v3 certificates, signed by a central CA (or validated with DANE?)</li>
+<li>TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)</li>
+</ul>
 <h1 id="detailed-design"><a href="#TOC">Detailed Design</a></h1>
 <p>Control machine config, Git, SSH, 2FA? Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH. Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.<br />Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP</p>
 <h2 id="ipv6"><a href="#TOC">IPv6</a></h2>
@@ -245,7 +235,19 @@
 </ul>
 <p>!!</p>
 <h3 id="configuration"><a href="#TOC">Configuration</a></h3>
-<p>The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems - NanoBSD, conf file - Jails, conf file - Kerberos - OpenDNSSEC - SoftHSM - NSD - Unbound - OpenLDAP - OpenNTP - OpenSSH - Configuration Management - NFS</p>
+<p>The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems</p>
+<pre><code>- NanoBSD, conf file
+- Jails, conf file
+- Kerberos
+- OpenDNSSEC
+- SoftHSM
+- NSD
+- Unbound
+- OpenLDAP
+- OpenNTP
+- OpenSSH
+- Configuration Management
+- NFS</code></pre>
 <h3 id="startup-and-shutdown"><a href="#TOC">Startup and shutdown</a></h3>
 <p>Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.</p>
 <h3 id="queue-draining"><a href="#TOC">Queue draining</a></h3>
@@ -254,7 +256,12 @@
 <p>For app upgrades, snapshot current, update app, restart jail with new updated app jail. For OS upgrades, build new offline image, update slice 2, reboot.</p>
 <h3 id="backups-and-restores"><a href="#TOC">Backups and restores</a></h3>
 <p>Config files / OS files / data files</p>
-<p>How to backup and restore: - Kerberos principals, groups etc. - LDAP data - DNS records/zones - HSM data Calculate the latency/data limits required to perform above backups/restores</p>
+<p>How to backup and restore:</p>
+<pre><code>- Kerberos principals, groups etc.
+- LDAP data
+- DNS records/zones
+- HSM data</code></pre>
+<p>Calculate the latency/data limits required to perform above backups/restores</p>
 <h3 id="redundancy"><a href="#TOC">Redundancy</a></h3>
 <p>OS, hard drive, zfs, multiple core servers with master/slave, database replication, multiple load balancers. Services are behind a load balancer</p>
 <h3 id="replicated-databases"><a href="#TOC">Replicated databases</a></h3>

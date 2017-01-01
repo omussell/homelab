@@ -34,28 +34,6 @@ This project aims to extend the work of infrastructures.org and Paul Schenkeveld
 [Project Athena]: https://en.wikipedia.org/wiki/Project_Athena
 [Distributed Computing Environment]: https://en.wikipedia.org/wiki/Distributed_Computing_Environment
 
-!!
-
-The implementation can take multiple forms. The envisioned configuration is a closed network, that is, sites are connected using secure tunnels over the insecure internet where each site is independent of the others. In addition, there is no dependance on the internet infrastructure such as third-party certificate authorities or DNS providers. This means that the Root CA and Root DNS zone are managed locally.
-
-Decentralised - Each site is independent and can function without a connection to the internet. 
-
-Headquarters - Main site(s), connected to other sites
-
-In any of these scenarios, the administrators can provide end-users with access to the network in multiple ways:
-
-- Thick client
-- Thin client
-- BYOD
-- Web access only
-
-
-In addition, a "server" can take many forms, it could be a Jail/Zone/Container, virtual machine, physical or cloud.
-
-Also, while the envisioned configuration is a closed network, where nothing is accessible via the normal internet, there is no requirement for this to be so. If you want end-users to be able to access your network from home or via BYOD they can.
-
-!!
-
 High-Level Design
 ===
 
@@ -80,8 +58,9 @@ KerberizedNFSv4 for client file access.
 Experimental
 ===
 Features that aren't production ready, but would be interesting to implement:
-SSH using X509v3 certificates, signed by a central CA (or validated with DANE?)
-TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)
+
+- SSH using X509v3 certificates, signed by a central CA (or validated with DANE?)
+- TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)
 
 Detailed Design
 ===
@@ -312,6 +291,7 @@ Specific Operational Requirements
 
 ### Configuration ### 
 The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems
+
 	- NanoBSD, conf file
 	- Jails, conf file
 	- Kerberos
@@ -338,10 +318,12 @@ For app upgrades, snapshot current, update app, restart jail with new updated ap
 Config files / OS files / data files
 
 How to backup and restore:
+
 	- Kerberos principals, groups etc.
 	- LDAP data
 	- DNS records/zones
 	- HSM data
+
 Calculate the latency/data limits required to perform above backups/restores
 
 ### Redundancy ###
