@@ -69,7 +69,28 @@
 <li><a href="#logging-auditing">Logging / Auditing</a></li>
 <li><a href="#rpc-admin-service">RPC / Admin service</a></li>
 </ul></li>
-<li><a href="#designing-for-operations">Designing for Operations</a></li>
+<li><a href="#designing-for-operations">Designing for Operations</a><ul>
+<li><a href="#specific-operational-requirements">Specific Operational Requirements</a><ul>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#startup-and-shutdown">Startup and shutdown</a></li>
+<li><a href="#queue-draining">Queue draining</a></li>
+<li><a href="#software-upgrades">Software upgrades</a></li>
+<li><a href="#backups-and-restores">Backups and restores</a></li>
+<li><a href="#redundancy">Redundancy</a></li>
+<li><a href="#replicated-databases">Replicated databases</a></li>
+<li><a href="#hot-swaps">Hot swaps</a></li>
+<li><a href="#access-controls-and-rate-limits">Access controls and rate limits</a></li>
+<li><a href="#monitoring">Monitoring</a></li>
+<li><a href="#auditing">Auditing</a></li>
+</ul></li>
+<li><a href="#unspecific-operational-requirements">Unspecific Operational Requirements</a><ul>
+<li><a href="#assigning-ipv6-addresses-to-clients">Assigning IPv6 Addresses to Clients</a></li>
+<li><a href="#static-or-dynamic-ipv6-addresses-dhcpv6-or-slaac">Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC)</a></li>
+<li><a href="#hostname-conventions">Hostname Conventions</a></li>
+<li><a href="#choosing-an-operating-system">Choosing an Operating System</a></li>
+<li><a href="#choosing-a-configuration-management-tool">Choosing a Configuration Management Tool</a></li>
+</ul></li>
+</ul></li>
 <li><a href="#scaling">Scaling</a></li>
 <li><a href="#user-access">User Access</a><ul>
 <li><a href="#overview">Overview</a></li>
@@ -136,14 +157,9 @@
 <h3 id="nanobsd"><a href="#TOC">NanoBSD</a></h3>
 <p><a href="https://www.freebsd.org/cgi/man.cgi?query=nanobsd">NanoBSD</a> is built via shell script and produces a minimal implementation of FreeBSD which fits on small flash media. The image is customised with a configuration file, which specifies variables and functions to build the image as required. There are three stages to the image build: buildkernel, buildworld and the customise commands. The buildkernel stage is only required to be run once, further configuration changes can skip the buildkernel stage. However, some configuration changes do still require the kernel to be built. Compiling the kernel takes a long time (~30 minutes) and should be done sparingly.</p>
 <p>Once the kernel and world have been built, you can customise the state of the environment using the customise commands. These are functions specified at the end of the configuration file. By skipping the buildkernel and buildworld stages, you reduce the image build time to ~20 seconds.</p>
-<p>The image is only required to be built once, updated images are deployed via dd to the inactive slice. The system is then rebooted, and boots into the newly updated slice. If there are problems, change the slice back to the original, and reboot.</p>
-<p>Building the image offline also gives the advantage of being able to test the image easily prior to widespread deployment. You can dd the image to a zfs volume, then use bhyve to run the image as a virtual machine. You can then perform testing to ensure it is correct, before rolling out the image to production.</p>
-<p>The flash storage is divided into three parts: the two image partitions or slices (1 and 2) containing the read-only root filesystem where only one is active, and the configuration file partition or /cfg. The /etc and /var directories are md (malloc backed) disks, which means they are located in RAM.</p>
-<p>On boot, the active slice contains the root filesystem mounted as read-only, which is beneficial since it is stored on flash media which has a limited number of writes. Configuration changes to files in /etc or /var are temporary, since they are located in RAM, and are loaded from the /cfg partition on boot. This means you can change configuration files, and if things go wrong, you can just reboot to clear the RAM. Otherwise if the new configuration is correct, you can mount /cfg, copy the changed files from /etc or /var to /cfg, then unmount again.</p>
-<p>Also, since the root filesystem is read-only, it is able to survive after an unplanned reboot. There is also no reason to run fsck after a non-graceful shutdown.</p>
-<p>Since the configuration files are stored separately to the root filesystem, when switching the active slice, the configuration files are not changed. So updates and upgrades should not have an effect on the running configuration.</p>
-<p>It is also good operational practice to make sure that any configuration changes are saved to /cfg after testing, so that in the event the server reboots the configuration is still saved.</p>
-<p>This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.</p>
+<p>The image is only required to be built once, updated images are deployed via dd to the inactive slice. The system is then rebooted, and boots into the newly updated slice. If there are problems, change the slice back to the original, and reboot. Building the image offline also gives the advantage of being able to test the image easily prior to widespread deployment. You can dd the image to a zfs volume, then use bhyve to run the image as a virtual machine. You can then perform testing to ensure it is correct, before rolling out the image to production.</p>
+<p>The flash storage is divided into three parts: the two image partitions or slices (1 and 2) containing the read-only root filesystem where only one is active, and the configuration file partition or /cfg. The /etc and /var directories are md (malloc backed) disks, which means they are located in RAM. On boot, the active slice contains the root filesystem mounted as read-only, which is beneficial since it is stored on flash media which has a limited number of writes. Configuration changes to files in /etc or /var are temporary, since they are located in RAM, and are loaded from the /cfg partition on boot. This means you can change configuration files, and if things go wrong, you can just reboot to clear the RAM. Otherwise if the new configuration is correct, you can mount /cfg, copy the changed files from /etc or /var to /cfg, then unmount again. Also, since the root filesystem is read-only, it is able to survive after an unplanned reboot. There is also no reason to run fsck after a non-graceful shutdown.</p>
+<p>Since the configuration files are stored separately to the root filesystem, when switching the active slice, the configuration files are not changed. So updates and upgrades should not have an effect on the running configuration. It is also good operational practice to make sure that any configuration changes are saved to /cfg after testing, so that in the event the server reboots the configuration is still saved. This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.</p>
 <h3 id="jails"><a href="#TOC">Jails</a></h3>
 <ul>
 <li>A process and all descendants are restricted to a chrooted directory tree</li>
@@ -213,6 +229,7 @@
 <h2 id="rpc-admin-service"><a href="#TOC">RPC / Admin service</a></h2>
 <p>!!</p>
 <h1 id="designing-for-operations"><a href="#TOC">Designing for Operations</a></h1>
+<h2 id="specific-operational-requirements"><a href="#TOC">Specific Operational Requirements</a></h2>
 <ul>
 <li>Configuration</li>
 <li>Startup and shutdown</li>
@@ -227,40 +244,34 @@
 <li>Auditing</li>
 </ul>
 <p>!!</p>
-<ul>
-<li>Configuration: The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems
-<ul>
-<li>NanoBSD, conf file</li>
-<li>Jails, conf file</li>
-<li>Kerberos</li>
-<li>OpenDNSSEC</li>
-<li>SoftHSM</li>
-<li>NSD</li>
-<li>Unbound</li>
-<li>OpenLDAP</li>
-<li>OpenNTP</li>
-<li>OpenSSH</li>
-<li>Configuration Management</li>
-<li>NFS</li>
-</ul></li>
-<li><p>Startup and shutdown: Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.</p></li>
-<li><p>Queue draining: All requests are going through the load balancer, individual nodes can be put into drain mode.</p></li>
-<li><p>Software upgrades: For app upgrades, snapshot current, update app, restart jail with new updated app jail. For OS upgrades, build new offline image, update slice 2, reboot.</p></li>
-<li><p>Backups and restores: Config files / OS files / data files</p>
-How to backup and restore:
-<ul>
-<li>Kerberos principals, groups etc.</li>
-<li>LDAP data</li>
-<li>DNS records/zones</li>
-<li>HSM data Calculate the latency/data limits required to perform above backups/restores</li>
-</ul></li>
-<li><p>Redundancy: OS, hard drive, zfs, multiple core servers with master/slave, database replication, multiple load balancers. Services are behind a load balancer</p></li>
-<li><p>Replicated databases</p></li>
-<li><p>Hot swaps: Physical components should be hot swappable. Service components should also be hot swappable.</p></li>
-<li>Access controls and rate limits: If a service provides an API, that API should include an Access Control List</li>
-<li>Monitoring: Configuration management tools typically monitor the OS / Application code is correct. Use normal network monitoring tools to monitor up/down, latency etc…</li>
-<li><p>Auditing: Logging to central servers</p></li>
-</ul>
+<h3 id="configuration"><a href="#TOC">Configuration</a></h3>
+<p>The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems - NanoBSD, conf file - Jails, conf file - Kerberos - OpenDNSSEC - SoftHSM - NSD - Unbound - OpenLDAP - OpenNTP - OpenSSH - Configuration Management - NFS</p>
+<h3 id="startup-and-shutdown"><a href="#TOC">Startup and shutdown</a></h3>
+<p>Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.</p>
+<h3 id="queue-draining"><a href="#TOC">Queue draining</a></h3>
+<p>All requests are going through the load balancer, individual nodes can be put into drain mode.</p>
+<h3 id="software-upgrades"><a href="#TOC">Software upgrades</a></h3>
+<p>For app upgrades, snapshot current, update app, restart jail with new updated app jail. For OS upgrades, build new offline image, update slice 2, reboot.</p>
+<h3 id="backups-and-restores"><a href="#TOC">Backups and restores</a></h3>
+<p>Config files / OS files / data files</p>
+<p>How to backup and restore: - Kerberos principals, groups etc. - LDAP data - DNS records/zones - HSM data Calculate the latency/data limits required to perform above backups/restores</p>
+<h3 id="redundancy"><a href="#TOC">Redundancy</a></h3>
+<p>OS, hard drive, zfs, multiple core servers with master/slave, database replication, multiple load balancers. Services are behind a load balancer</p>
+<h3 id="replicated-databases"><a href="#TOC">Replicated databases</a></h3>
+<h3 id="hot-swaps"><a href="#TOC">Hot swaps</a></h3>
+<p>Physical components should be hot swappable. Service components should also be hot swappable.</p>
+<h3 id="access-controls-and-rate-limits"><a href="#TOC">Access controls and rate limits</a></h3>
+<p>If a service provides an API, that API should include an Access Control List</p>
+<h3 id="monitoring"><a href="#TOC">Monitoring</a></h3>
+<p>Configuration management tools typically monitor the OS / Application code is correct. Use normal network monitoring tools to monitor up/down, latency etc…</p>
+<h3 id="auditing"><a href="#TOC">Auditing</a></h3>
+<p>Logging to central servers</p>
+<h2 id="unspecific-operational-requirements"><a href="#TOC">Unspecific Operational Requirements</a></h2>
+<h3 id="assigning-ipv6-addresses-to-clients"><a href="#TOC">Assigning IPv6 Addresses to Clients</a></h3>
+<h3 id="static-or-dynamic-ipv6-addresses-dhcpv6-or-slaac"><a href="#TOC">Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC)</a></h3>
+<h3 id="hostname-conventions"><a href="#TOC">Hostname Conventions</a></h3>
+<h3 id="choosing-an-operating-system"><a href="#TOC">Choosing an Operating System</a></h3>
+<h3 id="choosing-a-configuration-management-tool"><a href="#TOC">Choosing a Configuration Management Tool</a></h3>
 <h1 id="scaling"><a href="#TOC">Scaling</a></h1>
 <p>AKF Scaling Cube</p>
 <ul>
