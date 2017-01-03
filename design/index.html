@@ -23,6 +23,7 @@
 <li><a href="#experimental">Experimental</a></li>
 <li><a href="#detailed-design">Detailed Design</a><ul>
 <li><a href="#ipv6">IPv6</a><ul>
+<li><a href="#address-autoconfiguration-slaac">Address Autoconfiguration (SLAAC)</a></li>
 <li><a href="#send">SEND</a></li>
 <li><a href="#ipsec">IPsec</a></li>
 <li><a href="#kink">KINK</a></li>
@@ -86,6 +87,7 @@
 <li><a href="#unspecific-operational-requirements">Unspecific Operational Requirements</a><ul>
 <li><a href="#assigning-ipv6-addresses-to-clients">Assigning IPv6 Addresses to Clients</a></li>
 <li><a href="#static-or-dynamic-ipv6-addresses-dhcpv6-or-slaac">Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC)</a></li>
+<li><a href="#ipv6-security">IPv6 Security</a></li>
 <li><a href="#hostname-conventions">Hostname Conventions</a></li>
 <li><a href="#choosing-an-operating-system">Choosing an Operating System</a></li>
 <li><a href="#choosing-a-configuration-management-tool">Choosing a Configuration Management Tool</a></li>
@@ -132,13 +134,23 @@
 <h1 id="detailed-design"><a href="#TOC">Detailed Design</a></h1>
 <p>Control machine config, Git, SSH, 2FA? Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH. Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.<br />Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP</p>
 <h2 id="ipv6"><a href="#TOC">IPv6</a></h2>
-<p>IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4. The much larger address space, 2^128, allows more devices on the same subnet. The standard subnet size of 2^64 equates to the square of the entire IPv4 address space. Using Stateless address autoconfiguration (<a href="https://tools.ietf.org/html/rfc4862">SLAAC</a>), IPv6 hosts can configure themselves automatically when connected to an IPv6 network using the <a href="https://tools.ietf.org/html/rfc4861">Neighbor Discovery Protocol</a> (NDP) via ICMPv6 router discovery messages. The IPv6 router will be allocated a subnet by the ISP and configured with the first 64 bits of the 128-bit address. <a href="https://tools.ietf.org/html/rfc4862#section-5.4">Duplicate Address Detection</a> and <a href="https://tools.ietf.org/html/rfc4861#section-7.3">Neighbor Unreachability Detection</a> serve as error handling for the address autoconfiguration. Since the IPv6 addresses are generated from the prefix on the router, it is possible to renumber an entire network by changing the prefix on the router.</p>
+<p>IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4.</p>
+<p>IPv6 uses a 128-bit address which allows a much larger address space, 2^128. A single /64 subnet has size of 2^64 addresses which equates to the square of the entire IPv4 address space. An address is represented as eight groups of four hexadecimal digits with the groups separated by colons, e.g. 2001:0db8:0000:0042:0000:8a2e:0370:7334. Guidance for representing IPv6 addresses in text is shown in <a href="https://tools.ietf.org/html/rfc5952">RFC5952</a>.</p>
+<p>IPv6 addresses can be assigned in two ways, Stateless Address Autoconfiguration (<a href="https://tools.ietf.org/html/rfc4862">SLAAC</a>) and/or DHCPv6. The stateless approach is used when a site is not particularly concerned with the addresses hosts use, whereas stateful DHCPv6 is used when a site requires tighter control over addresses. Both SLAAC and DHCPv6 may be used simultaneously.</p>
+<h3 id="address-autoconfiguration-slaac"><a href="#TOC">Address Autoconfiguration (SLAAC)</a></h3>
+<p>The autoconfiguration process includes generating a link-local address, generating global addresses via stateless address autoconfiguration, and the Duplicate Address Detection procedure to verify the uniqueness of the addresses on a link. The IPv6 stateless autoconfiguration mechanism requires no manual configuration of hosts, minimal configuration of routers, and no additional servers. The stateless mechanism allows a host to generate its own addresses using a combination of locally available information and information advertised by routers. Routers advertise prefixes that identify the subnet(s) associated with a link, while hosts generate an “interface identifier” that uniquely identifies an interface on a subnet. An address is formed by combining the two. In the absence of routers, a host can only generate link-local addresses. However, link-local addresses are sufficient for allowing communication among nodes attached to the same link.</p>
+<p>IPv6 nodes on the same link use the Neighbor Discovery protocol to discover each others presence, to determine each other link-layer addresses, to find routers, and to maintain reachability information about the paths to active neighbors.</p>
+<p>All interfaces of IPv6 hosts require a link-local address, which is derived from the MAC address of the interface and the prefix fe80::/10. The address space is filled with prefix bits left-justified to the most-significant bit, and filling the MAC address in EUI-64 format into the least-significant bits. Any remaining bits between the two parts are set to zero.</p>
+<p>PICTURE OF LINK-LOCAL ADDRESS GENERATION</p>
+<p>Using SLAAC, hosts can configure themselves automatically when connected to an IPv6 network using the <a href="https://tools.ietf.org/html/rfc4861">Neighbor Discovery Protocol</a> (NDP) via ICMPv6 router discovery messages.</p>
+<p>The IPv6 router will be allocated a subnet by the ISP and configured with the first 64 bits of the 128-bit address. <a href="https://tools.ietf.org/html/rfc4862#section-5.4">Duplicate Address Detection</a> and <a href="https://tools.ietf.org/html/rfc4861#section-7.3">Neighbor Unreachability Detection</a> serve as error handling for the address autoconfiguration.</p>
+<p>Since the IPv6 addresses are generated from the prefix on the router, it is possible to renumber an entire network by changing the prefix on the router.</p>
 <p>IPv6 address are mapped to hostnames in DNS using <a href="https://tools.ietf.org/html/rfc3596">AAAA resource records</a>. Reverse resolution uses the ip6.arpa domain.</p>
 <h3 id="send"><a href="#TOC">SEND</a></h3>
 <h3 id="ipsec"><a href="#TOC">IPsec</a></h3>
 <p>Security associations via IKE or KINK</p>
 <h3 id="kink"><a href="#TOC">KINK</a></h3>
-<p><a href="https://tools.ietf.org/html/rfc4430">Kerberized Internet Negotiation of Keys</a> (KINK) defines a protocol to establish and maintain security associations using the Kerberos authentication system. The central key management provided by Kerberos is efficient because it limits computational cost and limits complexity versus IKE’s necessity of using public key cryptography. Initial authentication to the KDC may be performed using asymmetric keys via the <a href="https://tools.ietf.org/html/rfc4556">Public Key Cryptography for Initial Authentication in Kerberos</a> (PKINIT) protocol.</p>
+<p><a href="https://tools.ietf.org/html/rfc4430">Kerberized Internet Negotiation of Keys</a> (KINK) defines a protocol to establish and maintain security associations using the Kerberos authentication system. The central key management provided by Kerberos is efficient because it limits computational cost and limits complexity versus IKE’s necessity of using public key cryptography. Initial authentication to the KDC may be performed using asymmetric keys via <a href="https://tools.ietf.org/html/rfc4556">Public Key Cryptography for Initial Authentication in Kerberos</a> (PKINIT).</p>
 <h2 id="os"><a href="#TOC">OS</a></h2>
 <p>The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.</p>
 <h3 id="freebsd"><a href="#TOC">FreeBSD</a></h3>
@@ -276,6 +288,9 @@
 <h2 id="unspecific-operational-requirements"><a href="#TOC">Unspecific Operational Requirements</a></h2>
 <h3 id="assigning-ipv6-addresses-to-clients"><a href="#TOC">Assigning IPv6 Addresses to Clients</a></h3>
 <h3 id="static-or-dynamic-ipv6-addresses-dhcpv6-or-slaac"><a href="#TOC">Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC)</a></h3>
+<h3 id="ipv6-security"><a href="#TOC">IPv6 Security</a></h3>
+<p>While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key crptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in [RFC6105]/[RFC7113], is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply “RA disallow on a given interface” to “RA allowed from SEND authorised sources only”.</p>
+<p>[RFC6105] [RFC7113]</p>
 <h3 id="hostname-conventions"><a href="#TOC">Hostname Conventions</a></h3>
 <h3 id="choosing-an-operating-system"><a href="#TOC">Choosing an Operating System</a></h3>
 <h3 id="choosing-a-configuration-management-tool"><a href="#TOC">Choosing a Configuration Management Tool</a></h3>

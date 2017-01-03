@@ -73,25 +73,47 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 IPv6
 ---
 
-IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4. The much larger address space, 2^128, allows more devices on the same subnet. The standard subnet size of 2^64 equates to the square of the entire IPv4 address space. Using Stateless address autoconfiguration ([SLAAC]), IPv6 hosts can configure themselves automatically when connected to an IPv6 network using the [Neighbor Discovery Protocol] (NDP) via ICMPv6 router discovery messages. The IPv6 router will be allocated a subnet by the ISP and configured with the first 64 bits of the 128-bit address. [Duplicate Address Detection] and [Neighbor Unreachability Detection] serve as error handling for the address autoconfiguration. Since the IPv6 addresses are generated from the prefix on the router, it is possible to renumber an entire network by changing the prefix on the router.
+IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4. 
+
+IPv6 uses a 128-bit address which allows a much larger address space, 2^128. A single /64 subnet has size of 2^64 addresses which equates to the square of the entire IPv4 address space. An address is represented as eight groups of four hexadecimal digits with the groups separated by colons, e.g. 2001:0db8:0000:0042:0000:8a2e:0370:7334. Guidance for representing IPv6 addresses in text is shown in [RFC5952].
+
+IPv6 addresses can be assigned in two ways, Stateless Address Autoconfiguration ([SLAAC]) and/or DHCPv6. The stateless approach is used when a site is not particularly concerned with the addresses hosts use, whereas stateful DHCPv6 is used when a site requires tighter control over addresses. Both SLAAC and DHCPv6 may be used simultaneously. 
+
+### Address Autoconfiguration (SLAAC) ###
+The autoconfiguration process includes generating a link-local address, generating global addresses via stateless address autoconfiguration, and the Duplicate Address Detection procedure to verify the uniqueness of the addresses on a link. The IPv6 stateless autoconfiguration mechanism requires no manual configuration of hosts, minimal configuration of routers, and no additional servers. The stateless mechanism allows a host to generate its own addresses using a combination of locally available information and information advertised by routers. Routers advertise prefixes that identify the subnet(s) associated with a link, while hosts generate an "interface identifier" that uniquely identifies an interface on a subnet. An address is formed by combining the two. In the absence of routers, a host can only generate link-local addresses. However, link-local addresses are sufficient for allowing communication among nodes attached to the same link.
+
+IPv6 nodes on the same link use the Neighbor Discovery protocol to discover each others presence, to determine each other link-layer addresses, to find routers, and to maintain reachability information about the paths to active neighbors.
+
+All interfaces of IPv6 hosts require a link-local address, which is derived from the MAC address of the interface and the prefix fe80::/10. The address space is filled with prefix bits left-justified to the most-significant bit, and filling the MAC address in EUI-64 format into the least-significant bits. Any remaining bits between the two parts are set to zero.
+
+PICTURE OF LINK-LOCAL ADDRESS GENERATION
+
+Using SLAAC, hosts can configure themselves automatically when connected to an IPv6 network using the [Neighbor Discovery Protocol] (NDP) via ICMPv6 router discovery messages. 
+
+The IPv6 router will be allocated a subnet by the ISP and configured with the first 64 bits of the 128-bit address. [Duplicate Address Detection] and [Neighbor Unreachability Detection] serve as error handling for the address autoconfiguration. 
+
+Since the IPv6 addresses are generated from the prefix on the router, it is possible to renumber an entire network by changing the prefix on the router.
 
 IPv6 address are mapped to hostnames in DNS using [AAAA resource records]. Reverse resolution uses the ip6.arpa domain.
+
+
 
 [SLAAC]: https://tools.ietf.org/html/rfc4862
 [Neighbor Discovery Protocol]: https://tools.ietf.org/html/rfc4861
 [Duplicate Address Detection]: https://tools.ietf.org/html/rfc4862#section-5.4
 [Neighbor Unreachability Detection]: https://tools.ietf.org/html/rfc4861#section-7.3
 [AAAA resource records]: https://tools.ietf.org/html/rfc3596
-
+[RFC5952]: https://tools.ietf.org/html/rfc5952
 
 ### SEND ###
+
 
 ### IPsec ###
 Security associations via IKE or KINK
 
 
 ### KINK ###
-[Kerberized Internet Negotiation of Keys] (KINK) defines a protocol to establish and maintain security associations using the Kerberos authentication system. The central key management provided by Kerberos is efficient because it limits computational cost and limits complexity versus IKE's necessity of using public key cryptography. Initial authentication to the KDC may be performed using asymmetric keys via the [Public Key Cryptography for Initial Authentication in Kerberos] (PKINIT) protocol.
+[Kerberized Internet Negotiation of Keys] (KINK) defines a protocol to establish and maintain security associations using the Kerberos authentication system. The central key management provided by Kerberos is efficient because it limits computational cost and limits complexity versus IKE's necessity of using public key cryptography. Initial authentication to the KDC may be performed using asymmetric keys via [Public Key Cryptography for Initial Authentication in Kerberos] (PKINIT).
 
 
 [Kerberized Internet Negotiation of Keys]: https://tools.ietf.org/html/rfc4430
@@ -349,6 +371,13 @@ Unspecific Operational Requirements
 ### Assigning IPv6 Addresses to Clients ### 
 
 ### Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC) ###
+
+### IPv6 Security ###
+While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key crptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in [RFC6105]/[RFC7113], is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply "RA disallow on a given interface" to "RA allowed from SEND authorised sources only".
+
+[RFC6105]
+[RFC7113]
+
 
 ### Hostname Conventions ###
 
