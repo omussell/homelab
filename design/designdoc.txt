@@ -75,7 +75,7 @@ IPv6
 
 IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4. 
 
-IPv6 uses a 128-bit address which allows a much larger address space, 2^128. A single /64 subnet has size of 2^64 addresses which equates to the square of the entire IPv4 address space. An address is represented as eight groups of four hexadecimal digits with the groups separated by colons, e.g. 2001:0db8:0000:0042:0000:8a2e:0370:7334. Guidance for representing IPv6 addresses in text is shown in [RFC5952].
+IPv6 uses a 128-bit address which allows a much larger address space, 2^128. A single /64 subnet has a size of 2^64 addresses which equates to the square of the entire IPv4 address space. An address is represented as eight groups of four hexadecimal digits with the groups separated by colons, e.g. 2001:0db8:0000:0042:0000:8a2e:0370:7334. Guidance for representing IPv6 addresses in text is shown in [RFC5952].
 
 IPv6 addresses can be assigned in two ways, stateful or stateless, via Stateless Address Autoconfiguration ([SLAAC]) and/or DHCPv6. The stateless approach is used when a site is not particularly concerned with the addresses hosts use, whereas stateful DHCPv6 is used when a site requires tighter control over addresses. Both SLAAC and DHCPv6 may be used simultaneously. 
 
@@ -158,7 +158,8 @@ Since the configuration files are stored separately to the root filesystem, when
 - High performance with multiple caching mechanisms
 - Snapshots
 
-
+### Other Operating Systems/Containers/Filesystems ###
+While a combination of FreeBSD, Jails and ZFS have been recommended, you are free to use other operating systems like Windows or Linux, other container formats such as LXC or Zones, and other filesystems like BTRFS or EXT. The general concepts are interchangeable.
 
 ### Host Install Tools ###
 
@@ -262,6 +263,14 @@ Application Servers
 
 Security and Crypto
 ---
+Some of the design decisions made throughout this document may be questioned by others. For example, choosing AES-GCM over ChaCha20-Poly1305, utilising IPsec which may have been influenced by the NSA and whose design is questioned by respected cryptographers, using S/MIME rather than PGP, and using DNSSEC rather than DNSCrypt.
+
+As always, you are free to choose other cipher suites or software implementations. Specific reasons will be given below:
+
+- 1
+- 2
+- 3
+
 ### TLS ###
 ### SSH ###
 ### HSM ###
