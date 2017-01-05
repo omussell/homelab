@@ -1,6 +1,6 @@
 % Bootstrapping a Secure Infrastructure
 % Oliver Mussell
-% 2016
+% 2016-2017
 
 - Produced in Markdown with Vim, converted to HTML by Pandoc.
 - Graphics created with DOT
@@ -176,8 +176,14 @@ DNS
 DNS is required to provide hostname to IP mapping. 
 
 ### DNSSEC ###
-The DNS Security Extensions or [DNSSEC] add protection for DNS records by allowing resolvers and applications to authenticate the data they receive from DNS servers. [DNS resolution starts at the root], and works down the nameservers until the desired domain name is reached. DNSSEC builds upon this model by creating a chain of trust from the root zone.
+[DNSSEC] creates a secure domain name system by adding cryptographic signatures to existing DNS records. These digital signatures are stored in DNS name servers alongside other record types like AAAA, MX etc. By checking the associated signature, you can verify that a DNS record comes from its authoritative name server and hasn't been altered. A basic guide of [how DNSSEC works] is found [on the CloudFlare blog].
 
+When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the [Root Signing Ceremony]
+
+[DNSSEC]: https://tools.ietf.org/html/rfc2535
+[how DNSSEC works]: https://www.cloudflare.com/dns/dnssec/how-dnssec-works/
+[Root Signing Ceremony]: https://www.cloudflare.com/dns/dnssec/root-signing-ceremony/
+[on the CloudFlare blog]: https://blog.cloudflare.com/dnssec-an-introduction/
 
 
 ### DANE ###
@@ -185,7 +191,7 @@ DNS-Based Authentication of Named Entities or [DANE] allows certificates, used b
 
 DANE is implemented by placing TLSA records in the DNS.
 
-TLS via DANE can be used to secure websites over HTTPS, email via the [OpenPGP] and [S/MIME] extensions, instant messaging (XMPP, IRC) and others via SRV records.
+TLS via DANE can be used to secure websites over HTTPS, email via the [OpenPGP] and [S/MIME] extensions, instant messaging (XMPP, IRC) and other applications via SRV records.
 
 ### DANE for Email Security ###
 Since SMTP was designed to be transmitted in plaintext, encryption in the form of [STARTTLS] or [Opportunistic TLS] was developed to secure email communication. However, [it is known] to be [vulnerable to downgrade attacks], since the initial handshake occurs in plain text. An attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.  
@@ -210,6 +216,10 @@ A guide to setting up DNSSEC+DANE to guarantee secure email between organisation
 - [OpenDNSSEC]
 - [ISC BIND]
 
+	Further guides published by NIST:
+	[Secure Domain Name System Deployment Guide]
+	[Trustworthy Email]
+
 
 [STARTTLS]: https://tools.ietf.org/html/rfc3207
 [Opportunistic TLS]: https://en.wikipedia.org/wiki/Opportunistic_TLS
@@ -220,7 +230,6 @@ A guide to setting up DNSSEC+DANE to guarantee secure email between organisation
 [Let's Encrypt]: https://letsencrypt.org
 [intermediate solution]: https://github.com/EFForg/starttls-everywhere#alternatives
 [DNSSEC and DANE]: https://tools.ietf.org/html/draft-ietf-dane-smtp-with-dane-10
-[DNSSEC]: https://tools.ietf.org/html/rfc2535
 [DANE]: https://tools.ietf.org/html/rfc6698
 [OpenPGP]: https://tools.ietf.org/html/rfc7929
 [S/MIME]: https://tools.ietf.org/html/draft-ietf-dane-smime-14
@@ -234,7 +243,9 @@ A guide to setting up DNSSEC+DANE to guarantee secure email between organisation
 [Unbound]: http://unbound.net
 [OpenDNSSEC]: https://www.opendnssec.org
 [ISC BIND]: https://www.isc.org/downloads/bind/
-[DNS resolution starts at the root]: https://blog.cloudflare.com/dnssec-an-introduction/
+[Secure Domain Name System Deployment Guide]: http://dx.doi.org/10.6028/NIST.SP.800-81-2
+[Trustworthy Email]: http://dx.doi.org/10.6028/NIST.SP.800-177
+
 
 
 

@@ -12,7 +12,7 @@
 <div id="header">
 <h1 class="title">Bootstrapping a Secure Infrastructure</h1>
 <h2 class="author">Oliver Mussell</h2>
-<h3 class="date">2016</h3>
+<h3 class="date">2016-2017</h3>
 </div>
 <div id="TOC">
 <ul>
@@ -186,11 +186,12 @@
 <h2 id="dns"><a href="#TOC">DNS</a></h2>
 <p>DNS is required to provide hostname to IP mapping.</p>
 <h3 id="dnssec"><a href="#TOC">DNSSEC</a></h3>
-<p>The DNS Security Extensions or <a href="https://tools.ietf.org/html/rfc2535">DNSSEC</a> add protection for DNS records by allowing resolvers and applications to authenticate the data they receive from DNS servers. <a href="https://blog.cloudflare.com/dnssec-an-introduction/">DNS resolution starts at the root</a>, and works down the nameservers until the desired domain name is reached. DNSSEC builds upon this model by creating a chain of trust from the root zone.</p>
+<p><a href="https://tools.ietf.org/html/rfc2535">DNSSEC</a> creates a secure domain name system by adding cryptographic signatures to existing DNS records. These digital signatures are stored in DNS name servers alongside other record types like AAAA, MX etc. By checking the associated signature, you can verify that a DNS record comes from its authoritative name server and hasn’t been altered. A basic guide of <a href="https://www.cloudflare.com/dns/dnssec/how-dnssec-works/">how DNSSEC works</a> is found <a href="https://blog.cloudflare.com/dnssec-an-introduction/">on the CloudFlare blog</a>.</p>
+<p>When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the <a href="https://www.cloudflare.com/dns/dnssec/root-signing-ceremony/">Root Signing Ceremony</a></p>
 <h3 id="dane"><a href="#TOC">DANE</a></h3>
 <p>DNS-Based Authentication of Named Entities or <a href="https://tools.ietf.org/html/rfc6698">DANE</a> allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server’s certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.</p>
 <p>DANE is implemented by placing TLSA records in the DNS.</p>
-<p>TLS via DANE can be used to secure websites over HTTPS, email via the <a href="https://tools.ietf.org/html/rfc7929">OpenPGP</a> and <a href="https://tools.ietf.org/html/draft-ietf-dane-smime-14">S/MIME</a> extensions, instant messaging (XMPP, IRC) and others via SRV records.</p>
+<p>TLS via DANE can be used to secure websites over HTTPS, email via the <a href="https://tools.ietf.org/html/rfc7929">OpenPGP</a> and <a href="https://tools.ietf.org/html/draft-ietf-dane-smime-14">S/MIME</a> extensions, instant messaging (XMPP, IRC) and other applications via SRV records.</p>
 <h3 id="dane-for-email-security"><a href="#TOC">DANE for Email Security</a></h3>
 <p>Since SMTP was designed to be transmitted in plaintext, encryption in the form of <a href="https://tools.ietf.org/html/rfc3207">STARTTLS</a> or <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS">Opportunistic TLS</a> was developed to secure email communication. However, <a href="https://blog.filipo.io/the-sad-state-of-smtp-encryption/">it is known</a> to be <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS#Weaknesses_and_mitigations">vulnerable to downgrade attacks</a>, since the initial handshake occurs in plain text. An attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.</p>
 <p>The Electronic Frontier Foundation (<a href="https://www.eff.org">EFF</a>) has created a project called <a href="https://github.com/EFForg/starttls-everywhere">STARTTLS Everywhere</a> in an effort to enforce TLS between popular email domains, with the help of <a href="https://letsencrypt.org">Let’s Encrypt</a> to serve certificates.</p>
@@ -207,7 +208,8 @@
 <li><a href="https://www.nlnetlabs.nl/projects/nsd/">NSD</a></li>
 <li><a href="http://unbound.net">Unbound</a></li>
 <li><a href="https://www.opendnssec.org">OpenDNSSEC</a></li>
-<li><a href="https://www.isc.org/downloads/bind/">ISC BIND</a></li>
+<li><p><a href="https://www.isc.org/downloads/bind/">ISC BIND</a></p>
+<p>Further guides published by NIST: <a href="http://dx.doi.org/10.6028/NIST.SP.800-177">Secure Domain Name System Deployment Guide</a></p></li>
 </ul>
 <h2 id="ldap"><a href="#TOC">LDAP</a></h2>
 <h3 id="ldaps"><a href="#TOC">LDAPS</a></h3>
