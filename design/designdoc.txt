@@ -287,14 +287,9 @@ As always, you are free to choose other cipher suites or software implementation
 - 3
 
 ### Against DNSSEC (and DANE) ###
-Cryptography worst practices, Daniel J. Bernstein [slides], [video] - [counterpoint by Dan Kaminsky], [another counterpoint]
-[DNSSEC in Chrome] (2014)
-[Why not DANE in browsers], Adam Langley (2015)
-
-
-
-
-
+- Cryptography worst practices, Daniel J. Bernstein [slides], [video] - [counterpoint by Dan Kaminsky], [another counterpoint]
+- [DNSSEC in Chrome] (2014)
+- [Why not DANE in browsers], Adam Langley (2015)
 
 
 [slides]: http://cr.yp.to/talks/2012.03.08-1/slides.pdf
