@@ -292,6 +292,7 @@ As always, you are free to choose other cipher suites or software implementation
 - [Why not DANE in browsers], Adam Langley (2015)
 
 Counterpoints:
+
 - [Dan Kaminsky]
 - [EasyDNS]
 
