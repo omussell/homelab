@@ -86,11 +86,15 @@ IPv6 nodes on the same link use the Neighbor Discovery protocol to discover each
 
 All interfaces of IPv6 hosts require a link-local address, which is derived from the MAC address of the interface and the prefix fe80::/10. The address space is filled with prefix bits left-justified to the most-significant bit, and filling the MAC address in EUI-64 format into the least-significant bits. Any remaining bits between the two parts are set to zero.
 
-PICTURE OF LINK-LOCAL ADDRESS GENERATION
+	- The left-most 'prefix length' bits of the address are those of the link-local prefix
+	- The bits in the address to the right of the link-local prefix are set to all zeroes
+	- If the length of the interface identifier is Nbits, the right-most N bits of the address are replaced by the interface identifier
 
 Global addresses are formed by appending an interface identifier to a prefix of appropriate length. Prefixes are obtained from Prefix Information options contained in Router Advertisements. RA's are sent periodically to the all-nodes multicast address. To obtain an advertisement quickly, a host send out Router Solicitations as described in [RFC4861].
 
 PICTURE OF GLOBAL ADDRESS GENERATION
+
+The Neighbor Discovery Protocol ([NDP]) is used by nodes to determine the link-layer addresses for neighbors known to reside on the same attached link, to find neighboring routers to forward packets, and to keep track of neighbors that are reachable or not.
 
 The [Neighbor Discovery Protocol] (NDP) is used as part of Duplicate Address Detection . 
 
@@ -103,7 +107,7 @@ IPv6 address are mapped to hostnames in DNS using [AAAA resource records]. Rever
 
 
 [SLAAC]: https://tools.ietf.org/html/rfc4862
-[Neighbor Discovery Protocol]: https://tools.ietf.org/html/rfc4861
+[NDP]: https://tools.ietf.org/html/rfc4861
 [Duplicate Address Detection]: https://tools.ietf.org/html/rfc4862#section-5.4
 [Neighbor Unreachability Detection]: https://tools.ietf.org/html/rfc4861#section-7.3
 [AAAA resource records]: https://tools.ietf.org/html/rfc3596
@@ -282,8 +286,34 @@ As always, you are free to choose other cipher suites or software implementation
 - 2
 - 3
 
+### Against DNSSEC (and DANE) ###
+Cryptography worst practices, Daniel J. Bernstein [slides], [video] - [counterpoint by Dan Kaminsky], [another counterpoint]
+[DNSSEC in Chrome] (2014)
+[Why not DANE in browsers], Adam Langley (2015)
+
+
+
+
+
+
+
+[slides]: http://cr.yp.to/talks/2012.03.08-1/slides.pdf
+[video]: https://vimeo.com/18279777
+[counterpoint by Dan Kaminsky]: https://dankaminsky.com/2011/01/05/djb-ccc/
+[another counterpoint]: http://blog.easydns.org/2015/08/06/for-dnssec/
+[DNSSEC in Chrome]: https://groups.google.com/forum/#!topic/mozilla.dev.security/xylVm_kD_WE 
+[Why not DANE in browsers]: https://www.imperialviolet.org/2015/01/17/notdane.html
+
 ### TLS ###
+
 ### SSH ###
+
+
+
+
+
+
+
 ### HSM ###
 ### Passwords ###
 ### TCP Wrapper ###
