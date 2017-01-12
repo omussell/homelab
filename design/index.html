@@ -236,10 +236,9 @@
 <ul>
 <li>Cryptography worst practices, Daniel J. Bernstein <a href="http://cr.yp.to/talks/2012.03.08-1/slides.pdf">slides</a>, <a href="https://vimeo.com/18279777">video</a></li>
 <li><a href="https://groups.google.com/forum/#!topic/mozilla.dev.security/xylVm_kD_WE">DNSSEC in Chrome</a> (2014)</li>
-<li><p><a href="https://www.imperialviolet.org/2015/01/17/notdane.html">Why not DANE in browsers</a>, Adam Langley (2015)</p></li>
-<li><a href="https://dankaminsky.com/2011/01/05/djb-ccc/">Counterpoint by Dan Kaminsky</a></li>
-<li><p><a href="http://blog.easydns.org/2015/08/06/for-dnssec/">Another counterpoint</a></p></li>
+<li><a href="https://www.imperialviolet.org/2015/01/17/notdane.html">Why not DANE in browsers</a>, Adam Langley (2015)</li>
 </ul>
+<p>Counterpoints: - <a href="https://dankaminsky.com/2011/01/05/djb-ccc/">Dan Kaminsky</a> - <a href="http://blog.easydns.org/2015/08/06/for-dnssec/">EasyDNS</a></p>
 <h3 id="tls"><a href="#TOC">TLS</a></h3>
 <h3 id="ssh"><a href="#TOC">SSH</a></h3>
 <h3 id="hsm"><a href="#TOC">HSM</a></h3>
@@ -315,8 +314,7 @@
 <h3 id="assigning-ipv6-addresses-to-clients"><a href="#TOC">Assigning IPv6 Addresses to Clients</a></h3>
 <h3 id="static-or-dynamic-ipv6-addresses-dhcpv6-or-slaac"><a href="#TOC">Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC)</a></h3>
 <h3 id="ipv6-security"><a href="#TOC">IPv6 Security</a></h3>
-<p>While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key crptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in [RFC6105]/[RFC7113], is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply “RA disallow on a given interface” to “RA allowed from SEND authorised sources only”.</p>
-<p>[RFC6105] [RFC7113]</p>
+<p>While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key crptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in <a href="https://tools.ietf.org/html/rfc6105">RFC6105</a>/<a href="https://tools.ietf.org/html/rfc7113">RFC7113</a>, is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply “RA disallow on a given interface” to “RA allowed from SEND authorised sources only”.</p>
 <h3 id="hostname-conventions"><a href="#TOC">Hostname Conventions</a></h3>
 <h3 id="choosing-an-operating-system"><a href="#TOC">Choosing an Operating System</a></h3>
 <h3 id="choosing-a-configuration-management-tool"><a href="#TOC">Choosing a Configuration Management Tool</a></h3>

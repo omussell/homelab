@@ -291,14 +291,15 @@ As always, you are free to choose other cipher suites or software implementation
 - [DNSSEC in Chrome] (2014)
 - [Why not DANE in browsers], Adam Langley (2015)
 
-- [Counterpoint by Dan Kaminsky]
-- [Another counterpoint]
+Counterpoints:
+- [Dan Kaminsky]
+- [EasyDNS]
 
 
 [slides]: http://cr.yp.to/talks/2012.03.08-1/slides.pdf
 [video]: https://vimeo.com/18279777
-[Counterpoint by Dan Kaminsky]: https://dankaminsky.com/2011/01/05/djb-ccc/
-[Another counterpoint]: http://blog.easydns.org/2015/08/06/for-dnssec/
+[Dan Kaminsky]: https://dankaminsky.com/2011/01/05/djb-ccc/
+[EasyDNS]: http://blog.easydns.org/2015/08/06/for-dnssec/
 [DNSSEC in Chrome]: https://groups.google.com/forum/#!topic/mozilla.dev.security/xylVm_kD_WE 
 [Why not DANE in browsers]: https://www.imperialviolet.org/2015/01/17/notdane.html
 
@@ -428,8 +429,8 @@ Unspecific Operational Requirements
 ### IPv6 Security ###
 While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key crptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in [RFC6105]/[RFC7113], is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply "RA disallow on a given interface" to "RA allowed from SEND authorised sources only".
 
-[RFC6105]
-[RFC7113]
+[RFC6105]: https://tools.ietf.org/html/rfc6105
+[RFC7113]: https://tools.ietf.org/html/rfc7113
 
 
 ### Hostname Conventions ###
