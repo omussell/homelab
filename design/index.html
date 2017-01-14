@@ -25,6 +25,7 @@
 <li><a href="#ipv6">IPv6</a><ul>
 <li><a href="#address-autoconfiguration-slaac">Address Autoconfiguration (SLAAC)</a></li>
 <li><a href="#send">SEND</a></li>
+<li><a href="#dhcpv6">DHCPv6</a></li>
 <li><a href="#ipsec">IPsec</a></li>
 <li><a href="#kink">KINK</a></li>
 </ul></li>
@@ -154,6 +155,7 @@
 <p>Since the IPv6 addresses are generated from the prefix on the router, it is possible to renumber an entire network by changing the prefix on the router.</p>
 <p>IPv6 address are mapped to hostnames in DNS using <a href="https://tools.ietf.org/html/rfc3596">AAAA resource records</a>. Reverse resolution uses the ip6.arpa domain.</p>
 <h3 id="send"><a href="#TOC">SEND</a></h3>
+<h3 id="dhcpv6"><a href="#TOC">DHCPv6</a></h3>
 <h3 id="ipsec"><a href="#TOC">IPsec</a></h3>
 <p>Security associations via IKE or KINK</p>
 <h3 id="kink"><a href="#TOC">KINK</a></h3>
@@ -341,7 +343,7 @@
 <h3 id="assigning-ipv6-addresses-to-clients"><a href="#TOC">Assigning IPv6 Addresses to Clients</a></h3>
 <h3 id="static-or-dynamic-ipv6-addresses-dhcpv6-or-slaac"><a href="#TOC">Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC)</a></h3>
 <h3 id="ipv6-security"><a href="#TOC">IPv6 Security</a></h3>
-<p>While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key crptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in <a href="https://tools.ietf.org/html/rfc6105">RFC6105</a>/<a href="https://tools.ietf.org/html/rfc7113">RFC7113</a>, is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply “RA disallow on a given interface” to “RA allowed from SEND authorised sources only”.</p>
+<p>While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key cryptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in <a href="https://tools.ietf.org/html/rfc6105">RFC6105</a>/<a href="https://tools.ietf.org/html/rfc7113">RFC7113</a>, is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply “RA disallow on a given interface” to “RA allowed from SEND authorised sources only”.</p>
 <h3 id="hostname-conventions"><a href="#TOC">Hostname Conventions</a></h3>
 <h3 id="choosing-an-operating-system"><a href="#TOC">Choosing an Operating System</a></h3>
 <h3 id="choosing-a-configuration-management-tool"><a href="#TOC">Choosing a Configuration Management Tool</a></h3>

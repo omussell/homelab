@@ -116,6 +116,7 @@ IPv6 address are mapped to hostnames in DNS using [AAAA resource records]. Rever
 
 ### SEND ###
 
+### DHCPv6 ###
 
 ### IPsec ###
 Security associations via IKE or KINK
@@ -450,7 +451,7 @@ Unspecific Operational Requirements
 ### Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC) ###
 
 ### IPv6 Security ###
-While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key crptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in [RFC6105]/[RFC7113], is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply "RA disallow on a given interface" to "RA allowed from SEND authorised sources only".
+While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key cryptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in [RFC6105]/[RFC7113], is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply "RA disallow on a given interface" to "RA allowed from SEND authorised sources only".
 
 [RFC6105]: https://tools.ietf.org/html/rfc6105
 [RFC7113]: https://tools.ietf.org/html/rfc7113
