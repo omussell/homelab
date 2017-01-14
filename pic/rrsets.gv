@@ -1,0 +1,16 @@
+digraph structs {
+node [shape=record];
+	subgraph AAAARRset {
+		struct1 [shape=record, label="<f0> AAAA|<f1> AAAA|<f2> AAAA"];
+		label="Resource Records"
+	}
+	subgraph MXRRset {
+		struct2 [shape=record, label="<f0> MX|<f1> MX|<f2> MX"];
+		label="Resource Records"
+	}
+	struct3 [shape=record, label="<f0> AAAA RRset"];
+	struct4 [shape=record, label="<f0> MX RRset"];
+
+	struct1 -> struct3;
+	struct2 -> struct4;
+}
