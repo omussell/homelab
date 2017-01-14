@@ -135,7 +135,7 @@ The general server design would be a generic NanoBSD image occupying a flash dev
 ### FreeBSD ###
 [FreeBSD] is an advanced computer operating system used to power modern servers. Its advanced networking, security, and storage features have made FreeBSD the platform of choice for embedded networking and storage devices, and powers many of the [busiest web sites].
 
-FreeBSD was chosen as the operating system of choice due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems. 
+FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems. 
 
 ### NanoBSD ###
 [NanoBSD] is built via shell script and produces a minimal implementation of FreeBSD which fits on small flash media. The image is customised with a configuration file, which specifies variables and functions to build the image as required. There are three stages to the image build: buildkernel, buildworld and the customise commands. The buildkernel stage is only required to be run once, further configuration changes can skip the buildkernel stage. However, some configuration changes do still require the kernel to be built. Compiling the kernel takes a long time (~30 minutes) and should be done sparingly.
@@ -179,14 +179,40 @@ DNS
 ---
 DNS is required to provide hostname to IP mapping. 
 
+Querying the DNS for the IP address is a mechanism employed by almost all applications, therefore it is imperative that it is secured correctly. There are a few different options, namely, DNSSEC, DNSCrypt and DNSCurve.
+
+In addition, a high emphasis on DNS security is required given that other security protocols are dependant upon it. For example, when a client connects to a server using SSH and the public key of the server is not known to the client, a fingerprint of the key is presented to the user for verification. This fingerprint can be stored in the DNS using SSHFP records so that the fingerprint can be verified out-of-band. TLS, which is commonly used for securing websites, can also use the DNS by storing certificates using TLSA records with DANE. 
+
+This also means that whatever method that is used to secure DNS must be verified to be secure since the DNS is considered authoritative for the security of the domain. So in DNSSEC, the security of the domain is only as secure as the KSK, so it should be stored in a HSM.
+
+
+
 ### DNSSEC ###
-[DNSSEC] creates a secure domain name system by adding cryptographic signatures to existing DNS records. These digital signatures are stored in DNS name servers alongside other record types like AAAA, MX etc. By checking the associated signature, you can verify that a DNS record comes from its authoritative name server and hasn't been altered. A basic guide of [how DNSSEC works] is found [on the CloudFlare blog].
+DNSSEC creates a secure domain name system by adding cryptographic signatures to existing DNS records. These digital signatures are stored in DNS name servers alongside other record types like AAAA, MX etc. By checking the associated signature, you can verify that a DNS record comes from its authoritative name server and hasn't been altered. DNSSEC uses public key cryptography to sign and authenticate DNS resource record sets (RRsets). When requesting a DNS record, you can verify it comes from its authoritative name server and wasn't altered en-route by verifying its signature. 
 
-When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the [Root Signing Ceremony]
+New DNS record types were added to support DNSSEC:
 
-[DNSSEC]: https://tools.ietf.org/html/rfc2535
+- DNSKEY -  A zone signs its authoritative RRsets by using a private key and stores the corresponding public key in a DNSKEY RR. A resolver can then use the public key to validate signatures covering the RRsets in the zone, and authenticate them.
+- RRSIG - Digital signatures are stored in RRSIG resource records and are used in the DNSSEC authentication process. A validator can use these RRSIG RRs to authenticate RRsets from the zone. A RRSIG record contains the signature for a RRset with a particular name, class, and type. The RRSIG RR specifies a validity interval for the signature and uses the Algorithm, the Signer's Name and the Key Tag to identify the DNSKEY RR containing the public key that a validator can use to verify the signature.
+- NSEC and NSEC3 - The NSEC resource record lists two separate things: the next owner name that contains authoritative data or a delegation point NS RRset, and the set of RR types present at the NSEC RR's owner name. The complete set of NSEC RR's in a zone indicates which authoritative RRsets exist in a zone and also form a chain of authoritative owner names in the zone. This information is used to provide authenticated denial of existence for DNS data. To provide protection against zone enumeration, the owner names used in the NSEC3 RR are cryptographic hashes of the original owner name prepended as a single label to the name of the zone. The NSEC3 RR indicates which hash function is used to construct the hash, which salt is used, and how many iterations of the hash function are performed over the original owner name.
+- DS - The DS resource record refers to a DNSKEY RR and is used in the DNS DNSKEY authentication process. A DS RR referes to a DNSKEY RR by storing the key tag, algorithm number, and a digest of the DNSKEY RR. By authenticating the DS record, a resolver can authenticate the DNSKEY RR to which the DS record points. The DS RR and its corresponding DNSKEY RR have the same owner name, but they are stored in different locations. The DS RR appears only on the upper (parental) side of a delegation. The corresponding DNSKEY RR is stored in the child zone. This simplifies DNS zone management and zone signing but introduces processing requirements for the DS RR, which can be solved using the CDS RR.
+- CDNSKEY and CDS - The CDS and CDNSKEY resource records are published in the Child zone and give the Child control of what is published for it in the parental zone. The CDS/CDNSKEY RRset expresses what the Child would like the DS RRset to look like after the change using the CDS RR, or the DNSKEY RRset with the CDNSKEY RR.
+
+<img src="/homelab/pic/rrsets.svg">
+
+
+A basic guide of [how DNSSEC works] is found [on the CloudFlare blog].
+
+When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the Root Signing Ceremony
+
+
+List of DNSSEC RFCs
+
+- 1
+- 2
+- 3
+
 [how DNSSEC works]: https://www.cloudflare.com/dns/dnssec/how-dnssec-works/
-[Root Signing Ceremony]: https://www.cloudflare.com/dns/dnssec/root-signing-ceremony/
 [on the CloudFlare blog]: https://blog.cloudflare.com/dnssec-an-introduction/
 
 
@@ -221,8 +247,9 @@ A guide to setting up DNSSEC+DANE to guarantee secure email between organisation
 - [ISC BIND]
 
 	Further guides published by NIST:
-	[Secure Domain Name System Deployment Guide]
-	[Trustworthy Email]
+
+	- [Secure Domain Name System Deployment Guide]
+	- [Trustworthy Email]
 
 
 [STARTTLS]: https://tools.ietf.org/html/rfc3207
@@ -307,11 +334,6 @@ Counterpoints:
 ### TLS ###
 
 ### SSH ###
-
-
-
-
-
 
 
 ### HSM ###
