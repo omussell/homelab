@@ -97,9 +97,7 @@
 </ul></li>
 </ul></li>
 <li><a href="#scaling">Scaling</a></li>
-<li><a href="#user-access">User Access</a><ul>
-<li><a href="#overview">Overview</a></li>
-</ul></li>
+<li><a href="#user-access">User Access</a></li>
 </ul>
 </div>
 <ul>
@@ -116,18 +114,29 @@
 <p>The design of the environment will be similar to <a href="https://en.wikipedia.org/wiki/Project_Athena">Project Athena</a> at MIT and the <a href="https://en.wikipedia.org/wiki/Distributed_Computing_Environment">Distributed Computing Environment</a> by the OSF. Inspiration for this project comes from the <a href="http://www.infrastructures.org">infrastructures.org</a> website, specifically their papers: <a href="http://www.infrastructures.org/papers/bootstrap/bootstrap.html">Bootstrapping an Infrastructure</a> and <a href="http://www.infrastructures.org/papers/turing/turing.html">Why Order Matters: Turing Equivalence in Automated Systems Administration</a>. Additionally, a paper by Paul Schenkeveld, <a href="https://2010.asiabsdcon.org/papers/abc2010-P4A-paper.pdf">Building servers with NanoBSD, ZFS and Jails</a> served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
 <p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.</p>
 <h1 id="high-level-design"><a href="#TOC">High-Level Design</a></h1>
-<ul>
-<li>Control Machine - Stores operating system images and configuration files in version control. Used to create the Gold server.</li>
-<li>Gold server - In the form of a created system image</li>
-<li>Infrastructure servers - Provides directory, domain names, authentication/authorisation services</li>
-<li>Data storage - Provide clients with access to their data/files via network file systems.</li>
-<li>Clients - End use</li>
-</ul>
+<!---
+
+- Control Machine - Stores operating system images and configuration files in version control. Used to create the Gold server. 
+- Gold server - In the form of a created system image
+- Infrastructure servers - Provides directory, domain names, authentication/authorisation services
+- Data storage - Provide clients with access to their data/files via network file systems.
+- Clients - End use
+
+--->
+
 <img src="/homelab/pic/secenv.svg"> <img src="/homelab/pic/disklayout.svg">
-<p>!!</p>
-<p>Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SSH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.</p>
-<p>KerberizedNFSv4 for client file access.</p>
-<p>!!</p>
+<!---
+
+!!
+Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. 
+Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SSH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.
+
+KerberizedNFSv4 for client file access.
+
+!!
+
+--->
+
 <h1 id="experimental"><a href="#TOC">Experimental</a></h1>
 <p>Features that aren’t production ready, but would be interesting to implement:</p>
 <ul>
@@ -135,7 +144,15 @@
 <li>TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)</li>
 </ul>
 <h1 id="detailed-design"><a href="#TOC">Detailed Design</a></h1>
-<p>Control machine config, Git, SSH, 2FA? Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH. Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.<br />Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP</p>
+<!---
+
+Control machine config, Git, SSH, 2FA?
+Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
+Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
+Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
+
+--->
+
 <h2 id="ipv6"><a href="#TOC">IPv6</a></h2>
 <p>IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4.</p>
 <p>IPv6 uses a 128-bit address which allows a much larger address space, 2^128. A single /64 subnet has a size of 2^64 addresses which equates to the square of the entire IPv4 address space. An address is represented as eight groups of four hexadecimal digits with the groups separated by colons, e.g. 2001:0db8:0000:0042:0000:8a2e:0370:7334. Guidance for representing IPv6 addresses in text is shown in <a href="https://tools.ietf.org/html/rfc5952">RFC5952</a>.</p>
@@ -363,19 +380,17 @@
 <li>Applications</li>
 <li>Email</li>
 <li>Instant Messaging</li>
-<li><p>Working remotely</p></li>
-<li>Documents - Access documents through a website? Should be bound by authentication/authorisation. Version controlled documents. Like Sharepoint, but not terrible.</li>
-<li>Applications - web-access only preferred, TLS available, bound by authentication/authorisation.</li>
-<li>Email - How does ProtonMail do it? Usually a lot of protections and anti-spam required, but if orgs are able to authoritativly validate each other, you are only able to receive emails from those orgs that have been validated, everything else is binned. Or if an org does spam, its quick to pinpoint and can be made untrusted.</li>
-<li>Instant Messaging - IRC with OTR, e.g. irc with PGP support.</li>
-<li><p>Working remotely - won’t happen in a super-secure infra, but less secure may allow it. Could be done like MIT, with public SSH servers that require Kerberos name+pass and the user certificate. Then you could get X forwarded over SSH or instead of SSH, an SSL/TLS VPN that gives access to the internal network.</p></li>
+<li>Working remotely</li>
 </ul>
-<h2 id="overview"><a href="#TOC">Overview</a></h2>
-<p>Check against Digital Ocean writing guide and rubric for correctness. Assumption, that you have the necessary computing resources to build and use these servers Network switches are set up and computers can communicate and/or connect to internet</p>
-<p>In the beginning, a computer will need to be connected to the public internet in order to download the operating system files, and other software required to build the initial systems. This will act as the control machine.</p>
-<p>Why IPv6? pros and cons. Router Advertisements requirements, and security for Neighbour Discovery protocol should be discussed Why CARP,</p>
-<p>The main prerequisite for the infrastructure is an IPv6 capable router. The router will act as the gateway between the open internet and the internal infrastructure. It is preferable to have two identical routers, managed via CARP. The router would also be responsible for NTP from upstream NTP sources, and DHCPv6 if required. Router Advertisement messages will be sent to computers in the infrastructure in order for them to generate their IP address via SLAAC. The routers may also have firewall software configured, if specific hardware firewalls are not used.</p>
-<p>Then, the DNS, Authentication, Directory, Domain Naming, Time, Admin services are configured. This allows other systems in the infrastructure to find host naming information, authentication/authorisation information, correct time, etc.</p>
-<p>From there, the application servers can pull information they need from the secure infra.</p>
+<!---
+
+- Documents - Access documents through a website? Should be bound by authentication/authorisation. Version controlled documents. Like Sharepoint, but not terrible.
+- Applications - web-access only preferred, TLS available, bound by authentication/authorisation. 
+- Email - How does ProtonMail do it? Usually a lot of protections and anti-spam required, but if orgs are able to authoritativly validate each other, you are only able to receive emails from those orgs that have been validated, everything else is binned. Or if an org does spam, its quick to pinpoint and can be made untrusted.
+- Instant Messaging - IRC with OTR, e.g. irc with PGP support.
+- Working remotely - won't happen in a super-secure infra, but less secure may allow it. Could be done like MIT, with public SSH servers that require Kerberos name+pass and the user certificate. Then you could get X forwarded over SSH or instead of SSH, an SSL/TLS VPN that gives access to the internal network.
+
+--->
+
 </body>
 </html>
