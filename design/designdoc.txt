@@ -144,13 +144,14 @@ By default, a SEND-enabled node should use only CGAs for its own addresses. Cryp
 The purpose of CGAs is to prevent stealing and spoofing of existing IPv6 addresses. The public key of the address owner is bound cryptographically to the address. The address owner can use the corresponding private key to assert its ownership and to sign SEND messages sent from the address. An attacker can create a new address from an arbitrary subnet prefix and a public key because CGAs are not certified. Hwoever, the attacker cannot impersonate somebody else's address.
 
 ### SEND SAVI ###
-The SEcure Neighbor Discovery (SEND) Source Address Validation Improvement ([SAVI]) is a mechanism to provide source address validation using the SEND protocol. SEND SAVI uses the Duplicate Address Detection and Neighbor Unreachability messages to validate the address ownership claim of a node. Using the information contained in these messages, host IPv6 addresses are associated to switch ports, so that data packets will be validated by checking for consistency in this binding. In addition, SEND SAVI prevents hsots from generating packets containing off-link IPv6 source addresses.
+The SEcure Neighbor Discovery (SEND) Source Address Validation Improvement ([SAVI]) is a mechanism to provide source address validation using the SEND protocol. SEND SAVI uses the Duplicate Address Detection and Neighbor Unreachability messages to validate the address ownership claim of a node. Using the information contained in these messages, host IPv6 addresses are associated to switch ports, so that data packets will be validated by checking for consistency in this binding. In addition, SEND SAVI prevents hosts from generating packets containing off-link IPv6 source addresses.
 
-
+SEND SAVI is limited to links and prefixes in which every IPv6 host and router uses the SEND protocol to protect the exchange of Neighbor Discovery information.
 
 [SEND]: https://tools.ietf.org/html/rfc3971
 [NDP]: https://tools.ietf.org/html/rfc4861
 [CGA]: https://tools.ietf.org/html/rfc3972
+[SAVI]: https://tools.ietf.org/html/rfc7219
 
 ### DHCPv6 ###
 
