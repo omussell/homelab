@@ -237,7 +237,10 @@ New DNS record types were added to support DNSSEC:
 Resource records of the same type are grouped together into a resource record set or RRset. The RRset is then digitally signed, rather than individual DNS records.
 
 <img src="/homelab/pic/rrsets.svg">
+
 <img src="/homelab/pic/zsk.svg">
+
+<img src="/homelab/pic/zskverify.svg">
 
 
 
