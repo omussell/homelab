@@ -240,7 +240,8 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <img src="/homelab/pic/zsk.svg">
 <p>The signature can be verified by recording the public part of the zone signing key pair in a DNSKEY record. The RRset, RRSIG and DNSKEY (public ZSK) can then be used by a resolver to validate the response from a name server.</p>
 <img src="/homelab/pic/zskverify.svg">
-<p>The public ZSK also needs to be trusted, and so a chain is created up to the parent zone.</p>
+<p>The DNSKEY records containing the public ZSK are then organised into a RRset, and signed by the Key Signing Key (KSK), which is stored in a DNSKEY record as well. This creates a RRSIG for the DNSKEY RRset.</p>
+<img src="/homelab/pic/ksk.svg">
 <p>A basic guide of <a href="https://www.cloudflare.com/dns/dnssec/how-dnssec-works/">how DNSSEC works</a> is found <a href="https://blog.cloudflare.com/dnssec-an-introduction/">on the CloudFlare blog</a>.</p>
 <p>When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the Root Signing Ceremony</p>
 <p>List of DNSSEC RFCs</p>

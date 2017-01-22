@@ -246,8 +246,9 @@ The signature can be verified by recording the public part of the zone signing k
 
 <img src="/homelab/pic/zskverify.svg">
 
-The public ZSK also needs to be trusted, and so a chain is created up to the parent zone.
+The DNSKEY records containing the public ZSK are then organised into a RRset, and signed by the Key Signing Key (KSK), which is stored in a DNSKEY record as well. This creates a RRSIG for the DNSKEY RRset.
 
+<img src="/homelab/pic/ksk.svg">
 
 
 A basic guide of [how DNSSEC works] is found [on the CloudFlare blog].
