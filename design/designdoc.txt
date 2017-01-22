@@ -110,8 +110,6 @@ PICTURE OF GLOBAL ADDRESS GENERATION
 
 The Neighbor Discovery Protocol ([NDP]) is used by nodes to determine the link-layer addresses for neighbors known to reside on the same attached link, to find neighboring routers to forward packets, and to keep track of neighbors that are reachable or not.
 
-The [Neighbor Discovery Protocol] (NDP) is used as part of Duplicate Address Detection . 
-
 The IPv6 router will be allocated a subnet by the ISP and configured with the first 64 bits of the 128-bit address. [Duplicate Address Detection] and [Neighbor Unreachability Detection] serve as error handling for the address autoconfiguration. 
 
 Since the IPv6 addresses are generated from the prefix on the router, it is possible to renumber an entire network by changing the prefix on the router.
@@ -134,7 +132,7 @@ The SEcure Neighbor Discovery ([SEND]) protocol is designed to counter threats t
 Components of SEND:
 
 - Certification paths are expected to certify the authority of routers. A host must be configured with a trust anchor to which the router has a certification path before the host can adopt the router as its default router. 
-- Cryptographically Generated Addresses are used to make sure that the sender of a Neighbor Discovery messageis the owner of the claimed address.
+- Cryptographically Generated Addresses are used to make sure that the sender of a Neighbor Discovery message is the owner of the claimed address.
 - Timestamp and Nonce options are used to provide replay protection.
 
 The deployment model for trust anchors can be either a globally rooted public key infrastructure, or a local decentralised deployment similar to that used for TLS. At the moment, a global root does not exist and so cannot be used. In the decentralised model, a public key can be published by the end hosts own organisation. In a roaming environment, multiple trusted public keys can be configured. Also, a SEND node can fall back to the use of a non-SEND router.
@@ -239,6 +237,7 @@ New DNS record types were added to support DNSSEC:
 Resource records of the same type are grouped together into a resource record set or RRset. The RRset is then digitally signed, rather than individual DNS records.
 
 <img src="/homelab/pic/rrsets.svg">
+<img src="/homelab/pic/zsk.svg">
 
 
 
