@@ -238,10 +238,15 @@ Resource records of the same type are grouped together into a resource record se
 
 <img src="/homelab/pic/rrsets.svg">
 
+The RRset is digitally signed by the private part of the zone signing key pair (ZSK). The digital signature is then stored in a RRSIG record. This proves that the data in the RRset originates from the zone.
+
 <img src="/homelab/pic/zsk.svg">
+
+The signature can be verified by recording the public part of the zone signing key pair in a DNSKEY record. The RRset, RRSIG and DNSKEY (public ZSK) can then be used by a resolver to validate the response from a name server.
 
 <img src="/homelab/pic/zskverify.svg">
 
+The public ZSK also needs to be trusted, and so a chain is created up to the parent zone.
 
 
 
