@@ -5,8 +5,7 @@ node [shape=record];
 	struct2 [shape=record, label="DNSKEY Public ZSK"];
 	verified [shape=record, label="RRSIG Signature"];
 
-	struct1 -> resolve [style=dotted];
-	struct2 -> resolve [style=dotted];
-	struct3 -> resolve [style=dotted];
+	struct1 -> dnskey [style=dotted];
+	struct2 -> dnskey [style=dotted];
 	dnskey -> verified;
 }
