@@ -252,13 +252,7 @@ The DNSKEY records containing the public zone signing keys are then organised in
 
 The private key signing key signs a zone signing key which in turn will sign other zone data. The public key signing key is also signed by the private key signing key. The public KSK can then be used to validate the public ZSK.
 
- 
-
-
-
-
-
-
+<img src="/homelab/pic/kskverify.svg">
 
 A basic guide of [how DNSSEC works] is found [on the CloudFlare blog].
 
