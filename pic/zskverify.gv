@@ -4,7 +4,7 @@ node [shape=record];
 	struct1 [shape=record, label="AAAA RRset"];
 	struct2 [shape=record, label="DNSKEY Public ZSK"];
 	struct3 [shape=record, label="RRSIG Signature"];
-	verified [shape=record, label="Verified RRset"];
+	verified [shape=record, label="Verified AAAA RRset"];
 
 	struct1 -> resolve [style=dotted];
 	struct2 -> resolve [style=dotted];

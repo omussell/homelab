@@ -16,8 +16,8 @@
 </g>
 <!-- verified -->
 <g id="node5" class="node"><title>verified</title>
-<polygon fill="none" stroke="black" points="138.5,-1 138.5,-37 251.5,-37 251.5,-1 138.5,-1"/>
-<text text-anchor="middle" x="195" y="-14.9" font-family="Times Roman,serif" font-size="14.00">Verified RRset</text>
+<polygon fill="none" stroke="black" points="116,-1 116,-37 274,-37 274,-1 116,-1"/>
+<text text-anchor="middle" x="195" y="-14.9" font-family="Times Roman,serif" font-size="14.00">Verified AAAA RRset</text>
 </g>
 <!-- resolve&#45;&gt;verified -->
 <g id="edge8" class="edge"><title>resolve&#45;&gt;verified</title>
