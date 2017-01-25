@@ -371,6 +371,15 @@ Hideo
 Case - Molly
 - Web servers -- Apache</code></pre>
 <h2 id="updating-jails">Updating Jails</h2>
+<p>Update the host system first: freebsd-update fetch freebsd-update install</p>
+<p>Fetch the base files from the FreeBSD FTP: fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.0-RELEASE/base.txz -o ~/jails fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.0-RELEASE/lib32.txz -o ~/jails fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.0-RELEASE/ports.txz -o ~/jails</p>
+<p>Remove the previous template and all cloned jails zfs destroy -R zroot/jails/template@1</p>
+<p>Create the template directory: zfs create -p zroot/jails/template</p>
+<p>Extract the downloaded base files: tar -xf ~/jails/*.txz -C /usr/local/jails/template</p>
+<p>Copy needed files: cp /etc/resolv.conf /usr/local/jails/template/etc mkdir -p /usr/local/jails/template/home/username/.ssh cp /home/username/.ssh/authorized_keys /usr/local/jails/template/home/username/.ssh</p>
+<p>Create the new snapshot: zfs snapshot zroot/jails/template@1</p>
+<p>Run the createalljails.sh script</p>
+<p>Run the startalljails.sh script</p>
 <h2 id="ansible-setup">Ansible Setup</h2>
 <pre><code># Create the &quot;ansible&quot; user
 adduser -f filename

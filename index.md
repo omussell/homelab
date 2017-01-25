@@ -419,6 +419,35 @@ Jail names
 Updating Jails
 --------------
 
+Update the host system first:
+freebsd-update fetch
+freebsd-update install
+
+Fetch the base files from the FreeBSD FTP:
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.0-RELEASE/base.txz -o ~/jails
+    fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.0-RELEASE/lib32.txz -o ~/jails
+    fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.0-RELEASE/ports.txz -o ~/jails
+
+Remove the previous template and all cloned jails
+zfs destroy -R zroot/jails/template@1
+
+Create the template directory:
+zfs create -p zroot/jails/template
+
+Extract the downloaded base files:
+tar -xf ~/jails/*.txz -C /usr/local/jails/template
+
+Copy needed files:
+cp /etc/resolv.conf /usr/local/jails/template/etc
+mkdir -p /usr/local/jails/template/home/username/.ssh
+cp /home/username/.ssh/authorized_keys /usr/local/jails/template/home/username/.ssh
+
+Create the new snapshot:
+zfs snapshot zroot/jails/template@1
+
+Run the createalljails.sh script
+
+Run the startalljails.sh script
 
 
 
@@ -527,7 +556,3 @@ SSH with X.509 v3 Certificate Support (PKIX-SSH)
     The default install location was /usr/local/bin
     Test generating a key:
     /usr/local/bin/ssh-keygen -b 384 -t ecdsa -f /etc/ssh/ssh_host_key -N ""
-
-
-
-
