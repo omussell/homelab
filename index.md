@@ -324,7 +324,7 @@ Jails Infrastructure
     createalljails.sh
 
     cat /etc/jail.conf | grep -E \{$ | sed "s/{//" > ~/jails/listofjails.txt
-    #}}
+    #}} - ignore these braces, the previous command messes with the syntax higlighting
 
     for jail in `cat ~/jails/listofjails.txt`
     do
@@ -423,10 +423,13 @@ Update the host system first:
 freebsd-update fetch
 freebsd-update install
 
+Find out current version:
+$VERSION=freebsd-version | sed 's/-/ /' | awk '{print $1}'
+
 Fetch the base files from the FreeBSD FTP:
-fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.0-RELEASE/base.txz -o ~/jails
-    fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.0-RELEASE/lib32.txz -o ~/jails
-    fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.0-RELEASE/ports.txz -o ~/jails
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/base.txz -o ~/jails
+    fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/lib32.txz -o ~/jails
+    fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/ports.txz -o ~/jails
 
 Remove the previous template and all cloned jails
 zfs destroy -R zroot/jails/template@1
