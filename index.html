@@ -371,16 +371,38 @@ Hideo
 Case - Molly
 - Web servers -- Apache</code></pre>
 <h2 id="updating-jails">Updating Jails</h2>
-<p>Update the host system first: freebsd-update fetch freebsd-update install</p>
-<p>Find out current version: $VERSION=freebsd-version | sed 's/-/ /' | awk '{print $1}'</p>
-<p>Fetch the base files from the FreeBSD FTP: fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/<span class="math"><em>V</em><em>E</em><em>R</em><em>S</em><em>I</em><em>O</em><em>N</em> − <em>R</em><em>E</em><em>L</em><em>E</em><em>A</em><em>S</em><em>E</em> / <em>b</em><em>a</em><em>s</em><em>e</em>. <em>t</em><em>x</em><em>z</em> − <em>o</em>  / <em>j</em><em>a</em><em>i</em><em>l</em><em>s</em><em>f</em><em>e</em><em>t</em><em>c</em><em>h</em><em>f</em><em>t</em><em>p</em>:  /  / <em>f</em><em>t</em><em>p</em>. <em>f</em><em>r</em><em>e</em><em>e</em><em>b</em><em>s</em><em>d</em>. <em>o</em><em>r</em><em>g</em> / <em>p</em><em>u</em><em>b</em> / <em>F</em><em>r</em><em>e</em><em>e</em><em>B</em><em>S</em><em>D</em> / <em>r</em><em>e</em><em>l</em><em>e</em><em>a</em><em>s</em><em>e</em><em>s</em> / <em>a</em><em>m</em><em>d</em>64 / <em>a</em><em>m</em><em>d</em>64 / </span>VERSION-RELEASE/lib32.txz -o ~/jails fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/ports.txz -o ~/jails</p>
-<p>Remove the previous template and all cloned jails zfs destroy -R zroot/jails/template@1</p>
-<p>Create the template directory: zfs create -p zroot/jails/template</p>
-<p>Extract the downloaded base files: tar -xf ~/jails/*.txz -C /usr/local/jails/template</p>
-<p>Copy needed files: cp /etc/resolv.conf /usr/local/jails/template/etc mkdir -p /usr/local/jails/template/home/username/.ssh cp /home/username/.ssh/authorized_keys /usr/local/jails/template/home/username/.ssh</p>
-<p>Create the new snapshot: zfs snapshot zroot/jails/template@1</p>
-<p>Run the createalljails.sh script</p>
-<p>Run the startalljails.sh script</p>
+<pre><code>Update the host system first:
+freebsd-update fetch
+freebsd-update install
+
+Find out current version:
+$VERSION=freebsd-version | sed &#39;s/-/ /&#39; | awk &#39;{print $1}&#39;
+
+Fetch the base files from the FreeBSD FTP:
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/base.txz -o ~/jails
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/lib32.txz -o ~/jails
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/ports.txz -o ~/jails
+
+Remove the previous template and all cloned jails
+zfs destroy -R zroot/jails/template@1
+
+Create the template directory:
+zfs create -p zroot/jails/template
+
+Extract the downloaded base files:
+tar -xf ~/jails/*.txz -C /usr/local/jails/template
+
+Copy needed files:
+cp /etc/resolv.conf /usr/local/jails/template/etc
+mkdir -p /usr/local/jails/template/home/username/.ssh
+cp /home/username/.ssh/authorized_keys /usr/local/jails/template/home/username/.ssh
+
+Create the new snapshot:
+zfs snapshot zroot/jails/template@1
+
+Run the createalljails.sh script
+
+Run the startalljails.sh script</code></pre>
 <h2 id="ansible-setup">Ansible Setup</h2>
 <pre><code># Create the &quot;ansible&quot; user
 adduser -f filename

@@ -419,38 +419,38 @@ Jail names
 Updating Jails
 --------------
 
-Update the host system first:
-freebsd-update fetch
-freebsd-update install
+    Update the host system first:
+    freebsd-update fetch
+    freebsd-update install
 
-Find out current version:
-$VERSION=freebsd-version | sed 's/-/ /' | awk '{print $1}'
+    Find out current version:
+    $VERSION=freebsd-version | sed 's/-/ /' | awk '{print $1}'
 
-Fetch the base files from the FreeBSD FTP:
-fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/base.txz -o ~/jails
+    Fetch the base files from the FreeBSD FTP:
+    fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/base.txz -o ~/jails
     fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/lib32.txz -o ~/jails
     fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/$VERSION-RELEASE/ports.txz -o ~/jails
 
-Remove the previous template and all cloned jails
-zfs destroy -R zroot/jails/template@1
+    Remove the previous template and all cloned jails
+    zfs destroy -R zroot/jails/template@1
 
-Create the template directory:
-zfs create -p zroot/jails/template
+    Create the template directory:
+    zfs create -p zroot/jails/template
 
-Extract the downloaded base files:
-tar -xf ~/jails/*.txz -C /usr/local/jails/template
+    Extract the downloaded base files:
+    tar -xf ~/jails/*.txz -C /usr/local/jails/template
 
-Copy needed files:
-cp /etc/resolv.conf /usr/local/jails/template/etc
-mkdir -p /usr/local/jails/template/home/username/.ssh
-cp /home/username/.ssh/authorized_keys /usr/local/jails/template/home/username/.ssh
+    Copy needed files:
+    cp /etc/resolv.conf /usr/local/jails/template/etc
+    mkdir -p /usr/local/jails/template/home/username/.ssh
+    cp /home/username/.ssh/authorized_keys /usr/local/jails/template/home/username/.ssh
 
-Create the new snapshot:
-zfs snapshot zroot/jails/template@1
+    Create the new snapshot:
+    zfs snapshot zroot/jails/template@1
 
-Run the createalljails.sh script
+    Run the createalljails.sh script
 
-Run the startalljails.sh script
+    Run the startalljails.sh script
 
 
 
