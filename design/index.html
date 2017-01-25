@@ -43,13 +43,17 @@
 <li><a href="#dnssec">DNSSEC</a></li>
 <li><a href="#dane">DANE</a></li>
 <li><a href="#dane-for-email-security">DANE for Email Security</a></li>
+<li><a href="#dnscrypt">DNSCrypt</a></li>
+<li><a href="#dnscurve">DNSCurve</a></li>
 </ul></li>
 <li><a href="#ldap">LDAP</a><ul>
 <li><a href="#ldaps">LDAPS</a></li>
 <li><a href="#smime-or-pgp">S/MIME or PGP</a></li>
 </ul></li>
 <li><a href="#kerberos">Kerberos</a></li>
-<li><a href="#ntp">NTP</a></li>
+<li><a href="#ntp">NTP</a><ul>
+<li><a href="#ntpsec">NTPsec</a></li>
+</ul></li>
 <li><a href="#nfs">NFS</a><ul>
 <li><a href="#kerberizednfsv4">KerberizedNFSv4</a></li>
 </ul></li>
@@ -279,23 +283,19 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li><a href="http://dx.doi.org/10.6028/NIST.SP.800-177">Trustworthy Email</a></li>
 </ul></li>
 </ul>
+<h3 id="dnscrypt"><a href="#TOC">DNSCrypt</a></h3>
+<h3 id="dnscurve"><a href="#TOC">DNSCurve</a></h3>
 <h2 id="ldap"><a href="#TOC">LDAP</a></h2>
 <h3 id="ldaps"><a href="#TOC">LDAPS</a></h3>
 <h3 id="smime-or-pgp"><a href="#TOC">S/MIME or PGP</a></h3>
 <h2 id="kerberos"><a href="#TOC">Kerberos</a></h2>
 <h2 id="ntp"><a href="#TOC">NTP</a></h2>
+<h3 id="ntpsec"><a href="#TOC">NTPsec</a></h3>
 <h2 id="nfs"><a href="#TOC">NFS</a></h2>
 <h3 id="kerberizednfsv4"><a href="#TOC">KerberizedNFSv4</a></h3>
 <h2 id="application-servers"><a href="#TOC">Application Servers</a></h2>
 <h3 id="nginx"><a href="#TOC">NGINX</a></h3>
 <h2 id="security-and-crypto"><a href="#TOC">Security and Crypto</a></h2>
-<p>Some of the design decisions made throughout this document may be questioned by others. For example, choosing AES-GCM over ChaCha20-Poly1305, utilising IPsec which may have been influenced by the NSA and whose design is questioned by respected cryptographers, using S/MIME rather than PGP, and using DNSSEC rather than DNSCrypt.</p>
-<p>As always, you are free to choose other cipher suites or software implementations. Specific reasons will be given below:</p>
-<ul>
-<li>1</li>
-<li>2</li>
-<li>3</li>
-</ul>
 <h3 id="against-dnssec-and-dane"><a href="#TOC">Against DNSSEC (and DANE)</a></h3>
 <ul>
 <li>Cryptography worst practices, Daniel J. Bernstein <a href="http://cr.yp.to/talks/2012.03.08-1/slides.pdf">slides</a>, <a href="https://vimeo.com/18279777">video</a></li>

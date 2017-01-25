@@ -330,6 +330,9 @@ A guide to setting up DNSSEC+DANE to guarantee secure email between organisation
 [Secure Domain Name System Deployment Guide]: http://dx.doi.org/10.6028/NIST.SP.800-81-2
 [Trustworthy Email]: http://dx.doi.org/10.6028/NIST.SP.800-177
 
+### DNSCrypt ###
+
+### DNSCurve ###
 
 
 
@@ -346,6 +349,8 @@ Kerberos
 NTP
 ---
 
+### NTPsec ###
+
 
 NFS
 ---
@@ -358,14 +363,6 @@ Application Servers
 
 Security and Crypto
 ---
-Some of the design decisions made throughout this document may be questioned by others. For example, choosing AES-GCM over ChaCha20-Poly1305, utilising IPsec which may have been influenced by the NSA and whose design is questioned by respected cryptographers, using S/MIME rather than PGP, and using DNSSEC rather than DNSCrypt.
-
-As always, you are free to choose other cipher suites or software implementations. Specific reasons will be given below:
-
-- 1
-- 2
-- 3
-
 ### Against DNSSEC (and DANE) ###
 - Cryptography worst practices, Daniel J. Bernstein [slides], [video]
 - [DNSSEC in Chrome] (2014)
