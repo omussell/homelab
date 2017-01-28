@@ -271,8 +271,10 @@ The DS RRset resides at a delegation point in a parent zone and indicates the pu
 
 
 
-
 Each time the child zone changes its KSK, the new public KSK needs to be transmitted to the parent zone in order to be stored in its DS record. In most cases, this is a manual process. However, this can be mitigated by used CDS/CDNSKEY records. A CDS/CDNSKEY record contains the new information that the child zone would like to be published in the parent zone. These records only exist when the child zone wishes for the DS record in the parent zone to be changed. The parent zone should periodically check the child zone for the existence of CDS/CDNSKEY records, or can be prompted to do so.
+
+<img src="/homelab/pic/cds.svg">
+
 
 
 
