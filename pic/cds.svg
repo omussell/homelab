@@ -29,6 +29,7 @@
 <g id="edge2" class="edge"><title>struct1:f10&#45;&gt;struct2:f11</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M50,-93C50,-72 50,-64.2891 50,-47.4419"/>
 <polygon fill="black" stroke="black" points="53.5001,-47 50,-37 46.5001,-47 53.5001,-47"/>
+<text text-anchor="middle" x="71.5" y="-60.9" font-family="Times Roman,serif" font-size="14.00">Check</text>
 </g>
 <!-- struct2&#45;&gt;struct1 -->
 <g id="edge4" class="edge"><title>struct2:f2&#45;&gt;struct1:f1</title>
