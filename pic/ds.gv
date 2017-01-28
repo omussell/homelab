@@ -1,0 +1,14 @@
+digraph structs {
+node [shape=record];
+	struct1 [shape=record, label="Parent Zone"];
+	struct2 [shape=record, label="Child Zone"];
+
+	struct3 [shape=record, label="DNSKEY Hashed KSK"];
+	struct4 [shape=record, label="DNSKEY Public KSK"];
+
+
+
+	struct1 -> struct3 [style=dotted];
+	struct2 -> struct4 [style=dotted];
+	struct3 -> struct4;
+}

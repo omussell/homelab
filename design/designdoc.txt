@@ -261,6 +261,10 @@ The private key signing key signs a zone signing key which in turn will sign oth
 
 <img src="/homelab/pic/kskverify.svg">
 
+The DS RRset resides at a delegation point in a parent zone and indicates the public keys corresponding to the private keys used to self-sign the DNSKEY RRset at the delegated child zones apex. The public KSK in the child zone is hashed and stored in a DS record in the parent zone.
+
+<img src="/homelab/pic/ds.svg">
+
 A basic guide of [how DNSSEC works] is found [on the CloudFlare blog].
 
 When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the Root Signing Ceremony
