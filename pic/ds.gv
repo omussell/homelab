@@ -1,0 +1,7 @@
+digraph structs {
+node [shape=record];
+	struct1 [shape=record, label="Parent Zone|<f1> DNSKEY Hashed KSK"];
+	struct2 [shape=record, label="Child Zone|<f2> DNSKEY Public KSK"];
+
+	struct2:f2 -> struct1:f1
+}
