@@ -1,0 +1,13 @@
+digraph structs {
+node [shape=record];
+	resolve [shape=record, label="DNS Resolver"];
+	struct1 [shape=record, label="AAAA RRset"];
+	struct2 [shape=record, label="DNSKEY Public ZSK"];
+	struct3 [shape=record, label="RRSIG Signature"];
+	verified [shape=record, label="Verified AAAA RRset"];
+
+	struct1 -> resolve [style=dotted];
+	struct2 -> resolve [style=dotted];
+	struct3 -> resolve [style=dotted];
+	resolve -> verified;
+}
