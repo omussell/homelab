@@ -198,6 +198,38 @@ Since the configuration files are stored separately to the root filesystem, when
 - Does not rely on virtualisation, so performance penalty is mitigated
 - Easy to update or upgrade individual jails
 
+
+
+Jail parameters (jail.conf)
+
+- path - Directory which is the root of the jail
+- vnet - jail has its own virtual network stack with interfaces, addresses, routing table etc. - !! - Is this required to allow applications access to the network?
+- persist - allows a jail to exist without any processes, so it won't be removed when stopped.
+- allow.mount - allow users in jail to mount jail-friendly filesystems. May be required for NFS / home directory mounts?
+- exec.prestart - commands to run in the system environment before a jail is created
+- exec.start - commands to run in the jail environment when a jail is created
+- exec.poststart - commands to run in the system environment after a jail is created, and after any exec.start commands have completed
+- exec.prestop - commands to run in the system environment before a jail is removed
+- exec.stop - commands to run in the jail environment before a jail is removed, and after any exec.prestop commands have completed
+- exec.poststop - commands to run in the system environment after a jail is removed
+- ip_hostname - resolve the host.hostname parameter and add all IP addresses returned by the resolver to the list of addresses for this jail. - !! - Basically, rather than manually setting IP addresses, this setting means the IP is pulled from DNS (which is secured by DNSSEC). This introduces a bootstrap problem though, how do the DNS servers get IP addresses in the first place? (link-local addresses?)
+- mount or mount.fstab - filesystems to mount before creating the jail
+- depend - specify jails that this jail depends on. When this jail is to be created, any jails it depends on must already exist, otherwise they are created automatically up to the completion of the last exec.poststart command.
+ 
+Configuring the jail:
+- Setup /etc/resolv.conf so that name resolution works
+- Run newaliases to stop sendmail warnings
+- Set the root password
+- Set the timezone
+- Add accounts for users
+- Install packages
+ 
+- Setup bindings to other services (or get them from SRV records in DNS?)
+- Setup SSH to jail environment, configure sshd_config 
+
+
+
+
 ### ZFS ###
 
 - Data integrity using checksums
