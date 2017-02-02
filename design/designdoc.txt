@@ -104,10 +104,6 @@ Global addresses are formed by appending an interface identifier to a prefix of 
 
 PICTURE OF GLOBAL ADDRESS GENERATION
 
-
-
-
-
 The Neighbor Discovery Protocol ([NDP]) is used by nodes to determine the link-layer addresses for neighbors known to reside on the same attached link, to find neighboring routers to forward packets, and to keep track of neighbors that are reachable or not.
 
 The IPv6 router will be allocated a subnet by the ISP and configured with the first 64 bits of the 128-bit address. [Duplicate Address Detection] and [Neighbor Unreachability Detection] serve as error handling for the address autoconfiguration. 
