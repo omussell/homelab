@@ -349,7 +349,7 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 </ul>
 <h3 id="tls"><a href="#TOC">TLS</a></h3>
 <h3 id="ssh"><a href="#TOC">SSH</a></h3>
-<p>ssh_config</p>
+<p><strong>ssh_config</strong></p>
 <ul>
 <li><strong>Host</strong> - restrict the following options (up to the next Host or Match) to be only used for those hosts matching the pattern.</li>
 <li><strong>AddressFamily inet6</strong> - Use IPv6 only when connecting</li>
@@ -378,7 +378,7 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li><strong>VerifyHostKeyDNS yes</strong> - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.</li>
 </ul>
 <p>Since this option is reliant on DNS and that DNSSEC is set up correctly, it would be preferred to be used in centralised networks.</p>
-<p>sshd_config</p>
+<p><strong>sshd_config</strong></p>
 <ul>
 <li><strong>AddressFamily inet6</strong> - Use IPv6 only when connecting</li>
 <li><strong>AuthorizedKeysCommand</strong> - Specifies a program to be used to look up the users public keys. !! We could use this to lookup users public keys stored in LDAP. !!</li>

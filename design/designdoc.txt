@@ -438,7 +438,7 @@ Counterpoints:
 
 ### SSH ###
 
-ssh_config
+**ssh_config**
 
 - **Host** - restrict the following options (up to the next Host or Match) to be only used for those hosts matching the pattern.
 - **AddressFamily inet6** - Use IPv6 only when connecting
@@ -471,7 +471,7 @@ These options would be preferred in a peer to peer / decentralised network, sinc
 Since this option is reliant on DNS and that DNSSEC is set up correctly, it would be preferred to be used in centralised networks. 
 
 
-sshd_config
+**sshd_config**
 
 - **AddressFamily inet6** - Use IPv6 only when connecting
 - **AuthorizedKeysCommand** - Specifies a program to be used to look up the users public keys. !! We could use this to lookup users public keys stored in LDAP. !!
