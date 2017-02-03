@@ -229,10 +229,16 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li>mount or mount.fstab - filesystems to mount before creating the jail</li>
 <li>depend - specify jails that this jail depends on. When this jail is to be created, any jails it depends on must already exist, otherwise they are created automatically up to the completion of the last exec.poststart command.</li>
 </ul>
-<p>Configuring the jail: - Setup /etc/resolv.conf so that name resolution works - Run newaliases to stop sendmail warnings - Set the root password - Set the timezone - Add accounts for users - Install packages</p>
+<p>Configuring the jail:</p>
 <ul>
+<li>Setup /etc/resolv.conf so that name resolution works</li>
+<li>Run newaliases to stop sendmail warnings</li>
+<li>Set the root password</li>
+<li>Set the timezone</li>
+<li>Add accounts for users</li>
+<li><p>Install packages</p></li>
 <li>Setup bindings to other services (or get them from SRV records in DNS?)</li>
-<li>Setup SSH to jail environment, configure sshd_config</li>
+<li><p>Setup SSH to jail environment, configure sshd_config</p></li>
 </ul>
 <h3 id="zfs"><a href="#TOC">ZFS</a></h3>
 <ul>
@@ -345,33 +351,34 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <h3 id="ssh"><a href="#TOC">SSH</a></h3>
 <p>ssh_config</p>
 <ul>
-<li>Host - restrict the following options (up to the next Host or Match) to be only used for those hosts matching the pattern.</li>
-<li>AddressFamily inet6 - Use IPv6 only when connecting</li>
-<li>CanonicalizeHostname et al. - When an unqualified domain name is given as the SSH target, use the systems resolver to find the FQDN. The domain suffix is specified in CanonicalizeDomains. Can be set to strictly check so that if lookup fails within the specified domain, the SSH connection fails. This may be useful if unqualified names are used consistently, however, it adds another configuration file that is required to be maintained. !! Needs testing !!</li>
-<li>CheckHostIP yes - SSH will also check the host IP address in the known_hosts file, which would detect if a host key changed due to DNS spoofing. This will add addresses of destination hosts to ~/.ssh/known_hosts regardless of the setting of StrictHostKeyChecking. !! Needs testing !!</li>
-<li>Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com - Prefer use of DJB’s ciphers, fallback to AES GCM if necessary.</li>
-<li>FingerprintHash sha256 - Prefer SHA256 over MD5 when displaying key fingerprints</li>
-<li>HashKnownHosts yes - SSH will hash host names and addresses when they are added to ~/.ssh/known_hosts. Hashed names can be used normally by SSH, but are unreadable to humans.</li>
-<li>HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com - Prefer use of DJB’s cipher. !! Unsure if this option is related to HostBasedAuthentication, not clear in docs, should test !!</li>
-<li>KexAlgorithms curve25519-sha256@libssh.org - Prefer use of DJB’s cipher. Key Exchange Algorithm.</li>
-<li>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com - Encrypt then MAC, and SHA2 are preferred.</li>
-<li>Protocol 2 - Explicitly disable Protocol 1, which suffers from cryptographic weaknesses.</li>
-<li>PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com - Prefer use of DJB’s cipher. Key types for public key authentication.</li>
-<li>PubkeyAuthentication yes - Use public key authentication</li>
-<li>RevokedHostKeys KRL - Specifies revoked public keys. Keys listed in this file will be refused for host authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the host keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!</li>
+<li><strong>Host</strong> - restrict the following options (up to the next Host or Match) to be only used for those hosts matching the pattern.</li>
+<li><strong>AddressFamily inet6</strong> - Use IPv6 only when connecting</li>
+<li><strong>CanonicalizeHostname</strong> et al. - When an unqualified domain name is given as the SSH target, use the systems resolver to find the FQDN. The domain suffix is specified in CanonicalizeDomains. Can be set to strictly check so that if lookup fails within the specified domain, the SSH connection fails. This may be useful if unqualified names are used consistently, however, it adds another configuration file that is required to be maintained. !! Needs testing !!</li>
+<li><strong>CheckHostIP yes</strong> - SSH will also check the host IP address in the known_hosts file, which would detect if a host key changed due to DNS spoofing. This will add addresses of destination hosts to ~/.ssh/known_hosts regardless of the setting of StrictHostKeyChecking. !! Needs testing !!</li>
+<li><strong>Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com</strong> - Prefer use of DJB’s ciphers, fallback to AES GCM if necessary.</li>
+<li><strong>FingerprintHash sha256</strong> - Prefer SHA256 over MD5 when displaying key fingerprints</li>
+<li><strong>HashKnownHosts yes</strong> - SSH will hash host names and addresses when they are added to ~/.ssh/known_hosts. Hashed names can be used normally by SSH, but are unreadable to humans.</li>
+<li><strong>HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher. !! Unsure if this option is related to HostBasedAuthentication, not clear in docs, should test !!</li>
+<li><strong>KexAlgorithms curve25519-sha256@libssh.org</strong> - Prefer use of DJB’s cipher. Key Exchange Algorithm.</li>
+<li><strong>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</strong> - Encrypt then MAC, and SHA2 are preferred.</li>
+<li><strong>Protocol 2</strong> - Explicitly disable Protocol 1, which suffers from cryptographic weaknesses.</li>
+<li><strong>PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher. Key types for public key authentication.</li>
+<li><strong>PubkeyAuthentication yes</strong> - Use public key authentication</li>
+<li><strong>RevokedHostKeys KRL</strong> - Specifies revoked public keys. Keys listed in this file will be refused for host authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the host keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!</li>
 </ul>
 <p>For host key checking, there are two options:</p>
 <p>1.</p>
 <ul>
-<li>StrictHostKeyChecking yes - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH’s to a server, does it need to “accept” the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!</li>
-<li>UpdateHostKeys yes - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_configas HostKey ssh_host_ed25519_key, and the new keys would also be specified: HostKey ssh_host_ed25519_key_new. The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified in some other way.</li>
+<li><strong>StrictHostKeyChecking yes</strong> - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH’s to a server, does it need to “accept” the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!</li>
+<li><strong>UpdateHostKeys yes</strong> - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_configas HostKey ssh_host_ed25519_key, and the new keys would also be specified: HostKey ssh_host_ed25519_key_new. The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified in some other way.</li>
 </ul>
 <p>These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to SSH to servers in order to maintain the known_hosts files.</p>
 <p>2.</p>
 <ul>
-<li>VerifyHostKeyDNS yes - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.</li>
+<li><strong>VerifyHostKeyDNS yes</strong> - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.</li>
 </ul>
 <p>Since this option is reliant on DNS and that DNSSEC is set up correctly, it would be preferred to be used in centralised networks.</p>
+<p>sshd_config</p>
 <p>SSHFP records are generated by running “ssh-keygen -r $(hostname)”.</p>
 <p>SSHFP records consist of three properties:</p>
 <ul>
