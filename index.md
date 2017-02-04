@@ -523,20 +523,17 @@ DNS
 SSH
 ---
 
-    sshd_config
-    X11Forwarding no
-    IgnoreRhosts yes
-    UseDNS yes
-    PermitEmptyPasswords no
-    MaxAuthTries 6
-    PubKeyAuthentication yes
-    PasswordAuthentication yes  # to allow kerberos
-    PermitRootLogin no
-    Protocol 2
-    HashKnownHosts yes
+	# Jails ssh config
+	# Remove existing host keys and generate ed25519 host key
+	if [ ! -f /etc/ssh/ssh_host_ed25519_key ]; then
+		rm /etc/ssh/ssh_*host*
+		ssh-keygen -f /etc/ssh/ssh_host_ed25519_key -t ed25519 -N "" -E sha256
+	fi
+	
+	# Generate SSHFP records
+	ssh-keygen -r $(hostname) | awk '$4 == && $5 == 2 {print $0}'
+	
 
-    SSHFP records in DNS(SEC) to securely publish SSH key fingerprints
-    Kerberos for password authentication
 
 SSH with X.509 v3 Certificate Support (PKIX-SSH)
 ---
@@ -559,3 +556,4 @@ SSH with X.509 v3 Certificate Support (PKIX-SSH)
     The default install location was /usr/local/bin
     Test generating a key:
     /usr/local/bin/ssh-keygen -b 384 -t ecdsa -f /etc/ssh/ssh_host_key -N ""
+
