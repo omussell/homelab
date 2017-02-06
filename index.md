@@ -300,6 +300,8 @@ NanoBSD
     of 1GB.
     Compiled it again and it works now.
 
+    sh nanobsdv.sh -b -c nanobsdv.conf
+
     Base system:
     Hostname + IP
     Change root password using OPIE
