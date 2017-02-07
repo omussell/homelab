@@ -1,1 +1,1 @@
-sed "s/^/jail \-c /" listofjails.txt | sh
+sed "s/^/jail \-c /" ~/jails/listofjails.txt | sh

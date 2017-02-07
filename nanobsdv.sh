@@ -93,7 +93,7 @@ NANO_LATE_CUSTOMIZE=""
 NANO_NEWFS="-b 4096 -f 512 -i 8192 -U"
 
 # The drive name of the media at runtime
-NANO_DRIVE=vtbd0
+NANO_DRIVE=
 
 # Target media size in 512 bytes sectors
 NANO_MEDIASIZE=2000000
@@ -804,7 +804,8 @@ cust_pkg () (
 			break
 		elif [ $now -eq $have ] ; then
 			echo "FAILED: Nothing happened on this pass"
-			exit 2
+			break
+			#exit 2
 		fi
 	done
 	nano_rm -rf ${NANO_WORLDDIR}/Pkg
