@@ -53,7 +53,7 @@ High-Level Design
 
 !!
 Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. 
-Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SSH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.
+Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.
 
 KerberizedNFSv4 for client file access.
 
@@ -437,6 +437,42 @@ Counterpoints:
 ### TLS ###
 
 ### SSH ###
+
+The Secure Shell ([SSH]) protocol is used for secure remote login and tunneling other network services over an insecure network. SSH consists of three main components:
+
+- Transport Layer Protocol provides server authentication, confidentiality, and integrity with perfect forward secrecy. The transport layer will typicall be run over a TCP/IP connection.
+- User Authentication Protocol authenticates the client to the server. It runs over the transport layer protocol.
+- Connection Protocol multiplexes the encrypted tunnel into several logical channels. It runs over the user authentication protocol.
+
+Each server should have a host key. The host key is used during key exchange to verify that the client is talking to the correct server. The client must therefore have a priori knowledge of the servers host key. In order to accomplish this, two different methods are available, decentralised and centralised.
+
+- Decentralised - The client manages a local database, in the form of an authorized_keys file. While this allows a peer to peer architecture, it also requires manually updating and validating new/revoked host keys. Each client becomes responsible for validating the servers that it connects to. This allows you to scale arbitrarily, at the expense of manageability.
+- Centralised - The host keys are certified by a trusted third party, such as a certificate authority (CA) or via DNS(SEC). The client has knowledge of the CA root key or access to a validating DNS server. The validity of the host keys can be certified by accepted CAs or DNS servers. Consequently, each host key must be certified by the central authority before authorization is possible.
+
+There is an option to defer checking the host key when connecting to host for the first time, however, this is not recommended and can be avoided by pre-seeding a public host key in the server build to allow connecting to the configuration management infrastructure and then changed at a later time.
+
+**Transport Layer**
+
+Authentication at this layer is host based, it does not perform user authentication. The key exchange method, public key algorithm, symmetric encryption algorithm, message authentication algorithm, and hash algorithm are all negotiated.
+
+The client initiates the connection, usually using TCP/IP. Port 22 is the officially recognized port number, however, servers that expose this port to the public internet should choose a different port since it is usually scanned for by automated bots.
+
+An encryption algorithm and a key will be negotiated during the key exchange. Since the ciphers on the client and server are independent, they may differ. The key exchange occurs in order for the client and server to find a common cipher available to both. Data integrity is provided by including a message authentication code or MAC with each packet that is created from a shared secret, packet sequence number and the contents of the packet.
+
+
+
+
+
+
+
+
+
+
+[SSH]: https://tools.ietf.org/html/rfc4251
+
+
+
+
 
 **ssh_config**
 
