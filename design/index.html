@@ -351,9 +351,9 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <h3 id="ssh"><a href="#TOC">SSH</a></h3>
 <p>The Secure Shell (<a href="https://tools.ietf.org/html/rfc4251">SSH</a>) protocol is used for secure remote login and tunneling other network services over an insecure network. SSH consists of three main components:</p>
 <ul>
-<li>Transport Layer Protocol provides server authentication, confidentiality, and integrity with perfect forward secrecy. The transport layer will typicall be run over a TCP/IP connection.</li>
-<li>User Authentication Protocol authenticates the client to the server. It runs over the transport layer protocol.</li>
-<li>Connection Protocol multiplexes the encrypted tunnel into several logical channels. It runs over the user authentication protocol.</li>
+<li>Transport Layer Protocol - Provides server authentication, confidentiality, and integrity with perfect forward secrecy. The transport layer will typicall be run over a TCP/IP connection.</li>
+<li>User Authentication Protocol - Authenticates the client to the server. It runs over the transport layer protocol.</li>
+<li>Connection Protocol - Multiplexes the encrypted tunnel into several logical channels. It runs over the user authentication protocol.</li>
 </ul>
 <p>Each server should have a host key. The host key is used during key exchange to verify that the client is talking to the correct server. The client must therefore have a priori knowledge of the servers host key. In order to accomplish this, two different methods are available, decentralised and centralised.</p>
 <ul>
@@ -364,7 +364,15 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <p><strong>Transport Layer</strong></p>
 <p>Authentication at this layer is host based, it does not perform user authentication. The key exchange method, public key algorithm, symmetric encryption algorithm, message authentication algorithm, and hash algorithm are all negotiated.</p>
 <p>The client initiates the connection, usually using TCP/IP. Port 22 is the officially recognized port number, however, servers that expose this port to the public internet should choose a different port since it is usually scanned for by automated bots.</p>
+<p>!!</p>
 <p>An encryption algorithm and a key will be negotiated during the key exchange. Since the ciphers on the client and server are independent, they may differ. The key exchange occurs in order for the client and server to find a common cipher available to both. Data integrity is provided by including a message authentication code or MAC with each packet that is created from a shared secret, packet sequence number and the contents of the packet.</p>
+<p>The key exchange algorithm decides the method which is used to perform the key exchange which specifies how one time session keys are generated for encryption and for authentication, and how the server authentication is done.</p>
+<p>Public key format, encoding and algorithm (signature and/or encryption)</p>
+<p>!!</p>
+<p>Key exchange starts with each side sending their lists of supported algorithms. Each side has a preferred algorithm in each category.</p>
+<p><strong>User Authentication</strong></p>
+<p>When user authentication starts, it receives the session identifier from the transport layer. The session identifier uniquely identifies this session and is suitable for signing in order to prove ownership of a private key. The server drives the authentication by telling the client which authentication methods can be used, such as public key or password authentication.</p>
+<p>In order to perform public key authentication, the client must be in possession of a private key. This method works by sending a signature created with a private key of the user. The server cheks that the key is a valid authenticator for the user, and checks that the signature is valid.</p>
 <p><strong>ssh_config</strong></p>
 <ul>
 <li><strong>Host</strong> - restrict the following options (up to the next Host or Match) to be only used for those hosts matching the pattern.</li>
