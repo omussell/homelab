@@ -361,7 +361,7 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li>Centralised - The host keys are certified by a trusted third party, such as a certificate authority (CA) or via DNS(SEC). The client has knowledge of the CA root key or access to a validating DNS server. The validity of the host keys can be certified by accepted CAs or DNS servers. Consequently, each host key must be certified by the central authority before authorization is possible.</li>
 </ul>
 <p>There is an option to defer checking the host key when connecting to host for the first time, however, this is not recommended and can be avoided by pre-seeding a public host key in the server build to allow connecting to the configuration management infrastructure and then changed at a later time.</p>
-<p><strong>Transport Layer</strong></p>
+<p><strong>Transport Layer Protocol</strong></p>
 <p>Authentication at this layer is host based, it does not perform user authentication. The key exchange method, public key algorithm, symmetric encryption algorithm, message authentication algorithm, and hash algorithm are all negotiated.</p>
 <p>The client initiates the connection, usually using TCP/IP. Port 22 is the officially recognized port number, however, servers that expose this port to the public internet should choose a different port since it is usually scanned for by automated bots.</p>
 <p>!!</p>
@@ -370,9 +370,21 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <p>Public key format, encoding and algorithm (signature and/or encryption)</p>
 <p>!!</p>
 <p>Key exchange starts with each side sending their lists of supported algorithms. Each side has a preferred algorithm in each category.</p>
-<p><strong>User Authentication</strong></p>
+<p><strong>User Authentication Protocol</strong></p>
 <p>When user authentication starts, it receives the session identifier from the transport layer. The session identifier uniquely identifies this session and is suitable for signing in order to prove ownership of a private key. The server drives the authentication by telling the client which authentication methods can be used, such as public key or password authentication.</p>
 <p>In order to perform public key authentication, the client must be in possession of a private key. This method works by sending a signature created with a private key of the user. The server cheks that the key is a valid authenticator for the user, and checks that the signature is valid.</p>
+<p><strong>Connection Protocol</strong></p>
+<p>This layer provides interactive login sessions, remote execution of commands and forwarded TCP/IP connections, multiplexed into a single encrypted tunnel.</p>
+<p>All terminal sessions, forwarded connections etc. are channels. Either side may open a channel. Multiple channels are multiplexed into a single connection.</p>
+<p><strong>First connection</strong></p>
+<p>ssh obtains configuration data from sources in the following order:</p>
+<ul>
+<li>command-line options</li>
+<li>users configuration file (~/.ssh/ssh_config)</li>
+<li>system-wide configuration file (/etc/ssh/ssh_config)</li>
+</ul>
+<p>The chosen options must also comply with the configurations specified in sshd_config on the receiving end.</p>
+<p>The client sends its chosen algorithm details and key exchange method to the host. The host replies with its chosen algorithms. The two perform key exchange of the host keys. Once verified, the client sends the user authentication details. The host verifies these details. If verified, the host accepts the connection.</p>
 <p><strong>ssh_config</strong></p>
 <ul>
 <li><strong>Host</strong> - restrict the following options (up to the next Host or Match) to be only used for those hosts matching the pattern.</li>
@@ -384,7 +396,7 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li><strong>HashKnownHosts yes</strong> - SSH will hash host names and addresses when they are added to ~/.ssh/known_hosts. Hashed names can be used normally by SSH, but are unreadable to humans.</li>
 <li><strong>HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher.</li>
 <li><strong>KexAlgorithms curve25519-sha256@libssh.org</strong> - Prefer use of DJB’s cipher. Key Exchange Algorithm.</li>
-<li><strong>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</strong> - Encrypt then MAC, and SHA2 are preferred.</li>
+<li><strong>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</strong> - Encrypt then MAC, and SHA2 are preferred. When chacha20-poly1305@openssh.com is used, no MAC is used since Poly1305 is used as the MAC. The MAC algorithms listed here are used by AES GCM if available.</li>
 <li><strong>Protocol 2</strong> - Explicitly disable Protocol 1, which suffers from cryptographic weaknesses.</li>
 <li><strong>PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher. Key types for public key authentication.</li>
 <li><strong>PubkeyAuthentication yes</strong> - Use public key authentication</li>
@@ -413,7 +425,7 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li><strong>HostKey /etc/ssh/ssh_host_ed25519_key</strong> - Specifies the ed25519 host private key file.</li>
 <li><strong>HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher.</li>
 <li><strong>KexAlgorithms curve25519-sha256@libssh.org</strong> - Prefer use of DJB’s cipher. Key Exchange Algorithm.</li>
-<li><strong>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</strong> - Encrypt then MAC, and SHA2 are preferred.</li>
+<li><strong>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</strong> - Encrypt then MAC, and SHA2 are preferred. When chacha20-poly1305@openssh.com is used, no MAC is used since Poly1305 is used as the MAC. The MAC algorithms listed here are used by AES GCM if available.</li>
 <li><strong>PasswordAuthentication no</strong> - Disable password authentication</li>
 <li><strong>PermitRootLogin no</strong> - Do not allow root login over SSH</li>
 <li><strong>PrintLastLog no</strong> - Disables printing the date and time of the last user login.</li>

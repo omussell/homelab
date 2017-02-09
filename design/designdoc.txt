@@ -451,7 +451,7 @@ Each server should have a host key. The host key is used during key exchange to 
 
 There is an option to defer checking the host key when connecting to host for the first time, however, this is not recommended and can be avoided by pre-seeding a public host key in the server build to allow connecting to the configuration management infrastructure and then changed at a later time.
 
-**Transport Layer**
+**Transport Layer Protocol**
 
 Authentication at this layer is host based, it does not perform user authentication. The key exchange method, public key algorithm, symmetric encryption algorithm, message authentication algorithm, and hash algorithm are all negotiated.
 
@@ -469,14 +469,30 @@ Public key format, encoding and algorithm (signature and/or encryption)
 
 Key exchange starts with each side sending their lists of supported algorithms. Each side has a preferred algorithm in each category. 
 
-**User Authentication**
+**User Authentication Protocol**
 
 When user authentication starts, it receives the session identifier from the transport layer. The session identifier uniquely identifies this session and is suitable for signing in order to prove ownership of a private key. The server drives the authentication by telling the client which authentication methods can be used, such as public key or password authentication.
 
 In order to perform public key authentication, the client must be in possession of a private key. This method works by sending a signature created with a private key of the user. The server cheks that the key is a valid authenticator for the user, and checks that the signature is valid.
 
+**Connection Protocol**
+
+This layer provides interactive login sessions, remote execution of commands and forwarded TCP/IP connections, multiplexed into a single encrypted tunnel.
+
+All terminal sessions, forwarded connections etc. are channels. Either side may open a channel. Multiple channels are multiplexed into a single connection. 
 
 
+**First connection**
+
+ssh obtains configuration data from sources in the following order:
+
+- command-line options
+- users configuration file (~/.ssh/ssh_config)
+- system-wide configuration file (/etc/ssh/ssh_config)
+
+The chosen options must also comply with the configurations specified in sshd_config on the receiving end.
+
+The client sends its chosen algorithm details and key exchange method to the host. The host replies with its chosen algorithms. The two perform key exchange of the host keys. Once verified, the client sends the user authentication details. The host verifies these details. If verified, the host accepts the connection.
 
 
 
@@ -498,7 +514,7 @@ In order to perform public key authentication, the client must be in possession 
 - **HashKnownHosts yes** - SSH will hash host names and addresses when they are added to ~/.ssh/known_hosts. Hashed names can be used normally by SSH, but are unreadable to humans.
 - **HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com** - Prefer use of DJB's cipher. 
 - **KexAlgorithms curve25519-sha256@libssh.org** - Prefer use of DJB's cipher. Key Exchange Algorithm.
-- **MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com** - Encrypt then MAC, and SHA2 are preferred.
+- **MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com** - Encrypt then MAC, and SHA2 are preferred. When chacha20-poly1305@openssh.com is used, no MAC is used since Poly1305 is used as the MAC. The MAC algorithms listed here are used by AES GCM if available.
 - **Protocol 2** - Explicitly disable Protocol 1, which suffers from cryptographic weaknesses.
 - **PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com** - Prefer use of DJB's cipher. Key types for public key authentication.
 - **PubkeyAuthentication yes** - Use public key authentication
@@ -531,7 +547,7 @@ Since this option is reliant on DNS and that DNSSEC is set up correctly, it woul
 - **HostKey /etc/ssh/ssh_host_ed25519_key** - Specifies the ed25519 host private key file.
 - **HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com** - Prefer use of DJB's cipher. 
 - **KexAlgorithms curve25519-sha256@libssh.org** - Prefer use of DJB's cipher. Key Exchange Algorithm.
-- **MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com** - Encrypt then MAC, and SHA2 are preferred.
+- **MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com** - Encrypt then MAC, and SHA2 are preferred. When chacha20-poly1305@openssh.com is used, no MAC is used since Poly1305 is used as the MAC. The MAC algorithms listed here are used by AES GCM if available.
 - **PasswordAuthentication no** - Disable password authentication
 - **PermitRootLogin no** - Do not allow root login over SSH
 - **PrintLastLog no** - Disables printing the date and time of the last user login. 
