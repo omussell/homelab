@@ -494,14 +494,7 @@ The chosen options must also comply with the configurations specified in sshd_co
 
 The client sends its chosen algorithm details and key exchange method to the host. The host replies with its chosen algorithms. The two perform key exchange of the host keys. Once verified, the client sends the user authentication details. The host verifies these details. If verified, the host accepts the connection.
 
-
-
-
 [SSH]: https://tools.ietf.org/html/rfc4251
-
-
-
-
 
 **ssh_config**
 
