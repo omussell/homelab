@@ -694,6 +694,12 @@ While SEND has been recommended to prevent spoofing attacks, it is non-trivial t
 
 ### Choosing a Configuration Management Tool ###
 
+### Scheduling with cron ###
+
+The cron utility searches the user crontabs (/etc/cron.d on Linux or /var/cron/tabs on FreeBSD) for crontab files which are named after accounts in /etc/passwd. crontabs found are loaded into memory. A crontab file contains instructions to the cron daemon in the form "run this command at this time on this date". Each user has their own crontab, and commands in a crontab will be executed as the user who owns the crontab. The system crontab, /etc/crontab, should not be modified.
+
+cron then wakes up every minute and checks all crontabs to see if a command should be run in the current minute. Before running a command from an account crontab, cron checks the status of the account with pam and skips the command if the account is locked out or expired. Commands from /etc/crontab bypass this check. 
+
 
 Scaling
 ===

@@ -99,6 +99,7 @@
 <li><a href="#hostname-conventions">Hostname Conventions</a></li>
 <li><a href="#choosing-an-operating-system">Choosing an Operating System</a></li>
 <li><a href="#choosing-a-configuration-management-tool">Choosing a Configuration Management Tool</a></li>
+<li><a href="#scheduling-with-cron">Scheduling with cron</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#scaling">Scaling</a></li>
@@ -523,6 +524,9 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <h3 id="hostname-conventions"><a href="#TOC">Hostname Conventions</a></h3>
 <h3 id="choosing-an-operating-system"><a href="#TOC">Choosing an Operating System</a></h3>
 <h3 id="choosing-a-configuration-management-tool"><a href="#TOC">Choosing a Configuration Management Tool</a></h3>
+<h3 id="scheduling-with-cron"><a href="#TOC">Scheduling with cron</a></h3>
+<p>The cron utility searches the user crontabs (/etc/cron.d on Linux or /var/cron/tabs on FreeBSD) for crontab files which are named after accounts in /etc/passwd. crontabs found are loaded into memory. A crontab file contains instructions to the cron daemon in the form “run this command at this time on this date”. Each user has their own crontab, and commands in a crontab will be executed as the user who owns the crontab. The system crontab, /etc/crontab, should not be modified.</p>
+<p>cron then wakes up every minute and checks all crontabs to see if a command should be run in the current minute. Before running a command from an account crontab, cron checks the status of the account with pam and skips the command if the account is locked out or expired. Commands from /etc/crontab bypass this check.</p>
 <h1 id="scaling"><a href="#TOC">Scaling</a></h1>
 <p>AKF Scaling Cube</p>
 <ul>
