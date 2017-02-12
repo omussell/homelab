@@ -248,6 +248,29 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li>High performance with multiple caching mechanisms</li>
 <li>Snapshots</li>
 </ul>
+<p>A storage pool is a collection of devices that provides physical storage and data replication for ZFS datasets. All datasets within a storage pool share the same space.</p>
+<p><strong>Virtual Devicers (vdevs)</strong></p>
+<p>A virtual device or vdev is a device or collection of devices organised into groups:</p>
+<ul>
+<li>Disk - A block device, under /dev.</li>
+<li>File - A regular file</li>
+<li>Mirror - A mirror of two or more devices.</li>
+<li>raidz - Data and parity is striped across all disks within a raidz group.</li>
+<li>Spare - A special psuedo-vdev which keeps track of available hot spares in a pool.</li>
+<li>Log - A separate-intent log device.</li>
+<li>Cache - A device used to cache storage pool data.</li>
+</ul>
+<p>ZFS allows devices to be associated with pools as hot spares. These devices are not actively used in the pool, but when an active device fails, it is automatically replaced by a hot spare.</p>
+<p>There are zfs datasets in a zfs storage pool:</p>
+<ul>
+<li>File system - Can be mounted within the standard system namespace and behaves like other file systems.</li>
+<li>Volume - A logical volume exported as a raw or block device.</li>
+<li>Snapshot - A read-only version of a file system or volume at a given point in time, <em>filesystem@name</em> or <em>volume@name</em></li>
+</ul>
+<p>Snapshots can be created quickly, and initially do not consume any additional space. As data in the active dataset changes, the snapshot consumes data. Snapshots of volumes can be cloned or rolled back, but cannot be access independently. File system snapshots can be access under the .zfs/snapshot directory in the root of the file system.</p>
+<p>A clone is a writable volume or file system whose initial contents are the same as another dataset. Clones can only be created from a snapshot. When a snapshot is cloned, it creates a dependency between the parent and child, and the original cannot be destroyed as long as the clone exists. The clone can be promoted, which then allows the original to be destroyed.</p>
+<p>ZFS automatically manages mounting and unmounting file systems without the need to edit the /etc/fstab file. All automatically managed file systems are mounted by ZFS at boot time.</p>
+<p>A zfs dataset can be attached to a jail. A dataset cannot be attached to one jail and the children of the same dataset to other jails.</p>
 <h3 id="other-operating-systemscontainersfilesystems"><a href="#TOC">Other Operating Systems/Containers/Filesystems</a></h3>
 <p>While a combination of FreeBSD, Jails and ZFS have been recommended, you are free to use other operating systems like Windows or Linux, other container formats such as LXC or Zones, and other filesystems like BTRFS or EXT. The general concepts are interchangeable.</p>
 <h3 id="host-install-tools"><a href="#TOC">Host Install Tools</a></h3>
@@ -396,7 +419,7 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li><strong>FingerprintHash sha256</strong> - Prefer SHA256 over MD5 when displaying key fingerprints</li>
 <li><strong>HashKnownHosts yes</strong> - SSH will hash host names and addresses when they are added to ~/.ssh/known_hosts. Hashed names can be used normally by SSH, but are unreadable to humans.</li>
 <li><strong>HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher.</li>
-<li><strong>KexAlgorithms curve25519-sha256@libssh.org</strong> - Prefer use of DJB’s cipher. Key Exchange Algorithm.</li>
+<li><strong>KexAlgorithms curve25519-sha256@libssh.org</strong> - Prefer use of DJB’s cipher. Key Exchange Algorithms</li>
 <li><strong>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</strong> - Encrypt then MAC, and SHA2 are preferred. When chacha20-poly1305@openssh.com is used, no MAC is used since Poly1305 is used as the MAC. The MAC algorithms listed here are used by AES GCM if available.</li>
 <li><strong>Protocol 2</strong> - Explicitly disable Protocol 1, which suffers from cryptographic weaknesses.</li>
 <li><strong>PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher. Key types for public key authentication.</li>
@@ -407,9 +430,9 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <p>1.</p>
 <ul>
 <li><strong>StrictHostKeyChecking yes</strong> - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH’s to a server, does it need to “accept” the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!</li>
-<li><strong>UpdateHostKeys yes</strong> - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_configas HostKey ssh_host_ed25519_key, and the new keys would also be specified: HostKey ssh_host_ed25519_key_new. The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified in some other way.</li>
+<li><strong>UpdateHostKeys yes</strong> - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_config as “HostKey ssh_host_ed25519_key”, and the new keys would also be specified: “HostKey ssh_host_ed25519_key_new”. The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified as if you were connecting for the first time.</li>
 </ul>
-<p>These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to SSH to servers in order to maintain the known_hosts files.</p>
+<p>These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to regularly SSH to servers in order to maintain the known_hosts files.</p>
 <p>2.</p>
 <ul>
 <li><strong>VerifyHostKeyDNS yes</strong> - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.</li>

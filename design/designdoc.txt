@@ -234,6 +234,44 @@ Configuring the jail:
 - High performance with multiple caching mechanisms
 - Snapshots
 
+A storage pool is a collection of devices that provides physical storage and data replication for ZFS datasets. All datasets within a storage pool share the same space.
+
+**Virtual Devicers (vdevs)**
+
+A virtual device or vdev is a device or collection of devices organised into groups:
+
+- Disk - A block device, under /dev.
+- File - A regular file
+- Mirror - A mirror of two or more devices. 
+- raidz - Data and parity is striped across all disks within a raidz group.
+- Spare - A special psuedo-vdev which keeps track of available hot spares in a pool.
+- Log - A separate-intent log device.
+- Cache - A device used to cache storage pool data.
+
+ZFS allows devices to be associated with pools as hot spares. These devices are not actively used in the pool, but when an active device fails, it is automatically replaced by a hot spare.
+
+There are zfs datasets in a zfs storage pool:
+
+- File system - Can be mounted within the standard system namespace and behaves like other file systems.
+- Volume - A logical volume exported as a raw or block device.
+- Snapshot - A read-only version of a file system or volume at a given point in time, *filesystem@name* or *volume@name*
+
+Snapshots can be created quickly, and initially do not consume any additional space. As data in the active dataset changes, the snapshot consumes data. Snapshots of volumes can be cloned or rolled back, but cannot be access independently. File system snapshots can be access under the .zfs/snapshot directory in the root of the file system.
+
+A clone is a writable volume or file system whose initial contents are the same as another dataset. Clones can only be created from a snapshot. When a snapshot is cloned, it creates a dependency between the parent and child, and the original cannot be destroyed as long as the clone exists. The clone can be promoted, which then allows the original to be destroyed.
+
+ZFS automatically manages mounting and unmounting file systems without the need to edit the /etc/fstab file. All automatically managed file systems are mounted by ZFS at boot time. 
+
+A zfs dataset can be attached to a jail. A dataset cannot be attached to one jail and the children of the same dataset to other jails. 
+
+
+
+
+
+
+
+
+
 ### Other Operating Systems/Containers/Filesystems ###
 While a combination of FreeBSD, Jails and ZFS have been recommended, you are free to use other operating systems like Windows or Linux, other container formats such as LXC or Zones, and other filesystems like BTRFS or EXT. The general concepts are interchangeable.
 
@@ -506,7 +544,7 @@ The client sends its chosen algorithm details and key exchange method to the hos
 - **FingerprintHash sha256** - Prefer SHA256 over MD5 when displaying key fingerprints
 - **HashKnownHosts yes** - SSH will hash host names and addresses when they are added to ~/.ssh/known_hosts. Hashed names can be used normally by SSH, but are unreadable to humans.
 - **HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com** - Prefer use of DJB's cipher. 
-- **KexAlgorithms curve25519-sha256@libssh.org** - Prefer use of DJB's cipher. Key Exchange Algorithm.
+- **KexAlgorithms curve25519-sha256@libssh.org** - Prefer use of DJB's cipher. Key Exchange Algorithms
 - **MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com** - Encrypt then MAC, and SHA2 are preferred. When chacha20-poly1305@openssh.com is used, no MAC is used since Poly1305 is used as the MAC. The MAC algorithms listed here are used by AES GCM if available.
 - **Protocol 2** - Explicitly disable Protocol 1, which suffers from cryptographic weaknesses.
 - **PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com** - Prefer use of DJB's cipher. Key types for public key authentication.
@@ -518,9 +556,9 @@ For host key checking, there are two options:
 1. 
 
 - **StrictHostKeyChecking yes** - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH's to a server, does it need to "accept" the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!
-- **UpdateHostKeys yes** - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_configas HostKey ssh_host_ed25519_key, and the new keys would also be specified: HostKey ssh_host_ed25519_key_new. The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified in some other way. 
+- **UpdateHostKeys yes** - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_config as "HostKey ssh_host_ed25519_key", and the new keys would also be specified: "HostKey ssh_host_ed25519_key_new". The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified as if you were connecting for the first time. 
 
-These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to SSH to servers in order to maintain the known_hosts files.
+These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to regularly SSH to servers in order to maintain the known_hosts files.
 
 2.
 
