@@ -236,7 +236,7 @@ Configuring the jail:
 
 A storage pool is a collection of devices that provides physical storage and data replication for ZFS datasets. All datasets within a storage pool share the same space.
 
-**Virtual Devicers (vdevs)**
+**Virtual Devicer (vdevs)**
 
 A virtual device or vdev is a device or collection of devices organised into groups:
 
@@ -611,6 +611,33 @@ The output is a list of SSHFP records in the format:
 ### TCP Wrapper ###
 ### IDS ###
 ### Firewalls ###
+
+Configuration Management
+---
+
+Traditional system administration follows the "waterfall" method, where each step: gather requirements, design, implement, test, verify, deploy; is performed by a different team, and often conducted by hand. Each step or team has an end goal after which the product is handed over to the new team. The methodology documented in the papers at infrastructures.org, now referred to as DevOps, is the new way for managing infrastructures.
+
+Features of this method include:
+
+- Same Development and Operations toolchain
+- Consistent software development life cycle
+- Managed configuration and automation
+- Infrastructure as code
+- Automated provisioning and deployment
+- Automated build and release
+- Release packaging
+- Abstracted administration
+
+Continuous Delivery:
+
+- The process for releasing/deploying must be repeatable and reliable
+- Automate everything
+- If something is difficult or painful, do it more often to improve and automate it
+- Keep everything in source control
+- "Done" means "released, working properly, in the hands of the end user"
+- Build quality in
+- Everybody has responsibility for the release process
+- Improve continuously
 
 
 Authorisation / Access Control Lists
