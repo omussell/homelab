@@ -1,0 +1,607 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Oliver Mussell" />
+  <title>Bootstrapping a Secure Infrastructure</title>
+  <link rel="stylesheet" href="/homelab/design/style.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title">Bootstrapping a Secure Infrastructure</h1>
+<h2 class="author">Oliver Mussell</h2>
+<h3 class="date">2016-2017</h3>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#end-goal">End Goal</a></li>
+<li><a href="#background">Background</a></li>
+<li><a href="#high-level-design">High-Level Design</a></li>
+<li><a href="#experimental">Experimental</a></li>
+<li><a href="#detailed-design">Detailed Design</a><ul>
+<li><a href="#ipv6">IPv6</a><ul>
+<li><a href="#address-autoconfiguration-slaac">Address Autoconfiguration (SLAAC)</a></li>
+<li><a href="#send">SEND</a></li>
+<li><a href="#send-savi">SEND SAVI</a></li>
+<li><a href="#dhcpv6">DHCPv6</a></li>
+<li><a href="#ipsec">IPsec</a></li>
+<li><a href="#kink">KINK</a></li>
+</ul></li>
+<li><a href="#os">OS</a><ul>
+<li><a href="#freebsd">FreeBSD</a></li>
+<li><a href="#nanobsd">NanoBSD</a></li>
+<li><a href="#jails">Jails</a></li>
+<li><a href="#zfs">ZFS</a></li>
+<li><a href="#other-operating-systemscontainersfilesystems">Other Operating Systems/Containers/Filesystems</a></li>
+<li><a href="#host-install-tools">Host Install Tools</a></li>
+<li><a href="#ad-hoc-change-tools">Ad-Hoc Change Tools</a></li>
+</ul></li>
+<li><a href="#dns">DNS</a><ul>
+<li><a href="#dnssec">DNSSEC</a></li>
+<li><a href="#dane">DANE</a></li>
+<li><a href="#dane-for-email-security">DANE for Email Security</a></li>
+<li><a href="#dnscrypt">DNSCrypt</a></li>
+<li><a href="#dnscurve">DNSCurve</a></li>
+</ul></li>
+<li><a href="#ldap">LDAP</a><ul>
+<li><a href="#ldaps">LDAPS</a></li>
+<li><a href="#smime-or-pgp">S/MIME or PGP</a></li>
+</ul></li>
+<li><a href="#kerberos">Kerberos</a></li>
+<li><a href="#ntp">NTP</a><ul>
+<li><a href="#ntpsec">NTPsec</a></li>
+</ul></li>
+<li><a href="#nfs">NFS</a><ul>
+<li><a href="#kerberizednfsv4">KerberizedNFSv4</a></li>
+</ul></li>
+<li><a href="#application-servers">Application Servers</a><ul>
+<li><a href="#nginx">NGINX</a></li>
+</ul></li>
+<li><a href="#security-and-crypto">Security and Crypto</a><ul>
+<li><a href="#against-dnssec-and-dane">Against DNSSEC (and DANE)</a></li>
+<li><a href="#tls">TLS</a></li>
+<li><a href="#ssh">SSH</a></li>
+<li><a href="#hsm">HSM</a></li>
+<li><a href="#passwords">Passwords</a></li>
+<li><a href="#tcp-wrapper">TCP Wrapper</a></li>
+<li><a href="#ids">IDS</a></li>
+<li><a href="#firewalls">Firewalls</a></li>
+</ul></li>
+<li><a href="#configuration-management">Configuration Management</a></li>
+<li><a href="#authorisation-access-control-lists">Authorisation / Access Control Lists</a></li>
+<li><a href="#role-based-access-control-shared-administration-sudo">Role-Based Access Control / Shared Administration (sudo)</a></li>
+<li><a href="#domain-naming-service">Domain Naming Service</a></li>
+<li><a href="#directory-service-ldap">Directory Service (LDAP)</a></li>
+<li><a href="#time-service">Time Service</a></li>
+<li><a href="#logging-auditing">Logging / Auditing</a></li>
+<li><a href="#rpc-admin-service">RPC / Admin service</a></li>
+</ul></li>
+<li><a href="#designing-for-operations">Designing for Operations</a><ul>
+<li><a href="#specific-operational-requirements">Specific Operational Requirements</a><ul>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#startup-and-shutdown">Startup and shutdown</a></li>
+<li><a href="#queue-draining">Queue draining</a></li>
+<li><a href="#software-upgrades">Software upgrades</a></li>
+<li><a href="#backups-and-restores">Backups and restores</a></li>
+<li><a href="#redundancy">Redundancy</a></li>
+<li><a href="#replicated-databases">Replicated databases</a></li>
+<li><a href="#hot-swaps">Hot swaps</a></li>
+<li><a href="#access-controls-and-rate-limits">Access controls and rate limits</a></li>
+<li><a href="#monitoring">Monitoring</a></li>
+<li><a href="#auditing">Auditing</a></li>
+</ul></li>
+<li><a href="#unspecific-operational-requirements">Unspecific Operational Requirements</a><ul>
+<li><a href="#assigning-ipv6-addresses-to-clients">Assigning IPv6 Addresses to Clients</a></li>
+<li><a href="#static-or-dynamic-ipv6-addresses-dhcpv6-or-slaac">Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC)</a></li>
+<li><a href="#ipv6-security">IPv6 Security</a></li>
+<li><a href="#hostname-conventions">Hostname Conventions</a></li>
+<li><a href="#choosing-an-operating-system">Choosing an Operating System</a></li>
+<li><a href="#choosing-a-configuration-management-tool">Choosing a Configuration Management Tool</a></li>
+<li><a href="#scheduling-with-cron">Scheduling with cron</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#scaling">Scaling</a></li>
+<li><a href="#user-access">User Access</a></li>
+</ul>
+</div>
+<ul>
+<li>Produced in Markdown with Vim, converted to HTML by Pandoc.</li>
+<li>Graphics created with DOT</li>
+<li>Hosted on Github Pages</li>
+</ul>
+<p>!! needs cleanup !!</p>
+<h1 id="summary"><a href="#TOC">Summary</a></h1>
+<p>Create an infrastructure with an emphasis on security, resiliency and ease of maintenance.</p>
+<h1 id="end-goal"><a href="#TOC">End Goal</a></h1>
+<p>Produce a working implementation of a secure, resilient and easy to maintain infrastructure. This will be published in the form of version-controlled configuration documents, with the philosophy and background of the chosen configuration documented here. Anyone should be able to download the vendor supplied base operating system, and the configuration documents should convert that base OS into the desired state. The process by which this conversion is achieved could be as simple as a shell script, or as complicated as a configuration management tool backed by continuous deployment pipelines. In addition, the infrastructure should be flexible enough to be deployed in multiple configurations based on the decisions of the Infrastructure Architects and business owners. It should also be portable to other operating systems with only a little massage of the configuration code.</p>
+<h1 id="background"><a href="#TOC">Background</a></h1>
+<p>The design of the environment will be similar to <a href="https://en.wikipedia.org/wiki/Project_Athena">Project Athena</a> at MIT and the <a href="https://en.wikipedia.org/wiki/Distributed_Computing_Environment">Distributed Computing Environment</a> by the OSF. Inspiration for this project comes from the <a href="http://www.infrastructures.org">infrastructures.org</a> website, specifically their papers: <a href="http://www.infrastructures.org/papers/bootstrap/bootstrap.html">Bootstrapping an Infrastructure</a> and <a href="http://www.infrastructures.org/papers/turing/turing.html">Why Order Matters: Turing Equivalence in Automated Systems Administration</a>. Additionally, a paper by Paul Schenkeveld, <a href="https://2010.asiabsdcon.org/papers/abc2010-P4A-paper.pdf">Building servers with NanoBSD, ZFS and Jails</a> served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
+<p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.</p>
+<h1 id="high-level-design"><a href="#TOC">High-Level Design</a></h1>
+<!---
+
+- Control Machine - Stores operating system images and configuration files in version control. Used to create the Gold server. 
+- Gold server - In the form of a created system image
+- Infrastructure servers - Provides directory, domain names, authentication/authorisation services
+- Data storage - Provide clients with access to their data/files via network file systems.
+- Clients - End use
+
+--->
+
+<img src="/homelab/pic/secenv.svg"> <img src="/homelab/pic/disklayout.svg">
+<!---
+
+!!
+Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. 
+Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.
+
+KerberizedNFSv4 for client file access.
+
+!!
+
+--->
+
+<h1 id="experimental"><a href="#TOC">Experimental</a></h1>
+<p>Features that aren’t production ready, but would be interesting to implement:</p>
+<ul>
+<li>SSH using X509v3 certificates, signed by a central CA (or validated with DANE?)</li>
+<li>TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)</li>
+</ul>
+<h1 id="detailed-design"><a href="#TOC">Detailed Design</a></h1>
+<!---
+
+Control machine config, Git, SSH, 2FA?
+Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
+Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
+Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
+
+--->
+
+<h2 id="ipv6"><a href="#TOC">IPv6</a></h2>
+<p>IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4.</p>
+<p>IPv6 uses a 128-bit address which allows a much larger address space, 2^128. A single /64 subnet has a size of 2^64 addresses which equates to the square of the entire IPv4 address space. An address is represented as eight groups of four hexadecimal digits with the groups separated by colons, e.g. 2001:0db8:0000:0042:0000:8a2e:0370:7334. Guidance for representing IPv6 addresses in text is shown in <a href="https://tools.ietf.org/html/rfc5952">RFC5952</a>.</p>
+<p>IPv6 addresses can be assigned in two ways, stateful or stateless, via Stateless Address Autoconfiguration (<a href="https://tools.ietf.org/html/rfc4862">SLAAC</a>) and/or DHCPv6. The stateless approach is used when a site is not particularly concerned with the addresses hosts use, whereas stateful DHCPv6 is used when a site requires tighter control over addresses. Both SLAAC and DHCPv6 may be used simultaneously.</p>
+<h3 id="address-autoconfiguration-slaac"><a href="#TOC">Address Autoconfiguration (SLAAC)</a></h3>
+<p>The autoconfiguration process includes generating a link-local address, generating global addresses via stateless address autoconfiguration, and the Duplicate Address Detection procedure to verify the uniqueness of the addresses on a link. The IPv6 stateless autoconfiguration mechanism requires no manual configuration of hosts, minimal configuration of routers, and no additional servers. The stateless mechanism allows a host to generate its own addresses using a combination of locally available information and information advertised by routers. Routers advertise prefixes that identify the subnet(s) associated with a link, while hosts generate an “interface identifier” that uniquely identifies an interface on a subnet. An address is formed by combining the two. In the absence of routers, a host can only generate link-local addresses. However, link-local addresses are sufficient for allowing communication among nodes attached to the same link.</p>
+<p>IPv6 nodes on the same link use the Neighbor Discovery protocol to discover each others presence, to determine each others link-layer addresses, to find routers, and to maintain reachability information about the paths to active neighbors.</p>
+<p>All interfaces of IPv6 hosts require a link-local address, which is derived from the MAC address of the interface and the prefix fe80::/10. The address space is filled with prefix bits left-justified to the most-significant bit, and filling the MAC address in EUI-64 format into the least-significant bits. Any remaining bits between the two parts are set to zero.</p>
+<pre><code>- The left-most &#39;prefix length&#39; bits of the address are those of the link-local prefix
+- The bits in the address to the right of the link-local prefix are set to all zeroes
+- If the length of the interface identifier is Nbits, the right-most N bits of the address are replaced by the interface identifier</code></pre>
+<p>Global addresses are formed by appending an interface identifier to a prefix of appropriate length. Prefixes are obtained from Prefix Information options contained in Router Advertisements. RA’s are sent periodically to the all-nodes multicast address. To obtain an advertisement quickly, a host send out Router Solicitations as described in <a href="https://tools.ietf.org/html/rfc4861">RFC4861</a>.</p>
+<p>PICTURE OF GLOBAL ADDRESS GENERATION</p>
+<p>The Neighbor Discovery Protocol (<a href="https://tools.ietf.org/html/rfc4861">NDP</a>) is used by nodes to determine the link-layer addresses for neighbors known to reside on the same attached link, to find neighboring routers to forward packets, and to keep track of neighbors that are reachable or not.</p>
+<p>The IPv6 router will be allocated a subnet by the ISP and configured with the first 64 bits of the 128-bit address. <a href="https://tools.ietf.org/html/rfc4862#section-5.4">Duplicate Address Detection</a> and <a href="https://tools.ietf.org/html/rfc4861#section-7.3">Neighbor Unreachability Detection</a> serve as error handling for the address autoconfiguration.</p>
+<p>Since the IPv6 addresses are generated from the prefix on the router, it is possible to renumber an entire network by changing the prefix on the router.</p>
+<p>IPv6 address are mapped to hostnames in DNS using <a href="https://tools.ietf.org/html/rfc3596">AAAA resource records</a>. Reverse resolution uses the ip6.arpa domain.</p>
+<h3 id="send"><a href="#TOC">SEND</a></h3>
+<p>The SEcure Neighbor Discovery (<a href="https://tools.ietf.org/html/rfc3971">SEND</a>) protocol is designed to counter threats to the Neighbor Discovery Protocol (<a href="https://tools.ietf.org/html/rfc4861">NDP</a>) used by IPv6 to discover the presence of nodes on the same link and to find routers. SEND does not apply to addresses generated by SLAAC.</p>
+<p>Components of SEND:</p>
+<ul>
+<li>Certification paths are expected to certify the authority of routers. A host must be configured with a trust anchor to which the router has a certification path before the host can adopt the router as its default router.</li>
+<li>Cryptographically Generated Addresses are used to make sure that the sender of a Neighbor Discovery message is the owner of the claimed address.</li>
+<li>Timestamp and Nonce options are used to provide replay protection.</li>
+</ul>
+<p>The deployment model for trust anchors can be either a globally rooted public key infrastructure, or a local decentralised deployment similar to that used for TLS. At the moment, a global root does not exist and so cannot be used. In the decentralised model, a public key can be published by the end hosts own organisation. In a roaming environment, multiple trusted public keys can be configured. Also, a SEND node can fall back to the use of a non-SEND router.</p>
+<p>By default, a SEND-enabled node should use only CGAs for its own addresses. Cryptographically Generated Addresses (<a href="https://tools.ietf.org/html/rfc3972">CGA</a>) are IPv6 addresses for which the interface identifier is generated by computing a cryptographic one-way hash function from a public key and other parameters. The binding between the public key and the address can be verified by re-computing the hash value and by comparing the hash value with the interface identifier. Messages from an IPv6 address can be protected by attaching the public key and parameters and then signing the message with the corresponding private key.</p>
+<p>The purpose of CGAs is to prevent stealing and spoofing of existing IPv6 addresses. The public key of the address owner is bound cryptographically to the address. The address owner can use the corresponding private key to assert its ownership and to sign SEND messages sent from the address. An attacker can create a new address from an arbitrary subnet prefix and a public key because CGAs are not certified. Hwoever, the attacker cannot impersonate somebody else’s address.</p>
+<h3 id="send-savi"><a href="#TOC">SEND SAVI</a></h3>
+<p>The SEcure Neighbor Discovery (SEND) Source Address Validation Improvement (<a href="https://tools.ietf.org/html/rfc7219">SAVI</a>) is a mechanism to provide source address validation using the SEND protocol. SEND SAVI uses the Duplicate Address Detection and Neighbor Unreachability messages to validate the address ownership claim of a node. Using the information contained in these messages, host IPv6 addresses are associated to switch ports, so that data packets will be validated by checking for consistency in this binding. In addition, SEND SAVI prevents hosts from generating packets containing off-link IPv6 source addresses.</p>
+<p>SEND SAVI is limited to links and prefixes in which every IPv6 host and router uses the SEND protocol to protect the exchange of Neighbor Discovery information.</p>
+<h3 id="dhcpv6"><a href="#TOC">DHCPv6</a></h3>
+<p>DHCPv6 is the stateful counterpart to SLAAC. DHCPv6 enables DHCP servers to pass IPv6 network information to IPv6 nodes, such as addresses and configuration information carried in options.</p>
+<p>Clients transmit and receive DHCP messages over UDP using the autogenerated link-local address.</p>
+<h3 id="ipsec"><a href="#TOC">IPsec</a></h3>
+<p>Security associations via IKE or KINK</p>
+<h3 id="kink"><a href="#TOC">KINK</a></h3>
+<p><a href="https://tools.ietf.org/html/rfc4430">Kerberized Internet Negotiation of Keys</a> (KINK) defines a protocol to establish and maintain security associations using the Kerberos authentication system. The central key management provided by Kerberos is efficient because it limits computational cost and limits complexity versus IKE’s necessity of using public key cryptography. Initial authentication to the KDC may be performed using asymmetric keys via <a href="https://tools.ietf.org/html/rfc4556">Public Key Cryptography for Initial Authentication in Kerberos</a> (PKINIT).</p>
+<h2 id="os"><a href="#TOC">OS</a></h2>
+<p>The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.</p>
+<h3 id="freebsd"><a href="#TOC">FreeBSD</a></h3>
+<p><a href="https://www.freebsd.org">FreeBSD</a> is an advanced computer operating system used to power modern servers. Its advanced networking, security, and storage features have made FreeBSD the platform of choice for embedded networking and storage devices, and powers many of the <a href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/nutshell.html#introduction-nutshell-users">busiest web sites</a>.</p>
+<p>FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems.</p>
+<h3 id="nanobsd"><a href="#TOC">NanoBSD</a></h3>
+<p><a href="https://www.freebsd.org/cgi/man.cgi?query=nanobsd">NanoBSD</a> is built via shell script and produces a minimal implementation of FreeBSD which fits on small flash media. The image is customised with a configuration file, which specifies variables and functions to build the image as required. There are three stages to the image build: buildkernel, buildworld and the customise commands. The buildkernel stage is only required to be run once, further configuration changes can skip the buildkernel stage. However, some configuration changes do still require the kernel to be built. Compiling the kernel takes a long time (~30 minutes) and should be done sparingly.</p>
+<p>Once the kernel and world have been built, you can customise the state of the environment using the customise commands. These are functions specified at the end of the configuration file. By skipping the buildkernel and buildworld stages, you reduce the image build time to ~20 seconds.</p>
+<p>The image is only required to be built once, updated images are deployed via dd to the inactive slice. The system is then rebooted, and boots into the newly updated slice. If there are problems, change the slice back to the original, and reboot. Building the image offline also gives the advantage of being able to test the image easily prior to widespread deployment. You can dd the image to a zfs volume, then use bhyve to run the image as a virtual machine. You can then perform testing to ensure it is correct, before rolling out the image to production.</p>
+<p>The flash storage is divided into three parts: the two image partitions or slices (1 and 2) containing the read-only root filesystem where only one is active, and the configuration file partition or /cfg. The /etc and /var directories are md (malloc backed) disks, which means they are located in RAM. On boot, the active slice contains the root filesystem mounted as read-only, which is beneficial since it is stored on flash media which has a limited number of writes. Configuration changes to files in /etc or /var are temporary, since they are located in RAM, and are loaded from the /cfg partition on boot. This means you can change configuration files, and if things go wrong, you can just reboot to clear the RAM. Otherwise if the new configuration is correct, you can mount /cfg, copy the changed files from /etc or /var to /cfg, then unmount again. Also, since the root filesystem is read-only, it is able to survive after an unplanned reboot. There is also no reason to run fsck after a non-graceful shutdown.</p>
+<p>Since the configuration files are stored separately to the root filesystem, when switching the active slice, the configuration files are not changed. So updates and upgrades should not have an effect on the running configuration. It is also good operational practice to make sure that any configuration changes are saved to /cfg after testing, so that in the event the server reboots the configuration is still saved. This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.</p>
+<h3 id="jails"><a href="#TOC">Jails</a></h3>
+<ul>
+<li>A process and all descendants are restricted to a chrooted directory tree</li>
+<li>Does not rely on virtualisation, so performance penalty is mitigated</li>
+<li>Easy to update or upgrade individual jails</li>
+</ul>
+<p>Jail parameters (jail.conf)</p>
+<ul>
+<li>path - Directory which is the root of the jail</li>
+<li>vnet - jail has its own virtual network stack with interfaces, addresses, routing table etc. - !! - Is this required to allow applications access to the network?</li>
+<li>persist - allows a jail to exist without any processes, so it won’t be removed when stopped.</li>
+<li>allow.mount - allow users in jail to mount jail-friendly filesystems. May be required for NFS / home directory mounts?</li>
+<li>exec.prestart - commands to run in the system environment before a jail is created</li>
+<li>exec.start - commands to run in the jail environment when a jail is created</li>
+<li>exec.poststart - commands to run in the system environment after a jail is created, and after any exec.start commands have completed</li>
+<li>exec.prestop - commands to run in the system environment before a jail is removed</li>
+<li>exec.stop - commands to run in the jail environment before a jail is removed, and after any exec.prestop commands have completed</li>
+<li>exec.poststop - commands to run in the system environment after a jail is removed</li>
+<li>ip_hostname - resolve the host.hostname parameter and add all IP addresses returned by the resolver to the list of addresses for this jail. - !! - Basically, rather than manually setting IP addresses, this setting means the IP is pulled from DNS (which is secured by DNSSEC). This introduces a bootstrap problem though, how do the DNS servers get IP addresses in the first place? (link-local addresses?)</li>
+<li>mount or mount.fstab - filesystems to mount before creating the jail</li>
+<li>depend - specify jails that this jail depends on. When this jail is to be created, any jails it depends on must already exist, otherwise they are created automatically up to the completion of the last exec.poststart command.</li>
+</ul>
+<p>Configuring the jail:</p>
+<ul>
+<li>Setup /etc/resolv.conf so that name resolution works</li>
+<li>Run newaliases to stop sendmail warnings</li>
+<li>Set the root password</li>
+<li>Set the timezone</li>
+<li>Add accounts for users</li>
+<li><p>Install packages</p></li>
+<li>Setup bindings to other services (or get them from SRV records in DNS?)</li>
+<li><p>Setup SSH to jail environment, configure sshd_config</p></li>
+</ul>
+<h3 id="zfs"><a href="#TOC">ZFS</a></h3>
+<ul>
+<li>Data integrity using checksums</li>
+<li>Pooled storage, where all disks added to the pool are available to all filesystems</li>
+<li>High performance with multiple caching mechanisms</li>
+<li>Snapshots</li>
+</ul>
+<p>A storage pool is a collection of devices that provides physical storage and data replication for ZFS datasets. All datasets within a storage pool share the same space.</p>
+<p><strong>Virtual Devicer (vdevs)</strong></p>
+<p>A virtual device or vdev is a device or collection of devices organised into groups:</p>
+<ul>
+<li>Disk - A block device, under /dev.</li>
+<li>File - A regular file</li>
+<li>Mirror - A mirror of two or more devices.</li>
+<li>raidz - Data and parity is striped across all disks within a raidz group.</li>
+<li>Spare - A special psuedo-vdev which keeps track of available hot spares in a pool.</li>
+<li>Log - A separate-intent log device.</li>
+<li>Cache - A device used to cache storage pool data.</li>
+</ul>
+<p>ZFS allows devices to be associated with pools as hot spares. These devices are not actively used in the pool, but when an active device fails, it is automatically replaced by a hot spare.</p>
+<p>There are zfs datasets in a zfs storage pool:</p>
+<ul>
+<li>File system - Can be mounted within the standard system namespace and behaves like other file systems.</li>
+<li>Volume - A logical volume exported as a raw or block device.</li>
+<li>Snapshot - A read-only version of a file system or volume at a given point in time, <em>filesystem@name</em> or <em>volume@name</em></li>
+</ul>
+<p>Snapshots can be created quickly, and initially do not consume any additional space. As data in the active dataset changes, the snapshot consumes data. Snapshots of volumes can be cloned or rolled back, but cannot be access independently. File system snapshots can be access under the .zfs/snapshot directory in the root of the file system.</p>
+<p>A clone is a writable volume or file system whose initial contents are the same as another dataset. Clones can only be created from a snapshot. When a snapshot is cloned, it creates a dependency between the parent and child, and the original cannot be destroyed as long as the clone exists. The clone can be promoted, which then allows the original to be destroyed.</p>
+<p>ZFS automatically manages mounting and unmounting file systems without the need to edit the /etc/fstab file. All automatically managed file systems are mounted by ZFS at boot time.</p>
+<p>A zfs dataset can be attached to a jail. A dataset cannot be attached to one jail and the children of the same dataset to other jails.</p>
+<h3 id="other-operating-systemscontainersfilesystems"><a href="#TOC">Other Operating Systems/Containers/Filesystems</a></h3>
+<p>While a combination of FreeBSD, Jails and ZFS have been recommended, you are free to use other operating systems like Windows or Linux, other container formats such as LXC or Zones, and other filesystems like BTRFS or EXT. The general concepts are interchangeable.</p>
+<h3 id="host-install-tools"><a href="#TOC">Host Install Tools</a></h3>
+<h3 id="ad-hoc-change-tools"><a href="#TOC">Ad-Hoc Change Tools</a></h3>
+<p>rsync. zfs send/receive.</p>
+<h2 id="dns"><a href="#TOC">DNS</a></h2>
+<p>DNS is required to provide hostname to IP mapping.</p>
+<p>Querying the DNS for the IP address is a mechanism employed by almost all applications, therefore it is imperative that it is secured correctly. There are a few different options, namely, DNSSEC, DNSCrypt and DNSCurve.</p>
+<p>In addition, a high emphasis on DNS security is required given that other security protocols are dependant upon it. For example, when a client connects to a server using SSH and the public key of the server is not known to the client, a fingerprint of the key is presented to the user for verification. This fingerprint can be stored in the DNS using SSHFP records so that the fingerprint can be verified out-of-band. TLS, which is commonly used for securing websites, can also use the DNS by storing certificates using TLSA records with DANE.</p>
+<p>This also means that whatever method that is used to secure DNS must be verified to be secure since the DNS is considered authoritative for the security of the domain. So in DNSSEC, the security of the domain is only as secure as the KSK, so it should be stored in a HSM.</p>
+<h3 id="dnssec"><a href="#TOC">DNSSEC</a></h3>
+<p>DNSSEC creates a secure domain name system by adding cryptographic signatures to existing DNS records. These digital signatures are stored in DNS name servers alongside other record types like AAAA, MX etc. By checking the associated signature, you can verify that a DNS record comes from its authoritative name server and hasn’t been altered. DNSSEC uses public key cryptography to sign and authenticate DNS resource record sets (RRsets). When requesting a DNS record, you can verify it comes from its authoritative name server and wasn’t altered en-route by verifying its signature.</p>
+<p>New DNS record types were added to support DNSSEC:</p>
+<ul>
+<li>DNSKEY - A zone signs its authoritative RRsets by using a private key and stores the corresponding public key in a DNSKEY RR. A resolver can then use the public key to validate signatures covering the RRsets in the zone, and authenticate them.</li>
+<li>RRSIG - Digital signatures are stored in RRSIG resource records and are used in the DNSSEC authentication process. A validator can use these RRSIG RRs to authenticate RRsets from the zone. A RRSIG record contains the signature for a RRset with a particular name, class, and type. The RRSIG RR specifies a validity interval for the signature and uses the Algorithm, the Signer’s Name and the Key Tag to identify the DNSKEY RR containing the public key that a validator can use to verify the signature.</li>
+<li>NSEC and NSEC3 - The NSEC resource record lists two separate things: the next owner name that contains authoritative data or a delegation point NS RRset, and the set of RR types present at the NSEC RR’s owner name. The complete set of NSEC RR’s in a zone indicates which authoritative RRsets exist in a zone and also form a chain of authoritative owner names in the zone. This information is used to provide authenticated denial of existence for DNS data. To provide protection against zone enumeration, the owner names used in the NSEC3 RR are cryptographic hashes of the original owner name prepended as a single label to the name of the zone. The NSEC3 RR indicates which hash function is used to construct the hash, which salt is used, and how many iterations of the hash function are performed over the original owner name.</li>
+<li>DS - The DS resource record refers to a DNSKEY RR and is used in the DNS DNSKEY authentication process. A DS RR referes to a DNSKEY RR by storing the key tag, algorithm number, and a digest of the DNSKEY RR. By authenticating the DS record, a resolver can authenticate the DNSKEY RR to which the DS record points. The DS RR and its corresponding DNSKEY RR have the same owner name, but they are stored in different locations. The DS RR appears only on the upper (parental) side of a delegation. The corresponding DNSKEY RR is stored in the child zone. This simplifies DNS zone management and zone signing but introduces processing requirements for the DS RR, which can be solved using the CDS RR.</li>
+<li>CDNSKEY and CDS - The CDS and CDNSKEY resource records are published in the Child zone and give the Child control of what is published for it in the parental zone. The CDS/CDNSKEY RRset expresses what the Child would like the DS RRset to look like after the change using the CDS RR, or the DNSKEY RRset with the CDNSKEY RR.</li>
+</ul>
+<p>Resource records of the same type are grouped together into a resource record set or RRset. The RRset is then digitally signed, rather than individual DNS records.</p>
+<img src="/homelab/pic/rrsets.svg">
+<p>The RRset is digitally signed by the private part of the zone signing key pair (ZSK). The digital signature is then stored in a RRSIG record. This proves that the data in the RRset originates from the zone.</p>
+<img src="/homelab/pic/zsk.svg">
+<p>The signature can be verified by recording the public part of the zone signing key pair in a DNSKEY record. The RRset, RRSIG and DNSKEY (public ZSK) can then be used by a resolver to validate the response from a name server.</p>
+<img src="/homelab/pic/zskverify.svg">
+<p>The DNSKEY records containing the public zone signing keys are then organised into a RRset, and signed by the Key Signing Key (KSK), which is stored in a DNSKEY record as well. This creates a RRSIG for the DNSKEY RRset.</p>
+<img src="/homelab/pic/ksk.svg">
+<p>The private key signing key signs a zone signing key which in turn will sign other zone data. The public key signing key is also signed by the private key signing key. The public KSK can then be used to validate the public ZSK.</p>
+<img src="/homelab/pic/kskverify.svg">
+<p>The DS RRset resides at a delegation point in a parent zone and indicates the public keys corresponding to the private keys used to self-sign the DNSKEY RRset at the delegated child zones apex. The public KSK in the child zone is hashed and stored in a DS record in the parent zone.</p>
+<img src="/homelab/pic/ds.svg">
+<p>Each time the child zone changes its KSK, the new public KSK needs to be transmitted to the parent zone in order to be stored in its DS record. In most cases this is a manual process, however, this can be mitigated by used CDS/CDNSKEY records. A CDS/CDNSKEY record contains the new information that the child zone would like to be published in the parent zone. These records only exist when the child zone wishes for the DS record in the parent zone to be changed. The parent zone should periodically check the child zone for the existence of CDS/CDNSKEY records, or can be prompted to do so.</p>
+<img src="/homelab/pic/cds.svg">
+<p>The above steps produce a trusted zone that connects to its parent, but the DS record in the parent zone also needs to be trusted. The signing process is repeated for the DS records in the DS RRset, and the process repeats up the parent zones in a chain up to the root zone.</p>
+<p>There are now two scenarios:</p>
+<ul>
+<li>For public DNS servers, you are reliant on the trust given to the root zone owners that they have signed the root zone correctly and stored the private root signing key securely.</li>
+<li>For internal-only domains, the island of security approach means that the signed zone does not have an authentication chain to its parent.</li>
+</ul>
+<img src="/homelab/pic/chain.svg">
+<p>A basic guide of <a href="https://www.cloudflare.com/dns/dnssec/how-dnssec-works/">how DNSSEC works</a> is found <a href="https://blog.cloudflare.com/dnssec-an-introduction/">on the CloudFlare blog</a>.</p>
+<p>When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the Root Signing Ceremony</p>
+<p>List of DNSSEC RFCs</p>
+<ul>
+<li>1</li>
+<li>2</li>
+<li>3</li>
+</ul>
+<h3 id="dane"><a href="#TOC">DANE</a></h3>
+<p>DNS-Based Authentication of Named Entities or <a href="https://tools.ietf.org/html/rfc6698">DANE</a> allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server’s certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.</p>
+<p>DANE is implemented by placing TLSA records in the DNS.</p>
+<p>TLS via DANE can be used to secure websites over HTTPS, email via the <a href="https://tools.ietf.org/html/rfc7929">OpenPGP</a> and <a href="https://tools.ietf.org/html/draft-ietf-dane-smime-14">S/MIME</a> extensions, instant messaging (XMPP, IRC) and other applications via SRV records.</p>
+<h3 id="dane-for-email-security"><a href="#TOC">DANE for Email Security</a></h3>
+<p>Since SMTP was designed to be transmitted in plaintext, encryption in the form of <a href="https://tools.ietf.org/html/rfc3207">STARTTLS</a> or <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS">Opportunistic TLS</a> was developed to secure email communication. However, <a href="https://blog.filipo.io/the-sad-state-of-smtp-encryption/">it is known</a> to be <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS#Weaknesses_and_mitigations">vulnerable to downgrade attacks</a>, since the initial handshake occurs in plain text. An attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.</p>
+<p>The Electronic Frontier Foundation (<a href="https://www.eff.org">EFF</a>) has created a project called <a href="https://github.com/EFForg/starttls-everywhere">STARTTLS Everywhere</a> in an effort to enforce TLS between popular email domains, with the help of <a href="https://letsencrypt.org">Let’s Encrypt</a> to serve certificates.</p>
+<p>However, this is only to serve as an <a href="https://github.com/EFForg/starttls-everywhere#alternatives">intermediate solution</a> until <a href="https://tools.ietf.org/html/draft-ietf-dane-smtp-with-dane-10">DNSSEC and DANE</a> see widespread adoption.</p>
+<p>Our implementation includes DNSSEC and DANE, and so email protection will be available. However, since the infrastructure is not designed to be publicly accessible, some unique challenges surrounding maintenance of the DNS and CA root domains require solutions and also how to securely send between organisations needs to be determined.</p>
+<p>While DANE can be used to validate the connection between mail exchangers, the emails themselves are still unencrypted. S/MIME and OpenPGP allow emails to be encrypted. There are also standards in place to store DANE bind</p>
+<p>A guide to setting up DNSSEC+DANE to guarantee secure email between organisations is <a href="http://nccoe.nist.gov/sites/default/files/library/sp1800/dns-secure-email-sp1800-6-draft.pdf">published by NIST</a>. It shows the experiments carried out by Microsoft Corporation, NLnet Laboratories, Secure64, Internet Systems Consortium and Fraunhofer IAO, and includes the configuration required for their respective MUA, MTA and DNS services, including:</p>
+<ul>
+<li><a href="https://www.mozilla.org/en-GB/thunderbird/">Thunderbird</a></li>
+<li><a href="https://www.dovecot.org">Dovecot</a></li>
+<li><a href="http://www.postfix.org">Postfix</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Microsoft_Outlook">Outlook</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Microsoft_Exchange_Server">Exchange</a></li>
+<li><a href="https://www.nlnetlabs.nl/projects/nsd/">NSD</a></li>
+<li><a href="http://unbound.net">Unbound</a></li>
+<li><a href="https://www.opendnssec.org">OpenDNSSEC</a></li>
+<li><p><a href="https://www.isc.org/downloads/bind/">ISC BIND</a></p>
+<p>Further guides published by NIST:</p>
+<ul>
+<li><a href="http://dx.doi.org/10.6028/NIST.SP.800-81-2">Secure Domain Name System Deployment Guide</a></li>
+<li><a href="http://dx.doi.org/10.6028/NIST.SP.800-177">Trustworthy Email</a></li>
+</ul></li>
+</ul>
+<h3 id="dnscrypt"><a href="#TOC">DNSCrypt</a></h3>
+<h3 id="dnscurve"><a href="#TOC">DNSCurve</a></h3>
+<h2 id="ldap"><a href="#TOC">LDAP</a></h2>
+<h3 id="ldaps"><a href="#TOC">LDAPS</a></h3>
+<h3 id="smime-or-pgp"><a href="#TOC">S/MIME or PGP</a></h3>
+<h2 id="kerberos"><a href="#TOC">Kerberos</a></h2>
+<h2 id="ntp"><a href="#TOC">NTP</a></h2>
+<h3 id="ntpsec"><a href="#TOC">NTPsec</a></h3>
+<h2 id="nfs"><a href="#TOC">NFS</a></h2>
+<h3 id="kerberizednfsv4"><a href="#TOC">KerberizedNFSv4</a></h3>
+<h2 id="application-servers"><a href="#TOC">Application Servers</a></h2>
+<h3 id="nginx"><a href="#TOC">NGINX</a></h3>
+<h2 id="security-and-crypto"><a href="#TOC">Security and Crypto</a></h2>
+<h3 id="against-dnssec-and-dane"><a href="#TOC">Against DNSSEC (and DANE)</a></h3>
+<ul>
+<li>Cryptography worst practices, Daniel J. Bernstein <a href="http://cr.yp.to/talks/2012.03.08-1/slides.pdf">slides</a>, <a href="https://vimeo.com/18279777">video</a></li>
+<li><a href="https://groups.google.com/forum/#!topic/mozilla.dev.security/xylVm_kD_WE">DNSSEC in Chrome</a> (2014)</li>
+<li><a href="https://www.imperialviolet.org/2015/01/17/notdane.html">Why not DANE in browsers</a>, Adam Langley (2015)</li>
+</ul>
+<p>Counterpoints:</p>
+<ul>
+<li><a href="https://dankaminsky.com/2011/01/05/djb-ccc/">Dan Kaminsky</a></li>
+<li><a href="http://blog.easydns.org/2015/08/06/for-dnssec/">EasyDNS</a></li>
+</ul>
+<h3 id="tls"><a href="#TOC">TLS</a></h3>
+<h3 id="ssh"><a href="#TOC">SSH</a></h3>
+<p>The Secure Shell (<a href="https://tools.ietf.org/html/rfc4251">SSH</a>) protocol is used for secure remote login and tunneling other network services over an insecure network. SSH consists of three main components:</p>
+<ul>
+<li>Transport Layer Protocol - Provides server authentication, confidentiality, and integrity with perfect forward secrecy. The transport layer will typicall be run over a TCP/IP connection.</li>
+<li>User Authentication Protocol - Authenticates the client to the server. It runs over the transport layer protocol.</li>
+<li>Connection Protocol - Multiplexes the encrypted tunnel into several logical channels. It runs over the user authentication protocol.</li>
+</ul>
+<p>Each server should have a host key. The host key is used during key exchange to verify that the client is talking to the correct server. The client must therefore have a priori knowledge of the servers host key. In order to accomplish this, two different methods are available, decentralised and centralised.</p>
+<ul>
+<li>Decentralised - The client manages a local database, in the form of an authorized_keys file. While this allows a peer to peer architecture, it also requires manually updating and validating new/revoked host keys. Each client becomes responsible for validating the servers that it connects to. This allows you to scale arbitrarily, at the expense of manageability.</li>
+<li>Centralised - The host keys are certified by a trusted third party, such as a certificate authority (CA) or via DNS(SEC). The client has knowledge of the CA root key or access to a validating DNS server. The validity of the host keys can be certified by accepted CAs or DNS servers. Consequently, each host key must be certified by the central authority before authorization is possible.</li>
+</ul>
+<p>There is an option to defer checking the host key when connecting to host for the first time, however, this is not recommended and can be avoided by pre-seeding a public host key in the server build to allow connecting to the configuration management infrastructure and then changed at a later time.</p>
+<p><strong>Transport Layer Protocol</strong></p>
+<p>Authentication at this layer is host based, it does not perform user authentication. The key exchange method, public key algorithm, symmetric encryption algorithm, message authentication algorithm, and hash algorithm are all negotiated.</p>
+<p>The client initiates the connection, usually using TCP/IP. Port 22 is the officially recognized port number, however, servers that expose this port to the public internet should choose a different port since it is usually scanned for by automated bots.</p>
+<p>!!</p>
+<p>An encryption algorithm and a key will be negotiated during the key exchange. Since the ciphers on the client and server are independent, they may differ. The key exchange occurs in order for the client and server to find a common cipher available to both. Data integrity is provided by including a message authentication code or MAC with each packet that is created from a shared secret, packet sequence number and the contents of the packet.</p>
+<p>The key exchange algorithm decides the method which is used to perform the key exchange which specifies how one time session keys are generated for encryption and for authentication, and how the server authentication is done.</p>
+<p>Public key format, encoding and algorithm (signature and/or encryption)</p>
+<p>!!</p>
+<p>Key exchange starts with each side sending their lists of supported algorithms. Each side has a preferred algorithm in each category.</p>
+<p><strong>User Authentication Protocol</strong></p>
+<p>When user authentication starts, it receives the session identifier from the transport layer. The session identifier uniquely identifies this session and is suitable for signing in order to prove ownership of a private key. The server drives the authentication by telling the client which authentication methods can be used, such as public key or password authentication.</p>
+<p>In order to perform public key authentication, the client must be in possession of a private key. This method works by sending a signature created with a private key of the user. The server cheks that the key is a valid authenticator for the user, and checks that the signature is valid.</p>
+<p><strong>Connection Protocol</strong></p>
+<p>This layer provides interactive login sessions, remote execution of commands and forwarded TCP/IP connections, multiplexed into a single encrypted tunnel.</p>
+<p>All terminal sessions, forwarded connections etc. are channels. Either side may open a channel. Multiple channels are multiplexed into a single connection.</p>
+<p><strong>First connection</strong></p>
+<p>ssh obtains configuration data from sources in the following order:</p>
+<ul>
+<li>command-line options</li>
+<li>users configuration file (~/.ssh/ssh_config)</li>
+<li>system-wide configuration file (/etc/ssh/ssh_config)</li>
+</ul>
+<p>The chosen options must also comply with the configurations specified in sshd_config on the receiving end.</p>
+<p>The client sends its chosen algorithm details and key exchange method to the host. The host replies with its chosen algorithms. The two perform key exchange of the host keys. Once verified, the client sends the user authentication details. The host verifies these details. If verified, the host accepts the connection.</p>
+<p><strong>ssh_config</strong></p>
+<ul>
+<li><strong>Host</strong> - restrict the following options (up to the next Host or Match) to be only used for those hosts matching the pattern.</li>
+<li><strong>AddressFamily inet6</strong> - Use IPv6 only when connecting</li>
+<li><strong>CanonicalizeHostname</strong> et al. - When an unqualified domain name is given as the SSH target, use the systems resolver to find the FQDN. The domain suffix is specified in CanonicalizeDomains. Can be set to strictly check so that if lookup fails within the specified domain, the SSH connection fails. This may be useful if unqualified names are used consistently, however, it adds another configuration file that is required to be maintained. !! Needs testing !!</li>
+<li><strong>CheckHostIP yes</strong> - SSH will also check the host IP address in the known_hosts file, which would detect if a host key changed due to DNS spoofing. This will add addresses of destination hosts to ~/.ssh/known_hosts regardless of the setting of StrictHostKeyChecking. !! Needs testing !!</li>
+<li><strong>Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com</strong> - Prefer use of DJB’s ciphers, fallback to AES GCM if necessary.</li>
+<li><strong>FingerprintHash sha256</strong> - Prefer SHA256 over MD5 when displaying key fingerprints</li>
+<li><strong>HashKnownHosts yes</strong> - SSH will hash host names and addresses when they are added to ~/.ssh/known_hosts. Hashed names can be used normally by SSH, but are unreadable to humans.</li>
+<li><strong>HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher.</li>
+<li><strong>KexAlgorithms curve25519-sha256@libssh.org</strong> - Prefer use of DJB’s cipher. Key Exchange Algorithms</li>
+<li><strong>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</strong> - Encrypt then MAC, and SHA2 are preferred. When chacha20-poly1305@openssh.com is used, no MAC is used since Poly1305 is used as the MAC. The MAC algorithms listed here are used by AES GCM if available.</li>
+<li><strong>Protocol 2</strong> - Explicitly disable Protocol 1, which suffers from cryptographic weaknesses.</li>
+<li><strong>PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher. Key types for public key authentication.</li>
+<li><strong>PubkeyAuthentication yes</strong> - Use public key authentication</li>
+<li><strong>RevokedHostKeys KRL</strong> - Specifies revoked public keys. Keys listed in this file will be refused for host authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the host keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!</li>
+</ul>
+<p>For host key checking, there are two options:</p>
+<p>1.</p>
+<ul>
+<li><strong>StrictHostKeyChecking yes</strong> - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH’s to a server, does it need to “accept” the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!</li>
+<li><strong>UpdateHostKeys yes</strong> - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_config as “HostKey ssh_host_ed25519_key”, and the new keys would also be specified: “HostKey ssh_host_ed25519_key_new”. The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified as if you were connecting for the first time.</li>
+</ul>
+<p>These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to regularly SSH to servers in order to maintain the known_hosts files.</p>
+<p>2.</p>
+<ul>
+<li><strong>VerifyHostKeyDNS yes</strong> - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.</li>
+</ul>
+<p>Since this option is reliant on DNS and that DNSSEC is set up correctly, it would be preferred to be used in centralised networks.</p>
+<p><strong>sshd_config</strong></p>
+<ul>
+<li><strong>AddressFamily inet6</strong> - Use IPv6 only when connecting</li>
+<li><strong>AuthorizedKeysCommand</strong> - Specifies a program to be used to look up the users public keys. !! We could use this to lookup users public keys stored in LDAP. !!</li>
+<li><strong>AuthorizedKeysFile “.ssh/authorized_keys”</strong> - Specifies the file that contains the users public keys.</li>
+<li><strong>Banner none</strong> - No banner message is displayed to the user before authentication.</li>
+<li><strong>Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com</strong> - Prefer use of DJB’s ciphers, fallback to AES GCM if necessary.</li>
+<li><strong>FingerprintHash sha256</strong> - Prefer SHA256 over MD5 when displaying key fingerprints</li>
+<li><strong>HostKey /etc/ssh/ssh_host_ed25519_key</strong> - Specifies the ed25519 host private key file.</li>
+<li><strong>HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher.</li>
+<li><strong>KexAlgorithms curve25519-sha256@libssh.org</strong> - Prefer use of DJB’s cipher. Key Exchange Algorithm.</li>
+<li><strong>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</strong> - Encrypt then MAC, and SHA2 are preferred. When chacha20-poly1305@openssh.com is used, no MAC is used since Poly1305 is used as the MAC. The MAC algorithms listed here are used by AES GCM if available.</li>
+<li><strong>PasswordAuthentication no</strong> - Disable password authentication</li>
+<li><strong>PermitRootLogin no</strong> - Do not allow root login over SSH</li>
+<li><strong>PrintLastLog no</strong> - Disables printing the date and time of the last user login.</li>
+<li><strong>PrintMotd no</strong> - Disables printing the /etc/motd when a user logs in.</li>
+<li><strong>PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher. Key types for public key authentication.</li>
+<li><strong>PubkeyAuthentication yes</strong> - Use public key authentication</li>
+<li><strong>RevokedKeys KRL</strong> - Specifies revoked public keys. Keys listed in this file will be refused for public key authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!</li>
+<li><strong>UseDNS yes</strong> - Tells sshd to look up the remote host name and check that the resolved host name for the remote IP address maps back to the same IP address.</li>
+</ul>
+<p>SSHFP records are generated by running “ssh-keygen -r $(hostname)”.</p>
+<p>SSHFP records consist of three properties:</p>
+<ul>
+<li>Algorithm</li>
+<li>Fingerprint type</li>
+<li>Fingerprint in hexadecimal</li>
+</ul>
+<p>The algorithm property we require is 4, which equates to ed25519. The fingerprint type we require is 2, which is SHA256, since it is preferred over SHA1. We can filter the output of “ssh-keygen -r” so that we only see SSHFP records with these properties.</p>
+<p>ssh-keygen -r $(hostname) | awk ‘$4 == 4 &amp;&amp; $5 == 2 {print $0}’</p>
+<p>The output is a list of SSHFP records in the format:</p>
+<pre><code>hostname.fqdn IN SSHFP 4 2 4893752075487258092758094</code></pre>
+<h3 id="hsm"><a href="#TOC">HSM</a></h3>
+<h3 id="passwords"><a href="#TOC">Passwords</a></h3>
+<h3 id="tcp-wrapper"><a href="#TOC">TCP Wrapper</a></h3>
+<h3 id="ids"><a href="#TOC">IDS</a></h3>
+<h3 id="firewalls"><a href="#TOC">Firewalls</a></h3>
+<h2 id="configuration-management"><a href="#TOC">Configuration Management</a></h2>
+<p>Traditional system administration follows the “waterfall” method, where each step: gather requirements, design, implement, test, verify, deploy; is performed by a different team, and often conducted by hand. Each step or team has an end goal after which the product is handed over to the new team. The methodology documented in the papers at infrastructures.org, now referred to as DevOps, is the new way for managing infrastructures.</p>
+<p>Features of this method include:</p>
+<ul>
+<li>Same Development and Operations toolchain</li>
+<li>Consistent software development life cycle</li>
+<li>Managed configuration and automation</li>
+<li>Infrastructure as code</li>
+<li>Automated provisioning and deployment</li>
+<li>Automated build and release</li>
+<li>Release packaging</li>
+<li>Abstracted administration</li>
+</ul>
+<p>Continuous Delivery:</p>
+<ul>
+<li>The process for releasing/deploying must be repeatable and reliable</li>
+<li>Automate everything</li>
+<li>If something is difficult or painful, do it more often to improve and automate it</li>
+<li>Keep everything in source control</li>
+<li>“Done” means “released, working properly, in the hands of the end user”</li>
+<li>Build quality in</li>
+<li>Everybody has responsibility for the release process</li>
+<li>Improve continuously</li>
+</ul>
+<p>The commands and philosphy throughout this document focus on using the native tools as part of the OS, rather than the commands for a specific configuration management tool. This is done so that the system administrators know what is being configured at the most basic level, and so they can use the tools manually or through shell scripts. It also means that the configurations will work independent of the configuration management tool that is chosen.</p>
+<h2 id="authorisation-access-control-lists"><a href="#TOC">Authorisation / Access Control Lists</a></h2>
+<p>You can control access to objects using the ACL authorisation mechanism.</p>
+<h2 id="role-based-access-control-shared-administration-sudo"><a href="#TOC">Role-Based Access Control / Shared Administration (sudo)</a></h2>
+<h2 id="domain-naming-service"><a href="#TOC">Domain Naming Service</a></h2>
+<h2 id="directory-service-ldap"><a href="#TOC">Directory Service (LDAP)</a></h2>
+<h2 id="time-service"><a href="#TOC">Time Service</a></h2>
+<h2 id="logging-auditing"><a href="#TOC">Logging / Auditing</a></h2>
+<h2 id="rpc-admin-service"><a href="#TOC">RPC / Admin service</a></h2>
+<p>!!</p>
+<h1 id="designing-for-operations"><a href="#TOC">Designing for Operations</a></h1>
+<h2 id="specific-operational-requirements"><a href="#TOC">Specific Operational Requirements</a></h2>
+<ul>
+<li>Configuration</li>
+<li>Startup and shutdown</li>
+<li>Queue draining</li>
+<li>Software upgrades</li>
+<li>Backups and restores</li>
+<li>Redundancy</li>
+<li>Replicated databases</li>
+<li>Hot swaps</li>
+<li>Access controls and rate limits</li>
+<li>Monitoring</li>
+<li>Auditing</li>
+</ul>
+<p>!!</p>
+<h3 id="configuration"><a href="#TOC">Configuration</a></h3>
+<p>The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems</p>
+<pre><code>- NanoBSD, conf file
+- Jails, conf file
+- Kerberos
+- OpenDNSSEC
+- SoftHSM
+- NSD
+- Unbound
+- OpenLDAP
+- OpenNTP
+- OpenSSH
+- Configuration Management
+- NFS</code></pre>
+<h3 id="startup-and-shutdown"><a href="#TOC">Startup and shutdown</a></h3>
+<p>Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.</p>
+<h3 id="queue-draining"><a href="#TOC">Queue draining</a></h3>
+<p>All requests are going through the load balancer, individual nodes can be put into drain mode.</p>
+<h3 id="software-upgrades"><a href="#TOC">Software upgrades</a></h3>
+<p>For app upgrades, snapshot current, update app, restart jail with new updated app jail. For OS upgrades, build new offline image, update slice 2, reboot.</p>
+<h3 id="backups-and-restores"><a href="#TOC">Backups and restores</a></h3>
+<p>Config files / OS files / data files</p>
+<p>How to backup and restore:</p>
+<pre><code>- Kerberos principals, groups etc.
+- LDAP data
+- DNS records/zones
+- HSM data</code></pre>
+<p>Calculate the latency/data limits required to perform above backups/restores</p>
+<h3 id="redundancy"><a href="#TOC">Redundancy</a></h3>
+<p>OS, hard drive, zfs, multiple core servers with master/slave, database replication, multiple load balancers. Services are behind a load balancer</p>
+<h3 id="replicated-databases"><a href="#TOC">Replicated databases</a></h3>
+<h3 id="hot-swaps"><a href="#TOC">Hot swaps</a></h3>
+<p>Physical components should be hot swappable. Service components should also be hot swappable.</p>
+<h3 id="access-controls-and-rate-limits"><a href="#TOC">Access controls and rate limits</a></h3>
+<p>If a service provides an API, that API should include an Access Control List</p>
+<h3 id="monitoring"><a href="#TOC">Monitoring</a></h3>
+<p>Configuration management tools typically monitor the OS / Application code is correct. Use normal network monitoring tools to monitor up/down, latency etc…</p>
+<h3 id="auditing"><a href="#TOC">Auditing</a></h3>
+<p>Logging to central servers</p>
+<h2 id="unspecific-operational-requirements"><a href="#TOC">Unspecific Operational Requirements</a></h2>
+<h3 id="assigning-ipv6-addresses-to-clients"><a href="#TOC">Assigning IPv6 Addresses to Clients</a></h3>
+<h3 id="static-or-dynamic-ipv6-addresses-dhcpv6-or-slaac"><a href="#TOC">Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC)</a></h3>
+<h3 id="ipv6-security"><a href="#TOC">IPv6 Security</a></h3>
+<p>While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key cryptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in <a href="https://tools.ietf.org/html/rfc6105">RFC6105</a>/<a href="https://tools.ietf.org/html/rfc7113">RFC7113</a>, is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply “RA disallow on a given interface” to “RA allowed from SEND authorised sources only”.</p>
+<h3 id="hostname-conventions"><a href="#TOC">Hostname Conventions</a></h3>
+<h3 id="choosing-an-operating-system"><a href="#TOC">Choosing an Operating System</a></h3>
+<h3 id="choosing-a-configuration-management-tool"><a href="#TOC">Choosing a Configuration Management Tool</a></h3>
+<h3 id="scheduling-with-cron"><a href="#TOC">Scheduling with cron</a></h3>
+<p>The cron utility searches the user crontabs (/etc/cron.d on Linux or /var/cron/tabs on FreeBSD) for crontab files which are named after accounts in /etc/passwd. crontabs found are loaded into memory. A crontab file contains instructions to the cron daemon in the form “run this command at this time on this date”. Each user has their own crontab, and commands in a crontab will be executed as the user who owns the crontab. The system crontab, /etc/crontab, should not be modified.</p>
+<p>cron then wakes up every minute and checks all crontabs to see if a command should be run in the current minute. Before running a command from an account crontab, cron checks the status of the account with pam and skips the command if the account is locked out or expired. Commands from /etc/crontab bypass this check.</p>
+<h1 id="scaling"><a href="#TOC">Scaling</a></h1>
+<p>AKF Scaling Cube</p>
+<ul>
+<li>Replicate the entire system (horizontal duplication)</li>
+<li>Split the system into individual functions, services or resources (functional or service splits)</li>
+<li>Split the system into individual chunks (lookup or formulaic splits)</li>
+</ul>
+<p>Horizontal - Many replicas behind a load balancer. If each transaction can be completed independently on all replicas, the performance improvement is proportional to the number of replicas, for example, adding more replicas, disk spindles or network connections.</p>
+<p>!!</p>
+<h1 id="user-access"><a href="#TOC">User Access</a></h1>
+<ul>
+<li>Documents</li>
+<li>Applications</li>
+<li>Email</li>
+<li>Instant Messaging</li>
+<li>Working remotely</li>
+</ul>
+<!---
+
+- Documents - Access documents through a website? Should be bound by authentication/authorisation. Version controlled documents. Like Sharepoint, but not terrible.
+- Applications - web-access only preferred, TLS available, bound by authentication/authorisation. 
+- Email - How does ProtonMail do it? Usually a lot of protections and anti-spam required, but if orgs are able to authoritativly validate each other, you are only able to receive emails from those orgs that have been validated, everything else is binned. Or if an org does spam, its quick to pinpoint and can be made untrusted.
+- Instant Messaging - IRC with OTR, e.g. irc with PGP support.
+- Working remotely - won't happen in a super-secure infra, but less secure may allow it. Could be done like MIT, with public SSH servers that require Kerberos name+pass and the user certificate. Then you could get X forwarded over SSH or instead of SSH, an SSL/TLS VPN that gives access to the internal network.
+
+--->
+
+</body>
+</html>

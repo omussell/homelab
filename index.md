@@ -1,7 +1,11 @@
 Homelab
 =======
 
-[Bootstrapping a Secure Infrastructure](/homelab/design)
+###Bootstrapping a Secure Infrastructure###
+
+[Overview](/homelab/design/overview.html)
+[Design](/homelab/design/design.html)
+[Implementation](/homelab/design/implementation.html)
 
 
 Hardware
