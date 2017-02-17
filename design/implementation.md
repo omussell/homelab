@@ -14,6 +14,7 @@
 - [Design](/homelab/design/design.html)
 - [Implementation](/homelab/design/implementation.html)
 
+Summary
 ===
 
 Create an infrastructure with an emphasis on security, resiliency and ease of maintenance. 
