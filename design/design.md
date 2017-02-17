@@ -189,7 +189,7 @@ Configuring the jail:
 
 A storage pool is a collection of devices that provides physical storage and data replication for ZFS datasets. All datasets within a storage pool share the same space.
 
-**Virtual Devicer (vdevs)**
+**Virtual Device (vdevs)**
 
 A virtual device or vdev is a device or collection of devices organised into groups:
 
@@ -568,7 +568,9 @@ The output is a list of SSHFP records in the format:
 Configuration Management
 ---
 
-Traditional system administration follows the "waterfall" method, where each step: gather requirements, design, implement, test, verify, deploy; is performed by a different team, and often conducted by hand. Each step or team has an end goal after which the product is handed over to the new team. The methodology documented in the papers at infrastructures.org, now referred to as DevOps, is the new way for managing infrastructures.
+Traditional system administration follows the "waterfall" method, where each step: gather requirements, design, implement, test, verify, deploy; is performed by a different team, and often conducted by hand. Each step or team has an end goal after which the product is handed over to the new team. The methodology documented in the papers at infrastructures.org, now referred to as DevOps, adds a layer of abstraction to the administration of services. By describing the infrastructure in structured configuration files, you leave the implementation up to the configuration management tool. So rather than specifying how to install a package for multiple operating systems, you merely say that you want the package installed, and leave the implementation up to the configuration management tool. 
+
+Also, the idea of idempotency is important. Rather than having a script that says "service $SERVICE start" which doesn't check if the service is already started, you instead say that you want a service to be in a started state. The configuration management tool then periodically checks the state of the service, and changes it to the desired state if necessary.
 
 Features of this method include:
 
