@@ -16,10 +16,6 @@
 </div>
 <div id="TOC">
 <ul>
-<li><a href="#summary">Summary</a></li>
-<li><a href="#end-goal">End Goal</a></li>
-<li><a href="#background">Background</a></li>
-<li><a href="#high-level-design">High-Level Design</a></li>
 <li><a href="#experimental">Experimental</a></li>
 <li><a href="#detailed-design">Detailed Design</a><ul>
 <li><a href="#ipv6">IPv6</a><ul>
@@ -107,43 +103,19 @@
 <li><a href="#user-access">User Access</a></li>
 </ul>
 </div>
+<!---
+
+- Produced in Markdown with Vim, converted to HTML by Pandoc.
+- Graphics created with DOT
+- Hosted on Github Pages
+
+-->
+
 <ul>
-<li>Produced in Markdown with Vim, converted to HTML by Pandoc.</li>
-<li>Graphics created with DOT</li>
-<li>Hosted on Github Pages</li>
+<li><a href="/homelab/design/overview.html">Overview</a></li>
+<li><a href="/homelab/design/design.html">Design</a></li>
+<li><a href="/homelab/design/implementation.html">Implementation</a></li>
 </ul>
-<p>!! needs cleanup !!</p>
-<h1 id="summary"><a href="#TOC">Summary</a></h1>
-<p>Create an infrastructure with an emphasis on security, resiliency and ease of maintenance.</p>
-<h1 id="end-goal"><a href="#TOC">End Goal</a></h1>
-<p>Produce a working implementation of a secure, resilient and easy to maintain infrastructure. This will be published in the form of version-controlled configuration documents, with the philosophy and background of the chosen configuration documented here. Anyone should be able to download the vendor supplied base operating system, and the configuration documents should convert that base OS into the desired state. The process by which this conversion is achieved could be as simple as a shell script, or as complicated as a configuration management tool backed by continuous deployment pipelines. In addition, the infrastructure should be flexible enough to be deployed in multiple configurations based on the decisions of the Infrastructure Architects and business owners. It should also be portable to other operating systems with only a little massage of the configuration code.</p>
-<h1 id="background"><a href="#TOC">Background</a></h1>
-<p>The design of the environment will be similar to <a href="https://en.wikipedia.org/wiki/Project_Athena">Project Athena</a> at MIT and the <a href="https://en.wikipedia.org/wiki/Distributed_Computing_Environment">Distributed Computing Environment</a> by the OSF. Inspiration for this project comes from the <a href="http://www.infrastructures.org">infrastructures.org</a> website, specifically their papers: <a href="http://www.infrastructures.org/papers/bootstrap/bootstrap.html">Bootstrapping an Infrastructure</a> and <a href="http://www.infrastructures.org/papers/turing/turing.html">Why Order Matters: Turing Equivalence in Automated Systems Administration</a>. Additionally, a paper by Paul Schenkeveld, <a href="https://2010.asiabsdcon.org/papers/abc2010-P4A-paper.pdf">Building servers with NanoBSD, ZFS and Jails</a> served as inspiration for the use of NanoBSD as the operating system due to its unique properties.</p>
-<p>This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.</p>
-<h1 id="high-level-design"><a href="#TOC">High-Level Design</a></h1>
-<!---
-
-- Control Machine - Stores operating system images and configuration files in version control. Used to create the Gold server. 
-- Gold server - In the form of a created system image
-- Infrastructure servers - Provides directory, domain names, authentication/authorisation services
-- Data storage - Provide clients with access to their data/files via network file systems.
-- Clients - End use
-
---->
-
-<img src="/homelab/pic/secenv.svg"> <img src="/homelab/pic/disklayout.svg">
-<!---
-
-!!
-Directory servers comes in the form of DNS, using NSD as an authoritative name server, and Unbound for validating, caching and resolving servers. DNSSEC is implemented via OpenDNSSEC. SoftHSM is used for key storage (though a physical HSM would be necessary for prod). CA using OpenSSL. DANE used for D/TLS auth. 
-Heimdal Kerberos backed by OpenLDAP. Kerberized Internet Negotiation of Keys (KINK) used for the security aspect of VPN over IPsec, used to connect sites to one another. SH also uses Kerberos for password authentication in addition to public key authentication. OpenNTPd for time.
-
-KerberizedNFSv4 for client file access.
-
-!!
-
---->
-
 <h1 id="experimental"><a href="#TOC">Experimental</a></h1>
 <p>Features that aren’t production ready, but would be interesting to implement:</p>
 <ul>
