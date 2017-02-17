@@ -2,13 +2,17 @@
 % Oliver Mussell
 % 2016-2017
 
+<!---
+
 - Produced in Markdown with Vim, converted to HTML by Pandoc.
 - Graphics created with DOT
 - Hosted on Github Pages
 
-!! 
-needs cleanup
-!!
+-->
+
+- [Overview](/homelab/design/overview.html)
+- [Design](/homelab/design/design.html)
+- [Implementation](/homelab/design/implementation.html)
 
 Summary
 ===
