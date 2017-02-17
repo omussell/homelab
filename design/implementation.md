@@ -15,7 +15,13 @@
 - [Implementation](/homelab/design/implementation.html)
 
 
+
 Implementation
+===
+
+
+
+Provisioning
 ===
 
 IPv6
@@ -50,6 +56,9 @@ OS
 
 ### Ad-Hoc Change Tools ###
 
+Configuration Management
+===
+
 DNS
 ---
 
@@ -80,6 +89,10 @@ NTP
 ### NTPsec ###
 
 
+App Deployment
+===
+
+
 NFS
 ---
 
@@ -90,6 +103,9 @@ Application Servers
 
 ### NGINX ###
 
+
+Security and Compliance
+===
 
 Security and Crypto
 ---
@@ -104,7 +120,7 @@ Security and Crypto
 ### IDS ###
 ### Firewalls ###
 
-Configuration Management
+Configuration Management Tools
 ---
 
 Authorisation / Access Control Lists
@@ -128,7 +144,7 @@ Logging / Auditing
 RPC / Admin service
 ---
 
-Designing for Operations
+Orchestration
 ===
 
 Specific Operational Requirements

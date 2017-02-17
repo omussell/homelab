@@ -16,7 +16,8 @@
 </div>
 <div id="TOC">
 <ul>
-<li><a href="#implementation">Implementation</a><ul>
+<li><a href="#implementation">Implementation</a></li>
+<li><a href="#provisioning">Provisioning</a><ul>
 <li><a href="#ipv6">IPv6</a><ul>
 <li><a href="#address-autoconfiguration-slaac">Address Autoconfiguration (SLAAC)</a></li>
 <li><a href="#send">SEND</a></li>
@@ -34,6 +35,8 @@
 <li><a href="#host-install-tools">Host Install Tools</a></li>
 <li><a href="#ad-hoc-change-tools">Ad-Hoc Change Tools</a></li>
 </ul></li>
+</ul></li>
+<li><a href="#configuration-management">Configuration Management</a><ul>
 <li><a href="#dns">DNS</a><ul>
 <li><a href="#dnssec">DNSSEC</a></li>
 <li><a href="#dane">DANE</a></li>
@@ -49,12 +52,16 @@
 <li><a href="#ntp">NTP</a><ul>
 <li><a href="#ntpsec">NTPsec</a></li>
 </ul></li>
+</ul></li>
+<li><a href="#app-deployment">App Deployment</a><ul>
 <li><a href="#nfs">NFS</a><ul>
 <li><a href="#kerberizednfsv4">KerberizedNFSv4</a></li>
 </ul></li>
 <li><a href="#application-servers">Application Servers</a><ul>
 <li><a href="#nginx">NGINX</a></li>
 </ul></li>
+</ul></li>
+<li><a href="#security-and-compliance">Security and Compliance</a><ul>
 <li><a href="#security-and-crypto">Security and Crypto</a><ul>
 <li><a href="#tls">TLS</a></li>
 <li><a href="#ssh">SSH</a></li>
@@ -64,7 +71,7 @@
 <li><a href="#ids">IDS</a></li>
 <li><a href="#firewalls">Firewalls</a></li>
 </ul></li>
-<li><a href="#configuration-management">Configuration Management</a></li>
+<li><a href="#configuration-management-tools">Configuration Management Tools</a></li>
 <li><a href="#authorisation-access-control-lists">Authorisation / Access Control Lists</a></li>
 <li><a href="#role-based-access-control-shared-administration-sudo">Role-Based Access Control / Shared Administration (sudo)</a></li>
 <li><a href="#domain-naming-service">Domain Naming Service</a></li>
@@ -73,7 +80,7 @@
 <li><a href="#logging-auditing">Logging / Auditing</a></li>
 <li><a href="#rpc-admin-service">RPC / Admin service</a></li>
 </ul></li>
-<li><a href="#designing-for-operations">Designing for Operations</a><ul>
+<li><a href="#orchestration">Orchestration</a><ul>
 <li><a href="#specific-operational-requirements">Specific Operational Requirements</a><ul>
 <li><a href="#configuration">Configuration</a></li>
 <li><a href="#startup-and-shutdown">Startup and shutdown</a></li>
@@ -115,6 +122,7 @@
 <li><a href="/homelab/design/implementation.html">Implementation</a></li>
 </ul>
 <h1 id="implementation"><a href="#TOC">Implementation</a></h1>
+<h1 id="provisioning"><a href="#TOC">Provisioning</a></h1>
 <h2 id="ipv6"><a href="#TOC">IPv6</a></h2>
 <h3 id="address-autoconfiguration-slaac"><a href="#TOC">Address Autoconfiguration (SLAAC)</a></h3>
 <h3 id="send"><a href="#TOC">SEND</a></h3>
@@ -130,6 +138,7 @@
 <h3 id="other-operating-systemscontainersfilesystems"><a href="#TOC">Other Operating Systems/Containers/Filesystems</a></h3>
 <h3 id="host-install-tools"><a href="#TOC">Host Install Tools</a></h3>
 <h3 id="ad-hoc-change-tools"><a href="#TOC">Ad-Hoc Change Tools</a></h3>
+<h1 id="configuration-management"><a href="#TOC">Configuration Management</a></h1>
 <h2 id="dns"><a href="#TOC">DNS</a></h2>
 <h3 id="dnssec"><a href="#TOC">DNSSEC</a></h3>
 <h3 id="dane"><a href="#TOC">DANE</a></h3>
@@ -142,10 +151,12 @@
 <h2 id="kerberos"><a href="#TOC">Kerberos</a></h2>
 <h2 id="ntp"><a href="#TOC">NTP</a></h2>
 <h3 id="ntpsec"><a href="#TOC">NTPsec</a></h3>
+<h1 id="app-deployment"><a href="#TOC">App Deployment</a></h1>
 <h2 id="nfs"><a href="#TOC">NFS</a></h2>
 <h3 id="kerberizednfsv4"><a href="#TOC">KerberizedNFSv4</a></h3>
 <h2 id="application-servers"><a href="#TOC">Application Servers</a></h2>
 <h3 id="nginx"><a href="#TOC">NGINX</a></h3>
+<h1 id="security-and-compliance"><a href="#TOC">Security and Compliance</a></h1>
 <h2 id="security-and-crypto"><a href="#TOC">Security and Crypto</a></h2>
 <h3 id="tls"><a href="#TOC">TLS</a></h3>
 <h3 id="ssh"><a href="#TOC">SSH</a></h3>
@@ -154,7 +165,7 @@
 <h3 id="tcp-wrapper"><a href="#TOC">TCP Wrapper</a></h3>
 <h3 id="ids"><a href="#TOC">IDS</a></h3>
 <h3 id="firewalls"><a href="#TOC">Firewalls</a></h3>
-<h2 id="configuration-management"><a href="#TOC">Configuration Management</a></h2>
+<h2 id="configuration-management-tools"><a href="#TOC">Configuration Management Tools</a></h2>
 <h2 id="authorisation-access-control-lists"><a href="#TOC">Authorisation / Access Control Lists</a></h2>
 <h2 id="role-based-access-control-shared-administration-sudo"><a href="#TOC">Role-Based Access Control / Shared Administration (sudo)</a></h2>
 <h2 id="domain-naming-service"><a href="#TOC">Domain Naming Service</a></h2>
@@ -162,7 +173,7 @@
 <h2 id="time-service"><a href="#TOC">Time Service</a></h2>
 <h2 id="logging-auditing"><a href="#TOC">Logging / Auditing</a></h2>
 <h2 id="rpc-admin-service"><a href="#TOC">RPC / Admin service</a></h2>
-<h1 id="designing-for-operations"><a href="#TOC">Designing for Operations</a></h1>
+<h1 id="orchestration"><a href="#TOC">Orchestration</a></h1>
 <h2 id="specific-operational-requirements"><a href="#TOC">Specific Operational Requirements</a></h2>
 <h3 id="configuration"><a href="#TOC">Configuration</a></h3>
 <h3 id="startup-and-shutdown"><a href="#TOC">Startup and shutdown</a></h3>
