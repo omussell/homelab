@@ -319,6 +319,37 @@ NanoBSD
     Pull config from gold server
     Start jails/applications
 
+
+Multiple VMs using bhyve
+------------------------
+
+To allow networking on multiple vms, there should be a tap assigned to each vm, connected to the same bridge. 
+
+So to set up the bridge and an initial tap interface:
+
+    Edit /etc/sysctl.conf
+    net.link.tap.up_on_open=1
+
+    Edit /boot/loader.conf
+    vmm_load="YES"
+    nmdm_load="YES"
+    if_bridge_load="YES"
+    if_tap_load="YES"
+
+    Edit /etc/rc.conf
+    cloned_interfaces="bridge0 tap0"
+    ifconfig_bridge0="addm re0 addm tap0"
+
+    You then add multiple tap interfaces, by adding them to cloned_interfaces and ifconfig_bridge0 in /etc/rc.conf.
+    cloned_interfaces="bridge0 tap0 tap1 tap2"
+    ifconfig_bridge0="addm re0 addm tap0 addm tap1 addm tap2"
+
+    Then when you provision vms, assign one of the tap interfaces to them.
+
+
+
+
+
 Jails setup in NanoBSD bhyve vm
 -------------------------------
 
