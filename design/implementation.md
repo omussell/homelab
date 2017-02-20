@@ -38,7 +38,7 @@ As part of the image build process, the public keys of the control machine are i
 
 	- Alternative, pre-compute the host key (since a host key is just a normal private-public key pair, with no password. Also they can be shared and created on other machines.) and add the pre-computed host key to the image. The SSHFP record is generated and added to DNS by the control machine. Then when the control machine connects it can verify using DNS. The problem with this is that it only works if the DNS infrastructure is set up. How are the DNS servers set up in the first place? It also means that the private host key is included in the image build, which will be transmitted over the network to build the server, which is unacceptable.
 
-	- There could be two processes: one for initial bootstrapping and a send once the basic infrastructure is created.
+	- There could be two processes: one for initial bootstrapping and a second once the basic infrastructure is created.
 
 
 - User keys in an authorized_keys file
