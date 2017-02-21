@@ -157,6 +157,19 @@
 <li>the control machine can connect securely to the server</li>
 <li>works in the absence of a SSH CA or DNS for validating via a third party</li>
 </ul>
+<p>Alternative method, use a SSH CA on the control machine</p>
+<p>Generate a SSH CA certificate on the control machine, and sign the hsot key of the control machine Distribute the SSH CA cert onto the image</p>
+<ul>
+<li>ssh-keygen -A</li>
+<li>mkdir ~/ca</li>
+<li>cd ~/ca</li>
+<li>ssh-keygen -f ~/server_ca -t ed25519 -N “”</li>
+<li>ssh-keygen -s ~/server_ca -I CertAuth -h -n wintermute /etc/ssh/ssh_host_ed25519_key.pub</li>
+</ul>
+<p>-</p>
+<p>after host keys are generated using ssh-keygen -A, they need to be saved onto the root filesystem to persist across reboots, otherwise they clear out</p>
+<p><strong>or</strong></p>
+<p>instead of doing all of the above, provision the new vm, then connect to it using ssh -o StrictHostKeyChecking=no</p>
 <h2 id="stricthostkeychecking-vs-verifyhostkeydns-problem"><a href="#TOC">StrictHostKeyChecking vs VerifyHostKeyDNS Problem:</a></h2>
 <p>Do the StrictHostKeyChecking and VerifyHostKeyDNS options in ssh_config work together?</p>
 <ul>

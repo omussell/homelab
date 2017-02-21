@@ -61,6 +61,27 @@ This means that:
 - the control machine can connect securely to the server
 - works in the absence of a SSH CA or DNS for validating via a third party
 
+
+Alternative method, use a SSH CA on the control machine
+
+Generate a SSH CA certificate on the control machine, and sign the hsot key of the control machine
+Distribute the SSH CA cert onto the image
+
+- ssh-keygen -A
+- mkdir ~/ca
+- cd ~/ca
+- ssh-keygen -f ~/server_ca -t ed25519 -N ""
+- ssh-keygen -s ~/server_ca -I CertAuth -h -n wintermute /etc/ssh/ssh_host_ed25519_key.pub
+- 
+
+after host keys are generated using ssh-keygen -A, they need to be saved onto the root filesystem to persist across reboots, otherwise they clear out
+
+**or**
+
+instead of doing all of the above, provision the new vm, then connect to it using ssh -o StrictHostKeyChecking=no
+
+
+
 StrictHostKeyChecking vs VerifyHostKeyDNS Problem:
 ---
 
