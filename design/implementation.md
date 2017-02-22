@@ -110,7 +110,9 @@ Setting up IPsec Problem:
 ### Problem Statement ###
 
 How do we set up IPsec between the control machine and machines it creates?
+
 How do we set up IPsec between the router and machines communicating with it?
+
 How do we set up IPsec between the router and other sites?
 
 
