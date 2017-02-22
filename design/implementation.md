@@ -78,8 +78,7 @@ after host keys are generated using ssh-keygen -A, they need to be saved onto th
 
 **or**
 
-instead of doing all of the above, provision the new vm, then connect to it using ssh -o StrictHostKeyChecking=no
-
+instead of doing all of the above, provision the new vm, then connect to it using ssh -o StrictHostKeyChecking=no, create an authorized_key file that contains the public key of the user that will be connecting from the control machine and add it to the image. Login as root on the provisioned vm, PermitRootLogin yes. Then change the config after that point.
 
 
 StrictHostKeyChecking vs VerifyHostKeyDNS Problem:

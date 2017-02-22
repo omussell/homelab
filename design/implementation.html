@@ -169,7 +169,7 @@
 <p>-</p>
 <p>after host keys are generated using ssh-keygen -A, they need to be saved onto the root filesystem to persist across reboots, otherwise they clear out</p>
 <p><strong>or</strong></p>
-<p>instead of doing all of the above, provision the new vm, then connect to it using ssh -o StrictHostKeyChecking=no</p>
+<p>instead of doing all of the above, provision the new vm, then connect to it using ssh -o StrictHostKeyChecking=no, create an authorized_key file that contains the public key of the user that will be connecting from the control machine and add it to the image. Login as root on the provisioned vm, PermitRootLogin yes. Then change the config after that point.</p>
 <h2 id="stricthostkeychecking-vs-verifyhostkeydns-problem"><a href="#TOC">StrictHostKeyChecking vs VerifyHostKeyDNS Problem:</a></h2>
 <p>Do the StrictHostKeyChecking and VerifyHostKeyDNS options in ssh_config work together?</p>
 <ul>

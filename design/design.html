@@ -397,6 +397,8 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li><strong>Protocol 2</strong> - Explicitly disable Protocol 1, which suffers from cryptographic weaknesses.</li>
 <li><strong>PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher. Key types for public key authentication.</li>
 <li><strong>PubkeyAuthentication yes</strong> - Use public key authentication</li>
+<li>GlobalKnownHostsFile /etc/ssh/known_hosts - Specifies the file containing known host keys.</li>
+<li>UserKnownHostsFile /etc/ssh/known_hosts - Specifies the file containing known host keys. Should be specified if the GlobalKnownHostsFile is not checked for some reason. Can be overridden by the user specifying a new option at an interactive prompt.</li>
 <li><strong>RevokedHostKeys KRL</strong> - Specifies revoked public keys. Keys listed in this file will be refused for host authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the host keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!</li>
 </ul>
 <p>For host key checking, there are two options:</p>

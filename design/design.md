@@ -502,6 +502,8 @@ The client sends its chosen algorithm details and key exchange method to the hos
 - **Protocol 2** - Explicitly disable Protocol 1, which suffers from cryptographic weaknesses.
 - **PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com** - Prefer use of DJB's cipher. Key types for public key authentication.
 - **PubkeyAuthentication yes** - Use public key authentication
+- GlobalKnownHostsFile /etc/ssh/known_hosts - Specifies the file containing known host keys. 
+- UserKnownHostsFile /etc/ssh/known_hosts - Specifies the file containing known host keys. Should be specified if the GlobalKnownHostsFile is not checked for some reason. Can be overridden by the user specifying a new option at an interactive prompt.
 - **RevokedHostKeys KRL** - Specifies revoked public keys. Keys listed in this file will be refused for host authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the host keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!
 
 For host key checking, there are two options:
