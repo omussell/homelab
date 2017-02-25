@@ -144,7 +144,7 @@ Add new temp user account
 
 - Where tempuser.txt contains:
 
-	$PM_HOSTNAME-tempuser:::::::/grim/$PM_HOSTNAME::
+	PM_HOSTNAME-tempuser:::::::/grim/$PM_HOSTNAME::
 
 Generate SSH keys for the temp user account
 
