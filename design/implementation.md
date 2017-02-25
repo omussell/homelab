@@ -90,27 +90,32 @@ The problem with this method is that you require advanced knowledge of the IP ad
 --- Possible Solution ---
 
 CM=Control Machine
+
 PM=Provisioned Machine
 
 CM:
-Generate known_hosts file containing the host key of the CM
-Add new temp user account
-Generate SSH keys for the temp user account
-Generate an authorized_keys file with the public key of the temp user account (and the public key used by the configuration management tools if applicable)
-Add the known_hosts, authorized_keys, and private+public keys to the build image
-Build the image
-Provision the PM using the image
+
+- Generate known_hosts file containing the host key of the CM
+- Add new temp user account
+- Generate SSH keys for the temp user account
+- Generate an authorized_keys file with the public key of the temp user account (and the public key used by the configuration management tools if applicable)
+- Add the known_hosts, authorized_keys, and private+public keys to the build image
+- Build the image
+- Provision the PM using the image
 
 PM:
-Connect to the CM using the private+public keys of the temp user account, and transfer the PM host keys and and other information to the CM
+
+Connect to the CM using the private+public keys of the temp user account, and transfer the PM host keys and other information to the CM
 
 CM:
+
 Add PM host keys to CM known_hosts file
 SSH to PM to apply configuration
 
 Remove temp user account, and the private+public keys of the account
 
 PM:
+
 Remove private+public keys of the temp user account
 
 ---
@@ -119,6 +124,7 @@ Implementation commands:
 (note that the following commands are quite verbose, and will be replaced with a much easier to read Ansible playbook in future)
 
 CM:
+
 Generate known_hosts file containing the host key of the CM
 
 - Need to contruct the known_hosts key using the IP address of the CM followed by the host key
@@ -128,14 +134,17 @@ Generate known_hosts file containing the host key of the CM
 - The host key also has a "root@$HOSTNAME" string at the end of the line, which needs to be removed in the known_hosts file
 - So putting the commands together into a single line produces:
 
+
 	ifconfig `ifconfig -l | awk '{print $1}'` | grep -w inet | cut -w -f3 > ~/cm_ip && cat /etc/ssh/ssh_host_ed25519_key.pub >> ~/cm_ip && cat ~/cm_ip | tr "\n" " " | sed 's/root.*//' > /usr/src/tools/tools/nanobsd/Files/etc/ssh/known_hosts
+
 
 Add new temp user account
 
 	adduser -f tempuser.txt
 
 - Where tempuser.txt contains:
-- $PM_HOSTNAME-tempuser:::::::/grim/$PM_HOSTNAME::
+
+	$PM_HOSTNAME-tempuser:::::::/grim/$PM_HOSTNAME::
 
 Generate SSH keys for the temp user account
 
@@ -154,18 +163,20 @@ Add the known_hosts, authorized_keys, and private+public keys to the build image
 
 Build the image
 
-	./nanobuild/sh
+	./nanobuild.sh
 
 Provision the PM using the image
 
 	./startnano.sh
 
 PM:
-Connect to the CM using the private+public keys of the temp user account, and transfer the PM host keys and and other information to the CM
+
+Connect to the CM using the private+public keys of the temp user account, and transfer the PM host keys and other information to the CM
 
 	scp /etc/ssh/ssh_host_ed25519_key.pub $PM_HOSTNAME-tempuser@$CM_IP:/grim/$PM_HOSTNAME/crypto/ssh
 
 CM:
+
 Add PM host keys to CM known_hosts file
 
 	sed 's/^/$PM_IP /' /grim/$PM_HOSTNAME/crypto/ssh/ssh_host_ed25519_key.pub | sed 's/root.*//' >> ~/.ssh/known_hosts
@@ -181,6 +192,7 @@ Remove temp user account, and the private+public keys of the account
 - Note that this command also removes the home directory of the temp-user
 
 PM:
+
 Remove private+public keys of the temp user account
 
 	rm ~/.ssh/id_ed25519*
