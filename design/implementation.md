@@ -135,7 +135,7 @@ Generate known_hosts file containing the host key of the CM
 - So putting the commands together into a single line produces:
 
 
-	ifconfig `ifconfig -l | awk '{print $1}'` | grep -w inet | cut -w -f3 > ~/cm_ip && cat /etc/ssh/ssh_host_ed25519_key.pub >> ~/cm_ip && cat ~/cm_ip | tr "\n" " " | sed 's/root.*//' > /usr/src/tools/tools/nanobsd/Files/etc/ssh/known_hosts
+	ifconfig `ifconfig -l | awk '{print $1}'` | grep -w inet | cut -w -f3 > ~/cm_ip && cat /etc/ssh/ssh_host_ed25519_key.pub >> ~/cm_ip && cat ~/cm_ip | tr "\n" " " | sed 's/root.*//' > /usr/src/tools/tools/nanobsd/Files/etc/ssh/known_hosts && rm ~/cm_ip
 
 
 Add new temp user account

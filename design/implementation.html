@@ -211,7 +211,7 @@
 <li>note that if IPv6 is used, change inet to inet6. Also may not work if the incorrect interface is chosen, or if there are multiple interfaces</li>
 <li>The host key also has a “root@$HOSTNAME” string at the end of the line, which needs to be removed in the known_hosts file</li>
 <li><p>So putting the commands together into a single line produces:</p>
-<p>ifconfig <code>ifconfig -l | awk '{print $1}'</code> | grep -w inet | cut -w -f3 &gt; ~/cm_ip &amp;&amp; cat /etc/ssh/ssh_host_ed25519_key.pub &gt;&gt; ~/cm_ip &amp;&amp; cat ~/cm_ip | tr “” &quot; &quot; | sed ’s/root.*//’ &gt; /usr/src/tools/tools/nanobsd/Files/etc/ssh/known_hosts</p></li>
+<p>ifconfig <code>ifconfig -l | awk '{print $1}'</code> | grep -w inet | cut -w -f3 &gt; ~/cm_ip &amp;&amp; cat /etc/ssh/ssh_host_ed25519_key.pub &gt;&gt; ~/cm_ip &amp;&amp; cat ~/cm_ip | tr “” &quot; &quot; | sed ’s/root.*//’ &gt; /usr/src/tools/tools/nanobsd/Files/etc/ssh/known_hosts &amp;&amp; rm ~/cm_ip</p></li>
 </ul>
 <p>Add new temp user account</p>
 <pre><code>adduser -f tempuser.txt</code></pre>
