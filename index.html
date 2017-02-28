@@ -497,6 +497,9 @@ fi
 
 # Generate SSHFP records
 ssh-keygen -r $(hostname) | awk &#39;$4 == &amp;&amp; $5 == 2 {print $0}&#39;</code></pre>
+<h2 id="mount-zfs-datasets-over-nfs">Mount ZFS datasets over NFS</h2>
+<pre><code>zfs create zroot/test
+zfs set sharenfs=&quot;rw=@192.168.1/24&quot; zroot/test</code></pre>
 <h2 id="ssh-with-x.509-v3-certificate-support-pkix-ssh">SSH with X.509 v3 Certificate Support (PKIX-SSH)</h2>
 <pre><code>Running inside a jail for testing
 

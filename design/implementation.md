@@ -226,6 +226,17 @@ How do we set up IPsec between the router and machines communicating with it?
 How do we set up IPsec between the router and other sites?
 
 
+Immutable NanoBSD Provisioning
+---
+
+
+
+How to perform updates to NanoBSD servers with Jails running?
+---
+
+
+
+
 
 
 

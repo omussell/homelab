@@ -569,6 +569,14 @@ SSH
 	
 	# Generate SSHFP records
 	ssh-keygen -r $(hostname) | awk '$4 == && $5 == 2 {print $0}'
+
+
+Mount ZFS datasets over NFS
+---
+
+	zfs create zroot/test
+	zfs set sharenfs="rw=@192.168.1/24" zroot/test
+
 	
 
 
