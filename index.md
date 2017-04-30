@@ -491,6 +491,17 @@ Updating Jails
 
 
 
+Thin jails
+---
+
+	Update the template
+	freebsd-update -b /usr/local/jails/template fetch install
+
+
+
+
+
+
 
 Ansible Setup
 -------------
@@ -602,3 +613,143 @@ SSH with X.509 v3 Certificate Support (PKIX-SSH)
     Test generating a key:
     /usr/local/bin/ssh-keygen -b 384 -t ecdsa -f /etc/ssh/ssh_host_key -N ""
 
+
+Compiling NGINX with ChaCha20 support
+---
+
+    # Make a working directory
+    mkdir ~/nginx
+    cd ~/nginx
+
+    # Install some dependencies
+    pkg install ca_root_nss
+    pkg install pcre
+    pkg install perl5
+
+    # Pull the source files
+    fetch https://nginx.org/download/nginx-1.13.0.tar.gz
+    fetch https://www.openssl.org/source/openssl-1.1.0e.tar.gz
+
+    # Extract the tarballs
+    tar -xzvf nginx-1.13.0.tar.gz
+    tar -xzvf openssl-1.1.0e.tar.gz
+    rm *.tar.gz
+   
+    # Compile openssl
+    cd ~/nginx/openssl-1.1.0e.tar.gz
+    ./config
+    make
+    make install
+
+    # openssl should default to /usr/local/bin unless prefixdir variable has been specified
+    /usr/local/bin/openssl version
+    # Should output OpenSSL 1.1.0e
+
+    # Compile NGINX
+    # Use the compile script listing modules to include
+    #!/bin/sh
+    cd ~/nginx/nginx-1.13.0/
+    #make clean
+    
+    ./configure \
+    	--with-http_ssl_module \
+    #	--with-http-spdy_module \
+    	--with-http_gzip_static_module \
+    	--with-file-aio \
+    	--with-ld-opt="-L /usr/local/lib" \
+    
+    #	--without-http_autoindex_module \
+    	--without-http_browser_module \
+    	--without-http_fastcgi_module \
+    	--without-http_geo_module \
+    	--without-http_map_module \
+    	--without-http_proxy_module \
+    	--without-http_memcached_module \
+    	--without-http_ssi_module \
+    	--without-http_userid_module \
+    	--without-http_split_clients_module \
+    	--without-http_uwsgi_module \
+    	--without-http_scgi_module \
+    	--without-http_limit_conn_module \
+    	--without-http_referer_module \
+    	--without-http_http-cache \
+    	--without_upstream_ip_hash_module \
+    	--without-mail_pop3_module \
+    	--without-mail-imap_module \
+    	--without-mail_smtp_module
+    
+    	--with-openssl=~/nginx/openssl-1.1.0e/
+    
+    make
+    make install
+
+    # After running the compile script, NGINX should be installed in /usr/local/nginx
+    # Start the service
+    /usr/local/nginx/sbin/nginx
+
+    # If there are no issues, update the config file in /usr/local/nginx/conf/nginx.conf. 
+    # Reload NGINX to apply the new config
+    /usr/local/nginx/sbin/nginx -s reload
+
+#    # Generate an EC certificate
+#    /usr/local/bin/openssl ecparam -list_curves
+#    /usr/local/bin/openssl ecparam -name secp384r1 -genkey -param_enc explicit -out private-key.pem
+#    /usr/local/bin/openssl req -new -x509 -key private-key.pem -out server.pem -days 365
+#    cat private-key.pem server.pem > server-private.pem
+#
+#
+
+    # Currently having trouble getting a ECDSA signed certificate to work when loading the site in a browser. So far it works with TLSv1.2, ECDHE_RSA, X25519 and CHACHA20-POLY1305. At the moment if I generate a ECDSA cert and use it, the site fails to load at all. So using RSA for now.
+
+    # Current NGINX config:
+
+    worker_processes  1;
+    
+    events {
+        worker_connections  1024;
+    }
+    
+    
+    http {
+        include       mime.types;
+        default_type  application/octet-stream;
+        sendfile        on;
+        keepalive_timeout  65;
+    
+        server {
+            listen       80;
+            server_name  localhost;
+            location / {
+                root   /usr/local/www/;
+                index  index.html index.htm;
+            }
+    
+            error_page   500 502 503 504  /50x.html;
+            location = /50x.html {
+                root   html;
+            }
+    
+        }
+    
+        server {
+            listen       443 ssl;
+            server_name  localhost;
+    
+    	ssl on;
+            #ssl_certificate      /root/nginx/server.pem;
+            #ssl_certificate_key  /root/nginx/private.pem;
+    	ssl_certificate /usr/local/www/nginx-selfsigned.crt;
+    	ssl_certificate_key /usr/local/www/nginx-selfsigned.key;
+    	#ssl_ciphers HIGH;
+    	ssl_ciphers "ECDHE-RSA-CHACHA20-POLY1305";
+            ssl_prefer_server_ciphers  on;
+    	ssl_protocols TLSv1.2;
+    	ssl_ecdh_curve X25519;
+    	
+    	location / {
+                root   /usr/local/www/;
+                index  index.html index.htm;
+            }
+        }
+    
+    }

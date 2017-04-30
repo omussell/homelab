@@ -1,0 +1,21 @@
+digraph structs {
+node [shape=record];
+	struct1 [shape=record, label="<f1>Host name lookup"];
+	struct2 [shape=record, label="<f1>/etc/resolv.conf"];
+	struct3 [shape=record, label="<f1>/etc/hosts|<f2>DNS lookup"];
+
+	dns1 [shape=record, label="<f1>Name server"];
+
+	struct1 [shape=record, label="<f1>Command-line options"];
+	struct2 [shape=record, label="<f1>User's configuration file|<f2> ~/.ssh/config"];
+	struct3 [shape=record, label="<f1>System-wide configuration file|<f2> /etc/ssh/ssh_config"];
+
+
+host key
+
+
+
+	struct1:f10 -> struct2:f11 [style=dotted,label="Check"];
+	struct2:f2 -> struct1:f1
+	struct2:f3 -> struct1:f1 [label="Update"];
+}

@@ -226,6 +226,9 @@ How do we set up IPsec between the router and machines communicating with it?
 How do we set up IPsec between the router and other sites?
 
 
+
+
+
 Immutable NanoBSD Provisioning
 ---
 
@@ -236,6 +239,14 @@ How to perform updates to NanoBSD servers with Jails running?
 
 
 
+Bootstrap
+===
+
+
+Version Control
+---
+
+Version control is used to track OS configuration files, OS and application binaries/source code and configuration management tool files. The version control tools and repositories should be shared by both infrastructure and applications files. 
 
 
 

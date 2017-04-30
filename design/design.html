@@ -123,14 +123,14 @@
 <li>TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)</li>
 </ul>
 <h1 id="detailed-design"><a href="#TOC">Detailed Design</a></h1>
-<!---
+<!--
 
 Control machine config, Git, SSH, 2FA?
 Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
 Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
 Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
 
---->
+-->
 
 <h2 id="ipv6"><a href="#TOC">IPv6</a></h2>
 <p>IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4.</p>
@@ -144,7 +144,8 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 - The bits in the address to the right of the link-local prefix are set to all zeroes
 - If the length of the interface identifier is Nbits, the right-most N bits of the address are replaced by the interface identifier</code></pre>
 <p>Global addresses are formed by appending an interface identifier to a prefix of appropriate length. Prefixes are obtained from Prefix Information options contained in Router Advertisements. RA’s are sent periodically to the all-nodes multicast address. To obtain an advertisement quickly, a host send out Router Solicitations as described in <a href="https://tools.ietf.org/html/rfc4861">RFC4861</a>.</p>
-<p>PICTURE OF GLOBAL ADDRESS GENERATION</p>
+<pre><code>- Routers advertise prefixes that identify the subnet(s) associated with a link
+- Hosts generate an interface identifier that uniquely identifies an interface on a subnet</code></pre>
 <p>The Neighbor Discovery Protocol (<a href="https://tools.ietf.org/html/rfc4861">NDP</a>) is used by nodes to determine the link-layer addresses for neighbors known to reside on the same attached link, to find neighboring routers to forward packets, and to keep track of neighbors that are reachable or not.</p>
 <p>The IPv6 router will be allocated a subnet by the ISP and configured with the first 64 bits of the 128-bit address. <a href="https://tools.ietf.org/html/rfc4862#section-5.4">Duplicate Address Detection</a> and <a href="https://tools.ietf.org/html/rfc4861#section-7.3">Neighbor Unreachability Detection</a> serve as error handling for the address autoconfiguration.</p>
 <p>Since the IPv6 addresses are generated from the prefix on the router, it is possible to renumber an entire network by changing the prefix on the router.</p>

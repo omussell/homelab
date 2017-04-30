@@ -24,14 +24,14 @@ Features that aren't production ready, but would be interesting to implement:
 Detailed Design
 ===
 
-<!---
+<!--
 
 Control machine config, Git, SSH, 2FA?
 Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
 Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
 Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
 
---->
+-->
 
 IPv6
 ---
@@ -55,7 +55,8 @@ All interfaces of IPv6 hosts require a link-local address, which is derived from
 
 Global addresses are formed by appending an interface identifier to a prefix of appropriate length. Prefixes are obtained from Prefix Information options contained in Router Advertisements. RA's are sent periodically to the all-nodes multicast address. To obtain an advertisement quickly, a host send out Router Solicitations as described in [RFC4861].
 
-PICTURE OF GLOBAL ADDRESS GENERATION
+	- Routers advertise prefixes that identify the subnet(s) associated with a link
+	- Hosts generate an interface identifier that uniquely identifies an interface on a subnet
 
 The Neighbor Discovery Protocol ([NDP]) is used by nodes to determine the link-layer addresses for neighbors known to reside on the same attached link, to find neighboring routers to forward packets, and to keep track of neighbors that are reachable or not.
 
