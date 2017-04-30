@@ -691,13 +691,13 @@ Compiling NGINX with ChaCha20 support
     # Reload NGINX to apply the new config
     /usr/local/nginx/sbin/nginx -s reload
 
-#    # Generate an EC certificate
-#    /usr/local/bin/openssl ecparam -list_curves
-#    /usr/local/bin/openssl ecparam -name secp384r1 -genkey -param_enc explicit -out private-key.pem
-#    /usr/local/bin/openssl req -new -x509 -key private-key.pem -out server.pem -days 365
-#    cat private-key.pem server.pem > server-private.pem
-#
-#
+    # Generate an EC certificate
+    /usr/local/bin/openssl ecparam -list_curves
+    /usr/local/bin/openssl ecparam -name secp384r1 -genkey -param_enc explicit -out private-key.pem
+    /usr/local/bin/openssl req -new -x509 -key private-key.pem -out server.pem -days 365
+    cat private-key.pem server.pem > server-private.pem
+
+
 
     # Currently having trouble getting a ECDSA signed certificate to work when loading the site in a browser. So far it works with TLSv1.2, ECDHE_RSA, X25519 and CHACHA20-POLY1305. At the moment if I generate a ECDSA cert and use it, the site fails to load at all. So using RSA for now.
 
