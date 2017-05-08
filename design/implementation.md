@@ -28,6 +28,8 @@ During the hardware provisioning, the SD card containing the standard NanoBSD im
 
 The host (physical server running NanoBSD) can then complete its setup:
 
+- It is preferable to have the hosts (and the infrastructure servers) to have their IPv6 address allocated via DHCPv6, so that they are static. The application and any other servers would then use SLAAC for their IPv6 address assignment.
+
 - Generate SSH keys
 - Send SSH host public keys and SSHFP records to control machine
 - SSH to control machine

@@ -143,6 +143,7 @@
 <p>During the hardware provisioning, the SD card containing the standard NanoBSD image can be installed. This contains the bare-minimum configuration to allow the configuration management tools to continue the setup. On boot, the server contacts the control machine to download a new image and apply any updates if necessary.</p>
 <p>The host (physical server running NanoBSD) can then complete its setup:</p>
 <ul>
+<li><p>It is preferable to have the hosts (and the infrastructure servers) to have their IPv6 address allocated via DHCPv6, so that they are static. The application and any other servers would then use SLAAC for their IPv6 address assignment.</p></li>
 <li>Generate SSH keys</li>
 <li>Send SSH host public keys and SSHFP records to control machine</li>
 <li>SSH to control machine</li>
@@ -151,7 +152,7 @@
 <li>Download updated image</li>
 <li>Reboot</li>
 </ul></li>
-<li>Install any required packages from local repo</li>
+<li><p>Install any required packages from local repo</p></li>
 </ul>
 <h2 id="ssh-bootstrapping-problem"><a href="#TOC">SSH Bootstrapping Problem</a></h2>
 <h2 id="problem-statement"><a href="#TOC">Problem Statement</a></h2>
