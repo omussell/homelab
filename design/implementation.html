@@ -25,8 +25,12 @@
 <li><a href="#setting-up-ipsec-problem">Setting up IPsec Problem:</a><ul>
 <li><a href="#problem-statement-2">Problem Statement</a></li>
 </ul></li>
+<li><a href="#assigning-ip-addresses-to-jails">Assigning IP addresses to jails</a></li>
+<li><a href="#giving-dns-server-location-information-to-clients">Giving DNS server location information to clients</a></li>
 <li><a href="#immutable-nanobsd-provisioning">Immutable NanoBSD Provisioning</a></li>
 <li><a href="#how-to-perform-updates-to-nanobsd-servers-with-jails-running">How to perform updates to NanoBSD servers with Jails running?</a></li>
+<li><a href="#ip-addresses-that-need-to-be-known-by-a-human">IP addresses that need to be known by a human</a></li>
+<li><a href="#resource-records-to-be-stored-in-dnssec">Resource records to be stored in DNS(SEC):</a></li>
 </ul></li>
 <li><a href="#bootstrap">Bootstrap</a><ul>
 <li><a href="#version-control">Version Control</a></li>
@@ -281,14 +285,44 @@ cp -v /grim/$PM_HOSTNAME/crypto/ssh/authorized_keys /usr/src/tools/tools/nanobsd
 </ul>
 <p>So if the fingerprint is presented from insecure DNS (not DNSSEC validated), or if the SSHFP record does not exist, does it prompt the user? We don’t want this to happen since these SSH connections are happening autonomously.</p>
 <p>Also need to check what happens if both options are set to yes.</p>
-<p>If a host key is verified through DNS, is it still added to known_hosts?</p>
+<p>So the host key is verified via DNS. If the fingerprint is correct it will connect. If it is incorrect, it will follow the StrictHostKeyChecking option, which when set to yes will refuse to connect to a host if its host key has changed.</p>
+<p>If a host key is verified through DNS, is it still added to known_hosts? No, the host keys are only stored in the SSHFP records. This also means that when the host key is rotated, the SSHFP record needs to be updated once rather than having to amend the known_hosts file on every server that has ever connected.</p>
 <h2 id="setting-up-ipsec-problem"><a href="#TOC">Setting up IPsec Problem:</a></h2>
 <h3 id="problem-statement-2"><a href="#TOC">Problem Statement</a></h3>
 <p>How do we set up IPsec between the control machine and machines it creates?</p>
 <p>How do we set up IPsec between the router and machines communicating with it?</p>
 <p>How do we set up IPsec between the router and other sites?</p>
+<p>Since we have a robust DNSSEC implementation available, it makes sense to store as much crypto/public keys in there as possible rather than having them spread over multiple mechanisms. So rather than TLS certs in 3rd party PKI, SMIME certs in LDAP, SSH host keys in known_hosts files and IPsec public keys distributed manually, you can have TLSA, SMIMEA, SSHFP and IPSECKEY Resource Records stored securely in DNS.</p>
+<h2 id="assigning-ip-addresses-to-jails"><a href="#TOC">Assigning IP addresses to jails</a></h2>
+<p>It is not possible to assign IP addresses to jails using DHCP, they can only be assigned via jail.conf. This introduces the issue that a human would be required to find out a free address and manually enter it into the jail.conf, which becomes additionally complex with long and hard to remember IPv6 addresses. Some of this problem can be mitigated using variables for example by having the subnet prefix as a $PREFIX variable which can then be referenced as e.g. $PREFIX::d3d8.</p>
+<p>Another method available is the ip_hostname parameter in jail.conf which resolves the host.hostname parameters in DNS and all addresses returned by the resolver are add for the jail. So instead of entering the IP into jail.conf, a AAAA record would be manually entered into DNS and the jail would pick it up from there.</p>
+<h2 id="giving-dns-server-location-information-to-clients"><a href="#TOC">Giving DNS server location information to clients</a></h2>
+<p>Rather than manually configuring /etc/resolv.conf for the location of the local DNS servers, this information can be provided either by the router or DHCP server. If you do not want to run a DHCP server and rely solely on SLAAC for address allocation, then you can have the router provide the DNS information. Otherwise, the DHCP server can provide the DNS information.</p>
+<p>The major benefit of this approach is that you do not have to make any manual configurations for the location of the DNS servers on any of your clients. However, one of the drawbacks is experienced during the initial bootstrap when the DNS servers do not yet exist. So the DNS servers will need to have their stub resolvers configured manually.</p>
 <h2 id="immutable-nanobsd-provisioning"><a href="#TOC">Immutable NanoBSD Provisioning</a></h2>
 <h2 id="how-to-perform-updates-to-nanobsd-servers-with-jails-running"><a href="#TOC">How to perform updates to NanoBSD servers with Jails running?</a></h2>
+<h2 id="ip-addresses-that-need-to-be-known-by-a-human"><a href="#TOC">IP addresses that need to be known by a human</a></h2>
+<ul>
+<li>Router(s)</li>
+<li>Control Machine(s)</li>
+<li>DNS servers</li>
+</ul>
+<h2 id="resource-records-to-be-stored-in-dnssec"><a href="#TOC">Resource records to be stored in DNS(SEC):</a></h2>
+<p>Static:</p>
+<ul>
+<li>DNS servers</li>
+<li>Hostname to static IP for infrastructure servers</li>
+<li>CNAMES for standard services (auth.example.com, dns.example.com)</li>
+<li>MX records</li>
+</ul>
+<p>Dynamic:</p>
+<ul>
+<li>Hostname to dynamic IP for app/other servers (dynamic DNS updates?)</li>
+<li>SSHFP records</li>
+<li>IPSECKEY records</li>
+<li>TLSA records (for all web/app servers)</li>
+<li>SMIMEA (for each user)</li>
+</ul>
 <h1 id="bootstrap"><a href="#TOC">Bootstrap</a></h1>
 <h2 id="version-control"><a href="#TOC">Version Control</a></h2>
 <p>Version control is used to track OS configuration files, OS and application binaries/source code and configuration management tool files. The version control tools and repositories should be shared by both infrastructure and applications files.</p>

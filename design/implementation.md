@@ -243,7 +243,10 @@ So if the fingerprint is presented from insecure DNS (not DNSSEC validated), or 
 
 Also need to check what happens if both options are set to yes.
 
+So the host key is verified via DNS. If the fingerprint is correct it will connect. If it is incorrect, it will follow the StrictHostKeyChecking option, which when set to yes will refuse to connect to a host if its host key has changed.
+
 If a host key is verified through DNS, is it still added to known_hosts? 
+No, the host keys are only stored in the SSHFP records. This also means that when the host key is rotated, the SSHFP record needs to be updated once rather than having to amend the known_hosts file on every server that has ever connected.
 
 
 Setting up IPsec Problem:
@@ -258,8 +261,26 @@ How do we set up IPsec between the router and machines communicating with it?
 How do we set up IPsec between the router and other sites?
 
 
+Since we have a robust DNSSEC implementation available, it makes sense to store as much crypto/public keys in there as possible rather than having them spread over multiple mechanisms. So rather than TLS certs in 3rd party PKI, SMIME certs in LDAP, SSH host keys in known_hosts files and IPsec public keys distributed manually, you can have TLSA, SMIMEA, SSHFP and IPSECKEY Resource Records stored securely in DNS.
 
 
+
+Assigning IP addresses to jails
+---
+
+It is not possible to assign IP addresses to jails using DHCP, they can only be assigned via jail.conf. This introduces the issue that a human would be required to find out a free address and manually enter it into the jail.conf, which becomes additionally complex with long and hard to remember IPv6 addresses. Some of this problem can be mitigated using variables for example by having the subnet prefix as a $PREFIX variable which can then be referenced as e.g. $PREFIX::d3d8. 
+
+Another method available is the ip_hostname parameter in jail.conf which resolves the host.hostname parameters in DNS and all addresses returned by the resolver are add for the jail. So instead of entering the IP into jail.conf, a AAAA record would be manually entered into DNS and the jail would pick it up from there. 
+
+
+Giving DNS server location information to clients
+---
+
+Rather than manually configuring /etc/resolv.conf for the location of the local DNS servers, this information can be provided either by the router or DHCP server. If you do not want to run a DHCP server and rely solely on SLAAC for address allocation, then you can have the router provide the DNS information. Otherwise, the DHCP server can provide the DNS information. 
+
+[RFC8106]: https://tools.ietf.org/html/rfc8106
+
+The major benefit of this approach is that you do not have to make any manual configurations for the location of the DNS servers on any of your clients. However, one of the drawbacks is experienced during the initial bootstrap when the DNS servers do not yet exist. So the DNS servers will need to have their stub resolvers configured manually.
 
 Immutable NanoBSD Provisioning
 ---
@@ -268,6 +289,34 @@ Immutable NanoBSD Provisioning
 
 How to perform updates to NanoBSD servers with Jails running?
 ---
+
+
+IP addresses that need to be known by a human
+---
+
+- Router(s)
+- Control Machine(s)
+- DNS servers
+
+
+
+Resource records to be stored in DNS(SEC):
+---
+
+Static:
+
+- DNS servers
+- Hostname to static IP for infrastructure servers
+- CNAMES for standard services (auth.example.com, dns.example.com)
+- MX records
+
+Dynamic:
+
+- Hostname to dynamic IP for app/other servers (dynamic DNS updates?)
+- SSHFP records
+- IPSECKEY records
+- TLSA records (for all web/app servers)
+- SMIMEA (for each user)
 
 
 

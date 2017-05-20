@@ -155,6 +155,7 @@ Since the configuration files are stored separately to the root filesystem, when
 - Easy to update or upgrade individual jails
 
 
+In this setup, NanoBSD is stored on a SD card which the server uses for the initial boot. There would then be jails stored on ZFS datasets on a zpool made up of local disks (NVMe/SSD). This separation is done so that if the NanoBSD image is borked for some reason (hardware failure, dodgy update) then the zpool should still survive regardless, and so the important application data will also survive. You would sort out the issue with the NanoBSD image, then it would boot as normal.
 
 Jail parameters (jail.conf)
 

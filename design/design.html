@@ -190,6 +190,7 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li>Does not rely on virtualisation, so performance penalty is mitigated</li>
 <li>Easy to update or upgrade individual jails</li>
 </ul>
+<p>In this setup, NanoBSD is stored on a SD card which the server uses for the initial boot. There would then be jails stored on ZFS datasets on a zpool made up of local disks (NVMe/SSD). This separation is done so that if the NanoBSD image is borked for some reason (hardware failure, dodgy update) then the zpool should still survive regardless, and so the important application data will also survive. You would sort out the issue with the NanoBSD image, then it would boot as normal.</p>
 <p>Jail parameters (jail.conf)</p>
 <ul>
 <li>path - Directory which is the root of the jail</li>
