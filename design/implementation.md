@@ -101,7 +101,7 @@ This means that:
 
 Alternative method, use a SSH CA on the control machine
 
-Generate a SSH CA certificate on the control machine, and sign the hsot key of the control machine
+Generate a SSH CA certificate on the control machine, and sign the host key of the control machine
 Distribute the SSH CA cert onto the image
 
 - ssh-keygen -A
@@ -260,11 +260,6 @@ How do we set up IPsec between the router and machines communicating with it?
 
 How do we set up IPsec between the router and other sites?
 
-
-Since we have a robust DNSSEC implementation available, it makes sense to store as much crypto/public keys in there as possible rather than having them spread over multiple mechanisms. So rather than TLS certs in 3rd party PKI, SMIME certs in LDAP, SSH host keys in known_hosts files and IPsec public keys distributed manually, you can have TLSA, SMIMEA, SSHFP and IPSECKEY Resource Records stored securely in DNS.
-
-It is also important for us to have this information in DNS so that it can potentially be referenced by other organisations. If another org needs to access a website, it needs to be secured with TLS which is validated by the TLSA record via DANE. Likewise, if a person in another organisation wants to send an email, they need to know the TLS cert to secure the TLS communication and also the SMIME certificate to encrypt the email itself. By publishing the TLSA record and SMIMEA records in DNS, the other organisation can access this information and be confident that the records are accurate.
-
 Assigning IP addresses to jails
 ---
 
@@ -272,7 +267,7 @@ It is not possible to assign IP addresses to jails using DHCP, they can only be 
 
 Another method available is the ip_hostname parameter in jail.conf which resolves the host.hostname parameters in DNS and all addresses returned by the resolver are added for the jail. So instead of entering the IP into jail.conf, a AAAA record would be manually entered into DNS and the jail would pick it up from there. 
 
-Giving DNS server location information to clients
+Giving DNS server information to clients
 ---
 
 Rather than manually configuring /etc/resolv.conf for the location of the local DNS servers, this information can be provided either by the router or DHCP server. If you do not want to run a DHCP server and rely solely on SLAAC for address allocation, then you can have the router provide the DNS information. Otherwise, the DHCP server can provide the DNS information. [RFC8106]
@@ -280,6 +275,11 @@ Rather than manually configuring /etc/resolv.conf for the location of the local 
 [RFC8106]: https://tools.ietf.org/html/rfc8106
 
 The major benefit of this approach is that you do not have to make any manual configurations for the location of the DNS servers on any of your clients. However, one of the drawbacks is experienced during the initial bootstrap when the DNS servers do not yet exist. So the DNS servers will need to have their stub resolvers configured manually.
+
+Since we have a robust DNSSEC implementation available, it makes sense to store as much crypto/public keys in there as possible rather than having them spread over multiple mechanisms. So rather than TLS certs in 3rd party PKI, SMIME certs in LDAP, SSH host keys in known_hosts files and IPsec public keys distributed manually, you can have TLSA, SMIMEA, SSHFP and IPSECKEY Resource Records stored securely in DNS.
+
+It is also important for us to have this information in DNS so that it can potentially be referenced by other organisations. If another org needs to access a website, it needs to be secured with TLS which is validated by the TLSA record via DANE. Likewise, if a person in another organisation wants to send an email, they need to know the TLS cert to secure the TLS communication and also the SMIME certificate to encrypt the email itself. By publishing the TLSA record and SMIMEA records in DNS, the other organisation can access this information and be confident that the records are accurate.
+
 
 Immutable NanoBSD Provisioning
 ---

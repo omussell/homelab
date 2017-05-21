@@ -31,6 +31,19 @@ The design of the environment will be similar to [Project Athena] at MIT and the
 
 This project aims to extend the work of infrastructures.org and Paul Schenkeveld, by emphasising security and producing a working implementation that can be used by anyone.
 
+
+
+
+Further, the intent is for the infrastructure to work regardless of participating in the wider internet. The design is aimed at organisations that have strict security and uptime requirements (government/critical physical infrastructure), although there is nothing preventing other organisations from adopting this design and/or changing it to suit them.
+
+Organisations would likely still use the existing internet infrastructure in order to connect between their sites, however, there is the option to not be dependent on the third-party PKI and DNS systems. By removing the dependencies between organisations, there is greater decentralisation which allows more freedom. 
+
+However, a balance should be sought. If an organisation wishes part of its infrastructure, such as a website, to be accessible by the public you would not give them access to your infrastructure but instead host it on another infrastructure for example in the cloud which would be dependent on third party PKI and DNS.
+
+
+
+
+
 [infrastructures.org]: http://www.infrastructures.org
 [Bootstrapping an Infrastructure]: http://www.infrastructures.org/papers/bootstrap/bootstrap.html
 [Why Order Matters: Turing Equivalence in Automated Systems Administration]: http://www.infrastructures.org/papers/turing/turing.html
