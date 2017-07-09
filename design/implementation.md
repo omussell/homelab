@@ -249,6 +249,32 @@ If a host key is verified through DNS, is it still added to known_hosts?
 No, the host keys are only stored in the SSHFP records. This also means that when the host key is rotated, the SSHFP record needs to be updated once rather than having to amend the known_hosts file on every server that has ever connected.
 
 
+
+
+SSH Host Key Rotation
+---
+
+How do you rotate SSH host keys and update the SSHFP records in DNS(SEC)?
+
+requirement for renewal is initiated every x days/weeks
+host generates new host keys
+host connects to control machine, provides the new SSHFP values and asks for hosts SSHFP records to be updated
+control machine updates DNS zone info with new SSHFP values
+if update is successful, remove old values and resign zone. Inform host to remove old host keys
+if update is unsuccessful, remove new values and report error.
+
+
+
+
+Should only Kerberos Realm (domain) joined hosts be allowed to access DNS? If so, how?
+---
+
+We may want to only allow hosts under our control from being able to query the DNS servers that we manage. Otherwise anyone could plug a client into the LAN and query DNS. However, we need to determine how other organisations will connect to DNS to get public info like TLSA and SMIMEA records. Split DNS, public/private? 
+
+Does it matter? If a malicious client can do hostname lookups, is that really a problem? The info is secured with DNSSEC so spoofing/poisoning will get detected.
+ 
+
+
 Setting up IPsec Problem:
 ---
 
