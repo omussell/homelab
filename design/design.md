@@ -14,24 +14,8 @@
 - [Design](/homelab/design/design.html)
 - [Implementation](/homelab/design/implementation.html)
 
-Experimental
-===
-Features that aren't production ready, but would be interesting to implement:
-
-- SSH using X509v3 certificates, signed by a central CA (or validated with DANE?)
-- TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)
-
 Detailed Design
 ===
-
-<!--
-
-Control machine config, Git, SSH, 2FA?
-Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
-Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
-Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
-
--->
 
 IPv6
 ---
@@ -132,30 +116,13 @@ OS
 The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
 
 ### FreeBSD ###
-[FreeBSD] is an advanced computer operating system used to power modern servers. Its advanced networking, security, and storage features have made FreeBSD the platform of choice for embedded networking and storage devices, and powers many of the [busiest web sites].
-
 FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems. 
-
-### NanoBSD ###
-[NanoBSD] is built via shell script and produces a minimal implementation of FreeBSD which fits on small flash media. The image is customised with a configuration file, which specifies variables and functions to build the image as required. There are three stages to the image build: buildkernel, buildworld and the customise commands. The buildkernel stage is only required to be run once, further configuration changes can skip the buildkernel stage. However, some configuration changes do still require the kernel to be built. Compiling the kernel takes a long time (~30 minutes) and should be done sparingly.
-
-Once the kernel and world have been built, you can customise the state of the environment using the customise commands. These are functions specified at the end of the configuration file. By skipping the buildkernel and buildworld stages, you reduce the image build time to ~20 seconds.
-
-The image is only required to be built once, updated images are deployed via dd to the inactive slice. The system is then rebooted, and boots into the newly updated slice. If there are problems, change the slice back to the original, and reboot. Building the image offline also gives the advantage of being able to test the image easily prior to widespread deployment. You can dd the image to a zfs volume, then use bhyve to run the image as a virtual machine. You can then perform testing to ensure it is correct, before rolling out the image to production.
-
-The flash storage is divided into three parts: the two image partitions or slices (1 and 2) containing the read-only root filesystem where only one is active, and the configuration file partition or /cfg. The /etc and /var directories are md (malloc backed) disks, which means they are located in RAM. On boot, the active slice contains the root filesystem mounted as read-only, which is beneficial since it is stored on flash media which has a limited number of writes. Configuration changes to files in /etc or /var are temporary, since they are located in RAM, and are loaded from the /cfg partition on boot. This means you can change configuration files, and if things go wrong, you can just reboot to clear the RAM. Otherwise if the new configuration is correct, you can mount /cfg, copy the changed files from /etc or /var to /cfg, then unmount again. Also, since the root filesystem is read-only, it is able to survive after an unplanned reboot. There is also no reason to run fsck after a non-graceful shutdown.
-
-Since the configuration files are stored separately to the root filesystem, when switching the active slice, the configuration files are not changed. So updates and upgrades should not have an effect on the running configuration. It is also good operational practice to make sure that any configuration changes are saved to /cfg after testing, so that in the event the server reboots the configuration is still saved. This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.
-
 
 ### Jails ###
 
 - A process and all descendants are restricted to a chrooted directory tree
 - Does not rely on virtualisation, so performance penalty is mitigated
 - Easy to update or upgrade individual jails
-
-
-In this setup, NanoBSD is stored on a SD card which the server uses for the initial boot. There would then be jails stored on ZFS datasets on a zpool made up of local disks (NVMe/SSD). This separation is done so that if the NanoBSD image is borked for some reason (hardware failure, dodgy update) then the zpool should still survive regardless, and so the important application data will also survive. You would sort out the issue with the NanoBSD image, then it would boot as normal.
 
 Jail parameters (jail.conf)
 
@@ -225,14 +192,6 @@ ZFS automatically manages mounting and unmounting file systems without the need 
 
 A zfs dataset can be attached to a jail. A dataset cannot be attached to one jail and the children of the same dataset to other jails. 
 
-
-
-
-
-
-
-
-
 ### Other Operating Systems/Containers/Filesystems ###
 While a combination of FreeBSD, Jails and ZFS have been recommended, you are free to use other operating systems like Windows or Linux, other container formats such as LXC or Zones, and other filesystems like BTRFS or EXT. The general concepts are interchangeable.
 
@@ -240,10 +199,6 @@ While a combination of FreeBSD, Jails and ZFS have been recommended, you are fre
 
 ### Ad-Hoc Change Tools ###
 rsync. zfs send/receive.
-
-[FreeBSD]: https://www.freebsd.org
-[busiest web sites]: https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/nutshell.html#introduction-nutshell-users
-[NanoBSD]: https://www.freebsd.org/cgi/man.cgi?query=nanobsd
 
 
 DNS
@@ -311,12 +266,6 @@ A basic guide of [how DNSSEC works] is found [on the CloudFlare blog].
 When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the Root Signing Ceremony
 
 
-List of DNSSEC RFCs
-
-- 1
-- 2
-- 3
-
 [how DNSSEC works]: https://www.cloudflare.com/dns/dnssec/how-dnssec-works/
 [on the CloudFlare blog]: https://blog.cloudflare.com/dnssec-an-introduction/
 
@@ -382,31 +331,11 @@ A guide to setting up DNSSEC+DANE to guarantee secure email between organisation
 [Secure Domain Name System Deployment Guide]: http://dx.doi.org/10.6028/NIST.SP.800-81-2
 [Trustworthy Email]: http://dx.doi.org/10.6028/NIST.SP.800-177
 
-### DNSCrypt ###
-
-### DNSCurve ###
-
-
-
-
-LDAP
----
-### LDAPS ###
-### S/MIME or PGP ###
-
-Kerberos
----
-
 
 NTP
 ---
 
 ### NTPsec ###
-
-
-NFS
----
-### KerberizedNFSv4
 
 Application Servers
 ---
@@ -415,24 +344,6 @@ Application Servers
 
 Security and Crypto
 ---
-### Against DNSSEC (and DANE) ###
-- Cryptography worst practices, Daniel J. Bernstein [slides], [video]
-- [DNSSEC in Chrome] (2014)
-- [Why not DANE in browsers], Adam Langley (2015)
-
-Counterpoints:
-
-- [Dan Kaminsky]
-- [EasyDNS]
-
-
-[slides]: http://cr.yp.to/talks/2012.03.08-1/slides.pdf
-[video]: https://vimeo.com/18279777
-[Dan Kaminsky]: https://dankaminsky.com/2011/01/05/djb-ccc/
-[EasyDNS]: http://blog.easydns.org/2015/08/06/for-dnssec/
-[DNSSEC in Chrome]: https://groups.google.com/forum/#!topic/mozilla.dev.security/xylVm_kD_WE 
-[Why not DANE in browsers]: https://www.imperialviolet.org/2015/01/17/notdane.html
-
 ### TLS ###
 
 ### SSH ###
