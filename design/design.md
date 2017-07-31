@@ -192,9 +192,6 @@ ZFS automatically manages mounting and unmounting file systems without the need 
 
 A zfs dataset can be attached to a jail. A dataset cannot be attached to one jail and the children of the same dataset to other jails. 
 
-### Other Operating Systems/Containers/Filesystems ###
-While a combination of FreeBSD, Jails and ZFS have been recommended, you are free to use other operating systems like Windows or Linux, other container formats such as LXC or Zones, and other filesystems like BTRFS or EXT. The general concepts are interchangeable.
-
 ### Host Install Tools ###
 
 ### Ad-Hoc Change Tools ###
@@ -515,9 +512,6 @@ Continuous Delivery:
 - Everybody has responsibility for the release process
 - Improve continuously
 
-The commands and philosphy throughout this document focus on using the native tools as part of the OS, rather than the commands for a specific configuration management tool. This is done so that the system administrators know what is being configured at the most basic level, and so they can use the tools manually or through shell scripts. It also means that the configurations will work independent of the configuration management tool that is chosen.
-
-
 Authorisation / Access Control Lists
 ---
 You can control access to objects using the ACL authorisation mechanism. 
@@ -601,7 +595,7 @@ How to backup and restore:
 Calculate the latency/data limits required to perform above backups/restores
 
 ### Redundancy ###
-OS, hard drive, zfs, multiple core servers with master/slave, database replication, multiple load balancers. Services are behind a load balancer
+OS, hard drive, zfs. Services are behind a load balancer
 
 ### Replicated databases ###
 
@@ -620,43 +614,6 @@ Logging to central servers
 Unspecific Operational Requirements
 ---
 
-### Assigning IPv6 Addresses to Clients ### 
-
-### Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC) ###
-
-### IPv6 Security ###
-While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key cryptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in [RFC6105]/[RFC7113], is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply "RA disallow on a given interface" to "RA allowed from SEND authorised sources only".
-
-[RFC6105]: https://tools.ietf.org/html/rfc6105
-[RFC7113]: https://tools.ietf.org/html/rfc7113
-
-
-### Hostname Conventions ###
-
-### Choosing an Operating System ###
-
-### Choosing a Configuration Management Tool ###
-
-### Scheduling with cron ###
-
-The cron utility searches the user crontabs (/etc/cron.d on Linux or /var/cron/tabs on FreeBSD) for crontab files which are named after accounts in /etc/passwd. crontabs found are loaded into memory. A crontab file contains instructions to the cron daemon in the form "run this command at this time on this date". Each user has their own crontab, and commands in a crontab will be executed as the user who owns the crontab. The system crontab, /etc/crontab, should not be modified.
-
-cron then wakes up every minute and checks all crontabs to see if a command should be run in the current minute. Before running a command from an account crontab, cron checks the status of the account with pam and skips the command if the account is locked out or expired. Commands from /etc/crontab bypass this check. 
-
-
-Scaling
-===
-AKF Scaling Cube
-
-- Replicate the entire system (horizontal duplication)
-- Split the system into individual functions, services or resources (functional or service splits)
-- Split the system into individual chunks (lookup or formulaic splits)
-
-Horizontal - Many replicas behind a load balancer. If each transaction can be completed independently on all replicas, the performance improvement is proportional to the number of replicas, for example, adding more replicas, disk spindles or network connections.
-
-
-!!
-
 User Access
 ===
 - Documents
@@ -664,13 +621,3 @@ User Access
 - Email
 - Instant Messaging
 - Working remotely
-
-<!---
-
-- Documents - Access documents through a website? Should be bound by authentication/authorisation. Version controlled documents. Like Sharepoint, but not terrible.
-- Applications - web-access only preferred, TLS available, bound by authentication/authorisation. 
-- Email - How does ProtonMail do it? Usually a lot of protections and anti-spam required, but if orgs are able to authoritativly validate each other, you are only able to receive emails from those orgs that have been validated, everything else is binned. Or if an org does spam, its quick to pinpoint and can be made untrusted.
-- Instant Messaging - IRC with OTR, e.g. irc with PGP support.
-- Working remotely - won't happen in a super-secure infra, but less secure may allow it. Could be done like MIT, with public SSH servers that require Kerberos name+pass and the user certificate. Then you could get X forwarded over SSH or instead of SSH, an SSL/TLS VPN that gives access to the internal network.
-
---->
