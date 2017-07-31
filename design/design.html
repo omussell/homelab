@@ -29,7 +29,6 @@
 <li><a href="#freebsd">FreeBSD</a></li>
 <li><a href="#jails">Jails</a></li>
 <li><a href="#zfs">ZFS</a></li>
-<li><a href="#other-operating-systemscontainersfilesystems">Other Operating Systems/Containers/Filesystems</a></li>
 <li><a href="#host-install-tools">Host Install Tools</a></li>
 <li><a href="#ad-hoc-change-tools">Ad-Hoc Change Tools</a></li>
 </ul></li>
@@ -76,17 +75,8 @@
 <li><a href="#monitoring">Monitoring</a></li>
 <li><a href="#auditing">Auditing</a></li>
 </ul></li>
-<li><a href="#unspecific-operational-requirements">Unspecific Operational Requirements</a><ul>
-<li><a href="#assigning-ipv6-addresses-to-clients">Assigning IPv6 Addresses to Clients</a></li>
-<li><a href="#static-or-dynamic-ipv6-addresses-dhcpv6-or-slaac">Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC)</a></li>
-<li><a href="#ipv6-security">IPv6 Security</a></li>
-<li><a href="#hostname-conventions">Hostname Conventions</a></li>
-<li><a href="#choosing-an-operating-system">Choosing an Operating System</a></li>
-<li><a href="#choosing-a-configuration-management-tool">Choosing a Configuration Management Tool</a></li>
-<li><a href="#scheduling-with-cron">Scheduling with cron</a></li>
+<li><a href="#unspecific-operational-requirements">Unspecific Operational Requirements</a></li>
 </ul></li>
-</ul></li>
-<li><a href="#scaling">Scaling</a></li>
 <li><a href="#user-access">User Access</a></li>
 </ul>
 </div>
@@ -212,8 +202,6 @@
 <p>A clone is a writable volume or file system whose initial contents are the same as another dataset. Clones can only be created from a snapshot. When a snapshot is cloned, it creates a dependency between the parent and child, and the original cannot be destroyed as long as the clone exists. The clone can be promoted, which then allows the original to be destroyed.</p>
 <p>ZFS automatically manages mounting and unmounting file systems without the need to edit the /etc/fstab file. All automatically managed file systems are mounted by ZFS at boot time.</p>
 <p>A zfs dataset can be attached to a jail. A dataset cannot be attached to one jail and the children of the same dataset to other jails.</p>
-<h3 id="other-operating-systemscontainersfilesystems"><a href="#TOC">Other Operating Systems/Containers/Filesystems</a></h3>
-<p>While a combination of FreeBSD, Jails and ZFS have been recommended, you are free to use other operating systems like Windows or Linux, other container formats such as LXC or Zones, and other filesystems like BTRFS or EXT. The general concepts are interchangeable.</p>
 <h3 id="host-install-tools"><a href="#TOC">Host Install Tools</a></h3>
 <h3 id="ad-hoc-change-tools"><a href="#TOC">Ad-Hoc Change Tools</a></h3>
 <p>rsync. zfs send/receive.</p>
@@ -418,7 +406,6 @@
 <li>Everybody has responsibility for the release process</li>
 <li>Improve continuously</li>
 </ul>
-<p>The commands and philosphy throughout this document focus on using the native tools as part of the OS, rather than the commands for a specific configuration management tool. This is done so that the system administrators know what is being configured at the most basic level, and so they can use the tools manually or through shell scripts. It also means that the configurations will work independent of the configuration management tool that is chosen.</p>
 <h2 id="authorisation-access-control-lists"><a href="#TOC">Authorisation / Access Control Lists</a></h2>
 <p>You can control access to objects using the ACL authorisation mechanism.</p>
 <h2 id="role-based-access-control-shared-administration-sudo"><a href="#TOC">Role-Based Access Control / Shared Administration (sudo)</a></h2>
@@ -473,7 +460,7 @@
 - HSM data</code></pre>
 <p>Calculate the latency/data limits required to perform above backups/restores</p>
 <h3 id="redundancy"><a href="#TOC">Redundancy</a></h3>
-<p>OS, hard drive, zfs, multiple core servers with master/slave, database replication, multiple load balancers. Services are behind a load balancer</p>
+<p>OS, hard drive, zfs. Services are behind a load balancer</p>
 <h3 id="replicated-databases"><a href="#TOC">Replicated databases</a></h3>
 <h3 id="hot-swaps"><a href="#TOC">Hot swaps</a></h3>
 <p>Physical components should be hot swappable. Service components should also be hot swappable.</p>
@@ -484,25 +471,6 @@
 <h3 id="auditing"><a href="#TOC">Auditing</a></h3>
 <p>Logging to central servers</p>
 <h2 id="unspecific-operational-requirements"><a href="#TOC">Unspecific Operational Requirements</a></h2>
-<h3 id="assigning-ipv6-addresses-to-clients"><a href="#TOC">Assigning IPv6 Addresses to Clients</a></h3>
-<h3 id="static-or-dynamic-ipv6-addresses-dhcpv6-or-slaac"><a href="#TOC">Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC)</a></h3>
-<h3 id="ipv6-security"><a href="#TOC">IPv6 Security</a></h3>
-<p>While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key cryptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in <a href="https://tools.ietf.org/html/rfc6105">RFC6105</a>/<a href="https://tools.ietf.org/html/rfc7113">RFC7113</a>, is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply “RA disallow on a given interface” to “RA allowed from SEND authorised sources only”.</p>
-<h3 id="hostname-conventions"><a href="#TOC">Hostname Conventions</a></h3>
-<h3 id="choosing-an-operating-system"><a href="#TOC">Choosing an Operating System</a></h3>
-<h3 id="choosing-a-configuration-management-tool"><a href="#TOC">Choosing a Configuration Management Tool</a></h3>
-<h3 id="scheduling-with-cron"><a href="#TOC">Scheduling with cron</a></h3>
-<p>The cron utility searches the user crontabs (/etc/cron.d on Linux or /var/cron/tabs on FreeBSD) for crontab files which are named after accounts in /etc/passwd. crontabs found are loaded into memory. A crontab file contains instructions to the cron daemon in the form “run this command at this time on this date”. Each user has their own crontab, and commands in a crontab will be executed as the user who owns the crontab. The system crontab, /etc/crontab, should not be modified.</p>
-<p>cron then wakes up every minute and checks all crontabs to see if a command should be run in the current minute. Before running a command from an account crontab, cron checks the status of the account with pam and skips the command if the account is locked out or expired. Commands from /etc/crontab bypass this check.</p>
-<h1 id="scaling"><a href="#TOC">Scaling</a></h1>
-<p>AKF Scaling Cube</p>
-<ul>
-<li>Replicate the entire system (horizontal duplication)</li>
-<li>Split the system into individual functions, services or resources (functional or service splits)</li>
-<li>Split the system into individual chunks (lookup or formulaic splits)</li>
-</ul>
-<p>Horizontal - Many replicas behind a load balancer. If each transaction can be completed independently on all replicas, the performance improvement is proportional to the number of replicas, for example, adding more replicas, disk spindles or network connections.</p>
-<p>!!</p>
 <h1 id="user-access"><a href="#TOC">User Access</a></h1>
 <ul>
 <li>Documents</li>
@@ -511,15 +479,5 @@
 <li>Instant Messaging</li>
 <li>Working remotely</li>
 </ul>
-<!---
-
-- Documents - Access documents through a website? Should be bound by authentication/authorisation. Version controlled documents. Like Sharepoint, but not terrible.
-- Applications - web-access only preferred, TLS available, bound by authentication/authorisation. 
-- Email - How does ProtonMail do it? Usually a lot of protections and anti-spam required, but if orgs are able to authoritativly validate each other, you are only able to receive emails from those orgs that have been validated, everything else is binned. Or if an org does spam, its quick to pinpoint and can be made untrusted.
-- Instant Messaging - IRC with OTR, e.g. irc with PGP support.
-- Working remotely - won't happen in a super-secure infra, but less secure may allow it. Could be done like MIT, with public SSH servers that require Kerberos name+pass and the user certificate. Then you could get X forwarded over SSH or instead of SSH, an SSL/TLS VPN that gives access to the internal network.
-
---->
-
 </body>
 </html>
