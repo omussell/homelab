@@ -16,7 +16,6 @@
 </div>
 <div id="TOC">
 <ul>
-<li><a href="#experimental">Experimental</a></li>
 <li><a href="#detailed-design">Detailed Design</a><ul>
 <li><a href="#ipv6">IPv6</a><ul>
 <li><a href="#address-autoconfiguration-slaac">Address Autoconfiguration (SLAAC)</a></li>
@@ -28,7 +27,6 @@
 </ul></li>
 <li><a href="#os">OS</a><ul>
 <li><a href="#freebsd">FreeBSD</a></li>
-<li><a href="#nanobsd">NanoBSD</a></li>
 <li><a href="#jails">Jails</a></li>
 <li><a href="#zfs">ZFS</a></li>
 <li><a href="#other-operating-systemscontainersfilesystems">Other Operating Systems/Containers/Filesystems</a></li>
@@ -39,25 +37,14 @@
 <li><a href="#dnssec">DNSSEC</a></li>
 <li><a href="#dane">DANE</a></li>
 <li><a href="#dane-for-email-security">DANE for Email Security</a></li>
-<li><a href="#dnscrypt">DNSCrypt</a></li>
-<li><a href="#dnscurve">DNSCurve</a></li>
 </ul></li>
-<li><a href="#ldap">LDAP</a><ul>
-<li><a href="#ldaps">LDAPS</a></li>
-<li><a href="#smime-or-pgp">S/MIME or PGP</a></li>
-</ul></li>
-<li><a href="#kerberos">Kerberos</a></li>
 <li><a href="#ntp">NTP</a><ul>
 <li><a href="#ntpsec">NTPsec</a></li>
-</ul></li>
-<li><a href="#nfs">NFS</a><ul>
-<li><a href="#kerberizednfsv4">KerberizedNFSv4</a></li>
 </ul></li>
 <li><a href="#application-servers">Application Servers</a><ul>
 <li><a href="#nginx">NGINX</a></li>
 </ul></li>
 <li><a href="#security-and-crypto">Security and Crypto</a><ul>
-<li><a href="#against-dnssec-and-dane">Against DNSSEC (and DANE)</a></li>
 <li><a href="#tls">TLS</a></li>
 <li><a href="#ssh">SSH</a></li>
 <li><a href="#hsm">HSM</a></li>
@@ -116,22 +103,7 @@
 <li><a href="/homelab/design/design.html">Design</a></li>
 <li><a href="/homelab/design/implementation.html">Implementation</a></li>
 </ul>
-<h1 id="experimental"><a href="#TOC">Experimental</a></h1>
-<p>Features that aren’t production ready, but would be interesting to implement:</p>
-<ul>
-<li>SSH using X509v3 certificates, signed by a central CA (or validated with DANE?)</li>
-<li>TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)</li>
-</ul>
 <h1 id="detailed-design"><a href="#TOC">Detailed Design</a></h1>
-<!--
-
-Control machine config, Git, SSH, 2FA?
-Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
-Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
-Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
-
--->
-
 <h2 id="ipv6"><a href="#TOC">IPv6</a></h2>
 <p>IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4.</p>
 <p>IPv6 uses a 128-bit address which allows a much larger address space, 2^128. A single /64 subnet has a size of 2^64 addresses which equates to the square of the entire IPv4 address space. An address is represented as eight groups of four hexadecimal digits with the groups separated by colons, e.g. 2001:0db8:0000:0042:0000:8a2e:0370:7334. Guidance for representing IPv6 addresses in text is shown in <a href="https://tools.ietf.org/html/rfc5952">RFC5952</a>.</p>
@@ -176,21 +148,13 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <h2 id="os"><a href="#TOC">OS</a></h2>
 <p>The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.</p>
 <h3 id="freebsd"><a href="#TOC">FreeBSD</a></h3>
-<p><a href="https://www.freebsd.org">FreeBSD</a> is an advanced computer operating system used to power modern servers. Its advanced networking, security, and storage features have made FreeBSD the platform of choice for embedded networking and storage devices, and powers many of the <a href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/nutshell.html#introduction-nutshell-users">busiest web sites</a>.</p>
 <p>FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems.</p>
-<h3 id="nanobsd"><a href="#TOC">NanoBSD</a></h3>
-<p><a href="https://www.freebsd.org/cgi/man.cgi?query=nanobsd">NanoBSD</a> is built via shell script and produces a minimal implementation of FreeBSD which fits on small flash media. The image is customised with a configuration file, which specifies variables and functions to build the image as required. There are three stages to the image build: buildkernel, buildworld and the customise commands. The buildkernel stage is only required to be run once, further configuration changes can skip the buildkernel stage. However, some configuration changes do still require the kernel to be built. Compiling the kernel takes a long time (~30 minutes) and should be done sparingly.</p>
-<p>Once the kernel and world have been built, you can customise the state of the environment using the customise commands. These are functions specified at the end of the configuration file. By skipping the buildkernel and buildworld stages, you reduce the image build time to ~20 seconds.</p>
-<p>The image is only required to be built once, updated images are deployed via dd to the inactive slice. The system is then rebooted, and boots into the newly updated slice. If there are problems, change the slice back to the original, and reboot. Building the image offline also gives the advantage of being able to test the image easily prior to widespread deployment. You can dd the image to a zfs volume, then use bhyve to run the image as a virtual machine. You can then perform testing to ensure it is correct, before rolling out the image to production.</p>
-<p>The flash storage is divided into three parts: the two image partitions or slices (1 and 2) containing the read-only root filesystem where only one is active, and the configuration file partition or /cfg. The /etc and /var directories are md (malloc backed) disks, which means they are located in RAM. On boot, the active slice contains the root filesystem mounted as read-only, which is beneficial since it is stored on flash media which has a limited number of writes. Configuration changes to files in /etc or /var are temporary, since they are located in RAM, and are loaded from the /cfg partition on boot. This means you can change configuration files, and if things go wrong, you can just reboot to clear the RAM. Otherwise if the new configuration is correct, you can mount /cfg, copy the changed files from /etc or /var to /cfg, then unmount again. Also, since the root filesystem is read-only, it is able to survive after an unplanned reboot. There is also no reason to run fsck after a non-graceful shutdown.</p>
-<p>Since the configuration files are stored separately to the root filesystem, when switching the active slice, the configuration files are not changed. So updates and upgrades should not have an effect on the running configuration. It is also good operational practice to make sure that any configuration changes are saved to /cfg after testing, so that in the event the server reboots the configuration is still saved. This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.</p>
 <h3 id="jails"><a href="#TOC">Jails</a></h3>
 <ul>
 <li>A process and all descendants are restricted to a chrooted directory tree</li>
 <li>Does not rely on virtualisation, so performance penalty is mitigated</li>
 <li>Easy to update or upgrade individual jails</li>
 </ul>
-<p>In this setup, NanoBSD is stored on a SD card which the server uses for the initial boot. There would then be jails stored on ZFS datasets on a zpool made up of local disks (NVMe/SSD). This separation is done so that if the NanoBSD image is borked for some reason (hardware failure, dodgy update) then the zpool should still survive regardless, and so the important application data will also survive. You would sort out the issue with the NanoBSD image, then it would boot as normal.</p>
 <p>Jail parameters (jail.conf)</p>
 <ul>
 <li>path - Directory which is the root of the jail</li>
@@ -291,12 +255,6 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <img src="/homelab/pic/chain.svg">
 <p>A basic guide of <a href="https://www.cloudflare.com/dns/dnssec/how-dnssec-works/">how DNSSEC works</a> is found <a href="https://blog.cloudflare.com/dnssec-an-introduction/">on the CloudFlare blog</a>.</p>
 <p>When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the Root Signing Ceremony</p>
-<p>List of DNSSEC RFCs</p>
-<ul>
-<li>1</li>
-<li>2</li>
-<li>3</li>
-</ul>
 <h3 id="dane"><a href="#TOC">DANE</a></h3>
 <p>DNS-Based Authentication of Named Entities or <a href="https://tools.ietf.org/html/rfc6698">DANE</a> allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server’s certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.</p>
 <p>DANE is implemented by placing TLSA records in the DNS.</p>
@@ -324,30 +282,11 @@ Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/L
 <li><a href="http://dx.doi.org/10.6028/NIST.SP.800-177">Trustworthy Email</a></li>
 </ul></li>
 </ul>
-<h3 id="dnscrypt"><a href="#TOC">DNSCrypt</a></h3>
-<h3 id="dnscurve"><a href="#TOC">DNSCurve</a></h3>
-<h2 id="ldap"><a href="#TOC">LDAP</a></h2>
-<h3 id="ldaps"><a href="#TOC">LDAPS</a></h3>
-<h3 id="smime-or-pgp"><a href="#TOC">S/MIME or PGP</a></h3>
-<h2 id="kerberos"><a href="#TOC">Kerberos</a></h2>
 <h2 id="ntp"><a href="#TOC">NTP</a></h2>
 <h3 id="ntpsec"><a href="#TOC">NTPsec</a></h3>
-<h2 id="nfs"><a href="#TOC">NFS</a></h2>
-<h3 id="kerberizednfsv4"><a href="#TOC">KerberizedNFSv4</a></h3>
 <h2 id="application-servers"><a href="#TOC">Application Servers</a></h2>
 <h3 id="nginx"><a href="#TOC">NGINX</a></h3>
 <h2 id="security-and-crypto"><a href="#TOC">Security and Crypto</a></h2>
-<h3 id="against-dnssec-and-dane"><a href="#TOC">Against DNSSEC (and DANE)</a></h3>
-<ul>
-<li>Cryptography worst practices, Daniel J. Bernstein <a href="http://cr.yp.to/talks/2012.03.08-1/slides.pdf">slides</a>, <a href="https://vimeo.com/18279777">video</a></li>
-<li><a href="https://groups.google.com/forum/#!topic/mozilla.dev.security/xylVm_kD_WE">DNSSEC in Chrome</a> (2014)</li>
-<li><a href="https://www.imperialviolet.org/2015/01/17/notdane.html">Why not DANE in browsers</a>, Adam Langley (2015)</li>
-</ul>
-<p>Counterpoints:</p>
-<ul>
-<li><a href="https://dankaminsky.com/2011/01/05/djb-ccc/">Dan Kaminsky</a></li>
-<li><a href="http://blog.easydns.org/2015/08/06/for-dnssec/">EasyDNS</a></li>
-</ul>
 <h3 id="tls"><a href="#TOC">TLS</a></h3>
 <h3 id="ssh"><a href="#TOC">SSH</a></h3>
 <p>The Secure Shell (<a href="https://tools.ietf.org/html/rfc4251">SSH</a>) protocol is used for secure remote login and tunneling other network services over an insecure network. SSH consists of three main components:</p>
