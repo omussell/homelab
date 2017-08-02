@@ -23,11 +23,20 @@
 <li><a href="#send-savi">SEND SAVI</a></li>
 <li><a href="#dhcpv6">DHCPv6</a></li>
 <li><a href="#ipsec">IPsec</a></li>
-<li><a href="#kink">KINK</a></li>
 </ul></li>
+<li><a href="#version-control">Version Control</a></li>
+<li><a href="#configuration-management">Configuration Management</a></li>
 <li><a href="#os">OS</a><ul>
 <li><a href="#freebsd">FreeBSD</a></li>
 <li><a href="#jails">Jails</a></li>
+</ul></li>
+<li><a href="#os-1">OS</a><ul>
+<li><a href="#freebsd-1">FreeBSD</a></li>
+<li><a href="#jails-1">Jails</a></li>
+</ul></li>
+<li><a href="#os-2">OS</a><ul>
+<li><a href="#freebsd-2">FreeBSD</a></li>
+<li><a href="#jails-2">Jails</a></li>
 <li><a href="#zfs">ZFS</a></li>
 <li><a href="#host-install-tools">Host Install Tools</a></li>
 <li><a href="#ad-hoc-change-tools">Ad-Hoc Change Tools</a></li>
@@ -52,7 +61,7 @@
 <li><a href="#ids">IDS</a></li>
 <li><a href="#firewalls">Firewalls</a></li>
 </ul></li>
-<li><a href="#configuration-management">Configuration Management</a></li>
+<li><a href="#configuration-management-1">Configuration Management</a></li>
 <li><a href="#authorisation-access-control-lists">Authorisation / Access Control Lists</a></li>
 <li><a href="#role-based-access-control-shared-administration-sudo">Role-Based Access Control / Shared Administration (sudo)</a></li>
 <li><a href="#domain-naming-service">Domain Naming Service</a></li>
@@ -133,13 +142,57 @@
 <p>IPsec documentation seems a little sparse…</p>
 <p>FreeBSD has the IPsec kernel modules built into the kernel as of 11.0, but the documentation hasn’t been updated. Very little info is found online.</p>
 <p>StrongSWAN seems to be more popular.</p>
-<h3 id="kink"><a href="#TOC">KINK</a></h3>
-<p><a href="https://tools.ietf.org/html/rfc4430">Kerberized Internet Negotiation of Keys</a> (KINK) defines a protocol to establish and maintain security associations using the Kerberos authentication system. The central key management provided by Kerberos is efficient because it limits computational cost and limits complexity versus IKE’s necessity of using public key cryptography. Initial authentication to the KDC may be performed using asymmetric keys via <a href="https://tools.ietf.org/html/rfc4556">Public Key Cryptography for Initial Authentication in Kerberos</a> (PKINIT).</p>
+<h2 id="version-control"><a href="#TOC">Version Control</a></h2>
+<p>Version control is used to track OS configuration files, OS and application binaries/source code and configuration management tool files. The version control tools and repositories should be shared by both infrastructure and applications files.</p>
+<p>While third party hosted services are available, these options are unavailable to an infrastructure with limited internet access. There should also be no need for a dependency on third party infrastructure. In addition, it is often the case that company-confidential data is stored in version control, and the organisation should be encouraged to use version control as much as possible and this is a barrier.</p>
+<p>The other option is to self host. There are a number of options including git and subversion. choose the tool that is best suited to your organisation. git has been chosen as it is open source, familiar to most people and easy to pick up.</p>
+<p>Since Git is a collaborative tool, it is common to install a web version of git such as GitLab to give people a GUI. This is organisation specific, for our use case we will just have git repos stored on a specific server/storage area. All of the tools available to git are usable in the git package.</p>
+<p>Git is also a requirement for R10K, which is used by puppet for managing environments and automatically pushing changes when git commits are detected.</p>
+<p>The configuration for your infrastructure will be stored in git repos, in the form of a puppet control repository for managing puppet environments and also the repo for hosting your infrastructure hardware config. This might be in many different formats, due to the many different platforms available (bare-metal, virtual, cloud). Throughout this design, it assumed that the infrastructure is built on bare metal by default or virtual if deployed in existing environments. Cloud is not considered because they are inherently hosted externally which is not possible in a secure environment. While private cloud options are avaiable, this configuration is way overkill for this design. The design has been purposely built to be lightweight.</p>
+<h2 id="configuration-management"><a href="#TOC">Configuration Management</a></h2>
 <h2 id="os"><a href="#TOC">OS</a></h2>
 <p>The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.</p>
 <h3 id="freebsd"><a href="#TOC">FreeBSD</a></h3>
 <p>FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems.</p>
 <h3 id="jails"><a href="#TOC">Jails</a></h3>
+<ul>
+<li>A process and all descendants are restricted to a chrooted directory tree</li>
+<li>Does not rely on virtualisation, so performance penalty is mitigated</li>
+<li>Easy to update or upgrade individual jails</li>
+</ul>
+<p>Jail parameters (jail.conf)</p>
+<ul>
+<li>path - Directory which is the root of the jail</li>
+<li>vnet - jail has its own virtual network stack with interfaces, addresses, routing table etc. - !! - Is this required to allow applications access to the network?</li>
+<li>persist - allows a jail to exist without any processes, so it won’t be removed when stopped.</li>
+<li>allow.mount - allow users in jail to mount jail-friendly filesystems. May be required for NFS / home directory mounts?</li>
+<li>exec.prestart - commands to run in the system environment before a jail is created</li>
+<li>exec.start - commands to run in the jail environment when a jail is created</li>
+</ul>
+<h2 id="os-1"><a href="#TOC">OS</a></h2>
+<p>The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.</p>
+<h3 id="freebsd-1"><a href="#TOC">FreeBSD</a></h3>
+<p>FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems.</p>
+<h3 id="jails-1"><a href="#TOC">Jails</a></h3>
+<ul>
+<li>A process and all descendants are restricted to a chrooted directory tree</li>
+<li>Does not rely on virtualisation, so performance penalty is mitigated</li>
+<li>Easy to update or upgrade individual jails</li>
+</ul>
+<p>Jail parameters (jail.conf)</p>
+<ul>
+<li>path - Directory which is the root of the jail</li>
+<li>vnet - jail has its own virtual network stack with interfaces, addresses, routing table etc. - !! - Is this required to allow applications access to the network?</li>
+<li>persist - allows a jail to exist without any processes, so it won’t be removed when stopped.</li>
+<li>allow.mount - allow users in jail to mount jail-friendly filesystems. May be required for NFS / home directory mounts?</li>
+<li>exec.prestart - commands to run in the system environment before a jail is created</li>
+<li>exec.start - commands to run in the jail environment when a jail is created</li>
+</ul>
+<h2 id="os-2"><a href="#TOC">OS</a></h2>
+<p>The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.</p>
+<h3 id="freebsd-2"><a href="#TOC">FreeBSD</a></h3>
+<p>FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems.</p>
+<h3 id="jails-2"><a href="#TOC">Jails</a></h3>
 <ul>
 <li>A process and all descendants are restricted to a chrooted directory tree</li>
 <li>Does not rely on virtualisation, so performance penalty is mitigated</li>
@@ -241,8 +294,6 @@
 <li>For internal-only domains, the island of security approach means that the signed zone does not have an authentication chain to its parent.</li>
 </ul>
 <img src="/homelab/pic/chain.svg">
-<p>A basic guide of <a href="https://www.cloudflare.com/dns/dnssec/how-dnssec-works/">how DNSSEC works</a> is found <a href="https://blog.cloudflare.com/dnssec-an-introduction/">on the CloudFlare blog</a>.</p>
-<p>When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the Root Signing Ceremony</p>
 <h3 id="dane"><a href="#TOC">DANE</a></h3>
 <p>DNS-Based Authentication of Named Entities or <a href="https://tools.ietf.org/html/rfc6698">DANE</a> allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server’s certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.</p>
 <p>DANE is implemented by placing TLSA records in the DNS.</p>
@@ -329,21 +380,7 @@
 <li><strong>PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com</strong> - Prefer use of DJB’s cipher. Key types for public key authentication.</li>
 <li><strong>PubkeyAuthentication yes</strong> - Use public key authentication</li>
 <li>GlobalKnownHostsFile /etc/ssh/known_hosts - Specifies the file containing known host keys.</li>
-<li>UserKnownHostsFile /etc/ssh/known_hosts - Specifies the file containing known host keys. Should be specified if the GlobalKnownHostsFile is not checked for some reason. Can be overridden by the user specifying a new option at an interactive prompt.</li>
-<li><strong>RevokedHostKeys KRL</strong> - Specifies revoked public keys. Keys listed in this file will be refused for host authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the host keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!</li>
 </ul>
-<p>For host key checking, there are two options:</p>
-<p>1.</p>
-<ul>
-<li><strong>StrictHostKeyChecking yes</strong> - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH’s to a server, does it need to “accept” the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!</li>
-<li><strong>UpdateHostKeys yes</strong> - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_config as “HostKey ssh_host_ed25519_key”, and the new keys would also be specified: “HostKey ssh_host_ed25519_key_new”. The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified as if you were connecting for the first time.</li>
-</ul>
-<p>These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to regularly SSH to servers in order to maintain the known_hosts files.</p>
-<p>2.</p>
-<ul>
-<li><strong>VerifyHostKeyDNS yes</strong> - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.</li>
-</ul>
-<p>Since this option is reliant on DNS and that DNSSEC is set up correctly, it would be preferred to be used in centralised networks.</p>
 <p><strong>sshd_config</strong></p>
 <ul>
 <li><strong>AddressFamily inet6</strong> - Use IPv6 only when connecting</li>
@@ -365,6 +402,18 @@
 <li><strong>RevokedKeys KRL</strong> - Specifies revoked public keys. Keys listed in this file will be refused for public key authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!</li>
 <li><strong>UseDNS yes</strong> - Tells sshd to look up the remote host name and check that the resolved host name for the remote IP address maps back to the same IP address.</li>
 </ul>
+<p>For host key checking, there are two options:</p>
+<p>1.</p>
+<ul>
+<li><strong>StrictHostKeyChecking yes</strong> - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH’s to a server, does it need to “accept” the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!</li>
+<li><strong>UpdateHostKeys yes</strong> - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_config as “HostKey ssh_host_ed25519_key”, and the new keys would also be specified: “HostKey ssh_host_ed25519_key_new”. The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified as if you were connecting for the first time.</li>
+</ul>
+<p>These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to regularly SSH to servers in order to maintain the known_hosts files.</p>
+<p>2.</p>
+<ul>
+<li><strong>VerifyHostKeyDNS yes</strong> - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.</li>
+</ul>
+<p>Since this option is reliant on DNS and that DNSSEC is set up correctly, it would be preferred to be used in centralised networks.</p>
 <p>SSHFP records are generated by running “ssh-keygen -r $(hostname)”.</p>
 <p>SSHFP records consist of three properties:</p>
 <ul>
@@ -381,7 +430,7 @@
 <h3 id="tcp-wrapper"><a href="#TOC">TCP Wrapper</a></h3>
 <h3 id="ids"><a href="#TOC">IDS</a></h3>
 <h3 id="firewalls"><a href="#TOC">Firewalls</a></h3>
-<h2 id="configuration-management"><a href="#TOC">Configuration Management</a></h2>
+<h2 id="configuration-management-1"><a href="#TOC">Configuration Management</a></h2>
 <p>Traditional system administration follows the “waterfall” method, where each step: gather requirements, design, implement, test, verify, deploy; is performed by a different team, and often conducted by hand. Each step or team has an end goal after which the product is handed over to the new team. The methodology documented in the papers at infrastructures.org, now referred to as DevOps, adds a layer of abstraction to the administration of services. By describing the infrastructure in structured configuration files, you leave the implementation up to the configuration management tool. So rather than specifying how to install a package for multiple operating systems, you merely say that you want the package installed, and leave the implementation up to the configuration management tool.</p>
 <p>Also, the idea of idempotency is important. Rather than having a script that says “service $SERVICE start” which doesn’t check if the service is already started, you instead say that you want a service to be in a started state. The configuration management tool then periodically checks the state of the service, and changes it to the desired state if necessary.</p>
 <p>Features of this method include:</p>

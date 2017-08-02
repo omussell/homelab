@@ -103,13 +103,77 @@ FreeBSD has the IPsec kernel modules built into the kernel as of 11.0, but the d
 StrongSWAN seems to be more popular.
 
 
+Version Control
+---
 
-### KINK ###
-[Kerberized Internet Negotiation of Keys] (KINK) defines a protocol to establish and maintain security associations using the Kerberos authentication system. The central key management provided by Kerberos is efficient because it limits computational cost and limits complexity versus IKE's necessity of using public key cryptography. Initial authentication to the KDC may be performed using asymmetric keys via [Public Key Cryptography for Initial Authentication in Kerberos] (PKINIT).
+Version control is used to track OS configuration files, OS and application binaries/source code and configuration management tool files. The version control tools and repositories should be shared by both infrastructure and applications files. 
+
+While third party hosted services are available, these options are unavailable to an infrastructure with limited internet access. There should also be no need for a dependency on third party infrastructure. In addition, it is often the case that company-confidential data is stored in version control, and the organisation should be encouraged to use version control as much as possible and this is a barrier. 
+
+The other option is to self host. There are a number of options including git and subversion. choose the tool that is best suited to your organisation. git has been chosen as it is open source, familiar to most people and easy to pick up.
 
 
-[Kerberized Internet Negotiation of Keys]: https://tools.ietf.org/html/rfc4430
-[Public Key Cryptography for Initial Authentication in Kerberos]: https://tools.ietf.org/html/rfc4556
+
+Since Git is a collaborative tool, it is common to install a web version of git such as GitLab to give people a GUI. This is organisation specific, for our use case we will just have git repos stored on a specific server/storage area. All of the tools available to git are usable in the git package.
+
+Git is also a requirement for R10K, which is used by puppet for managing environments and automatically pushing changes when git commits are detected.
+
+The configuration for your infrastructure will be stored in git repos, in the form of a puppet control repository for managing puppet environments and also the repo for hosting your infrastructure hardware config. This might be in many different formats, due to the many different platforms available (bare-metal, virtual, cloud). Throughout this design, it assumed that the infrastructure is built on bare metal by default or virtual if deployed in existing environments. Cloud is not considered because they are inherently hosted externally which is not possible in a secure environment. While private cloud options are avaiable, this configuration is way overkill for this design. The design has been purposely built to be lightweight.
+
+
+Configuration Management
+---
+
+
+
+
+
+OS
+---
+The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
+
+### FreeBSD ###
+FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems. 
+
+### Jails ###
+
+- A process and all descendants are restricted to a chrooted directory tree
+- Does not rely on virtualisation, so performance penalty is mitigated
+- Easy to update or upgrade individual jails
+
+Jail parameters (jail.conf)
+
+- path - Directory which is the root of the jail
+- vnet - jail has its own virtual network stack with interfaces, addresses, routing table etc. - !! - Is this required to allow applications access to the network?
+- persist - allows a jail to exist without any processes, so it won't be removed when stopped.
+- allow.mount - allow users in jail to mount jail-friendly filesystems. May be required for NFS / home directory mounts?
+- exec.prestart - commands to run in the system environment before a jail is created
+- exec.start - commands to run in the jail environment when a jail is created
+
+
+
+OS
+---
+The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
+
+### FreeBSD ###
+FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems. 
+
+### Jails ###
+
+- A process and all descendants are restricted to a chrooted directory tree
+- Does not rely on virtualisation, so performance penalty is mitigated
+- Easy to update or upgrade individual jails
+
+Jail parameters (jail.conf)
+
+- path - Directory which is the root of the jail
+- vnet - jail has its own virtual network stack with interfaces, addresses, routing table etc. - !! - Is this required to allow applications access to the network?
+- persist - allows a jail to exist without any processes, so it won't be removed when stopped.
+- allow.mount - allow users in jail to mount jail-friendly filesystems. May be required for NFS / home directory mounts?
+- exec.prestart - commands to run in the system environment before a jail is created
+- exec.start - commands to run in the jail environment when a jail is created
+
 
 OS
 ---
@@ -257,15 +321,6 @@ There are now two scenarios:
 - For internal-only domains, the island of security approach means that the signed zone does not have an authentication chain to its parent.
 
 <img src="/homelab/pic/chain.svg">
-
-A basic guide of [how DNSSEC works] is found [on the CloudFlare blog].
-
-When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the Root Signing Ceremony
-
-
-[how DNSSEC works]: https://www.cloudflare.com/dns/dnssec/how-dnssec-works/
-[on the CloudFlare blog]: https://blog.cloudflare.com/dnssec-an-introduction/
-
 
 ### DANE ###
 DNS-Based Authentication of Named Entities or [DANE] allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server's certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.
@@ -419,24 +474,6 @@ The client sends its chosen algorithm details and key exchange method to the hos
 - **PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com** - Prefer use of DJB's cipher. Key types for public key authentication.
 - **PubkeyAuthentication yes** - Use public key authentication
 - GlobalKnownHostsFile /etc/ssh/known_hosts - Specifies the file containing known host keys. 
-- UserKnownHostsFile /etc/ssh/known_hosts - Specifies the file containing known host keys. Should be specified if the GlobalKnownHostsFile is not checked for some reason. Can be overridden by the user specifying a new option at an interactive prompt.
-- **RevokedHostKeys KRL** - Specifies revoked public keys. Keys listed in this file will be refused for host authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the host keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!
-
-For host key checking, there are two options:
-
-1. 
-
-- **StrictHostKeyChecking yes** - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH's to a server, does it need to "accept" the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!
-- **UpdateHostKeys yes** - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_config as "HostKey ssh_host_ed25519_key", and the new keys would also be specified: "HostKey ssh_host_ed25519_key_new". The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified as if you were connecting for the first time. 
-
-These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to regularly SSH to servers in order to maintain the known_hosts files.
-
-2.
-
-- **VerifyHostKeyDNS yes** - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.
-
-Since this option is reliant on DNS and that DNSSEC is set up correctly, it would be preferred to be used in centralised networks. 
-
 
 **sshd_config**
 
@@ -459,6 +496,20 @@ Since this option is reliant on DNS and that DNSSEC is set up correctly, it woul
 - **RevokedKeys KRL** - Specifies revoked public keys. Keys listed in this file will be refused for public key authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!
 - **UseDNS yes** - Tells sshd to look up the remote host name and check that the resolved host name for the remote IP address maps back to the same IP address.
 
+For host key checking, there are two options:
+
+1. 
+
+- **StrictHostKeyChecking yes** - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH's to a server, does it need to "accept" the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!
+- **UpdateHostKeys yes** - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_config as "HostKey ssh_host_ed25519_key", and the new keys would also be specified: "HostKey ssh_host_ed25519_key_new". The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified as if you were connecting for the first time. 
+
+These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to regularly SSH to servers in order to maintain the known_hosts files.
+
+2.
+
+- **VerifyHostKeyDNS yes** - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.
+
+Since this option is reliant on DNS and that DNSSEC is set up correctly, it would be preferred to be used in centralised networks. 
 
 SSHFP records are generated by running "ssh-keygen -r $(hostname)".  
 
