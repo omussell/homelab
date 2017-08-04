@@ -124,6 +124,7 @@ The configuration for your infrastructure will be stored in git repos, in the fo
 Configuration Management
 ---
 
+By using configuration management tools, we can codify our infrastructure which allows us to follow the same deployment pipeline as the applications we host, are able to perform disaster recovery quicker and have a history of the changes to the infrastructure.
 
 
 
