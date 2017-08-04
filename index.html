@@ -689,5 +689,26 @@ install_packages:
       - vim-lite
 
 Then to run:
-salt &#39;*&#39; state.apply examples</code></pre>
+salt &#39;\*&#39; state.apply examples</code></pre>
+<h2 id="salt-formulas">Salt Formulas</h2>
+<p>Install the GitFS backend, this is allows you to serve files from git repos.</p>
+<pre><code>pkg install -y py27-pygit2
+Edit the /usr/local/etc/salt/master configuration file:
+fileserver_backend:
+  - git
+  - roots
+gitfs_remotes:
+  - https://github.com/saltstack-formulas/lynis-formula
+service salt_master onerestart
+*If master and minion are the same node, restart the minion service as well*
+Then in the state file
+include:
+  - lynis
+*In this case, the lynis formula defaults to /usr/local/lynis, you may want to change this in production*
+To run:
+/usr/local/lynis/lynis audit system -Q
+Results are ouput to /var/log/lynis-report.dat</code></pre>
+<h2 id="salt-equivalent-to-r10k-and-using-git-as-a-pillar-source">Salt equivalent to R10K and using git as a pillar source</h2>
+<p>If the git server is also a minion, you can use Reactor to signal to the master to update the fileserver on each git push: <code>https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#refreshing-gitfs-upon-push</code></p>
+<p>You can also use git as a pillar source (host your specific config data in version control) <code>https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#using-git-as-an-external-pillar-source</code></p>
 <p>(Installing RAET) follow the instructions at https://github.com/saltstack/salt/issues/23196</p>
