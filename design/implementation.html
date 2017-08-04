@@ -17,20 +17,15 @@
 <div id="TOC">
 <ul>
 <li><a href="#implementation">Implementation</a><ul>
-<li><a href="#ssh-bootstrapping-problem">SSH Bootstrapping Problem</a></li>
-<li><a href="#problem-statement">Problem Statement</a></li>
 <li><a href="#stricthostkeychecking-vs-verifyhostkeydns-problem">StrictHostKeyChecking vs VerifyHostKeyDNS Problem:</a><ul>
-<li><a href="#problem-statement-1">Problem Statement</a></li>
+<li><a href="#problem-statement">Problem Statement</a></li>
 </ul></li>
 <li><a href="#ssh-host-key-rotation">SSH Host Key Rotation</a></li>
-<li><a href="#should-only-kerberos-realm-domain-joined-hosts-be-allowed-to-access-dns-if-so-how">Should only Kerberos Realm (domain) joined hosts be allowed to access DNS? If so, how?</a></li>
 <li><a href="#setting-up-ipsec-problem">Setting up IPsec Problem:</a><ul>
-<li><a href="#problem-statement-2">Problem Statement</a></li>
+<li><a href="#problem-statement-1">Problem Statement</a></li>
 </ul></li>
 <li><a href="#assigning-ip-addresses-to-jails">Assigning IP addresses to jails</a></li>
 <li><a href="#giving-dns-server-information-to-clients">Giving DNS server information to clients</a></li>
-<li><a href="#immutable-nanobsd-provisioning">Immutable NanoBSD Provisioning</a></li>
-<li><a href="#how-to-perform-updates-to-nanobsd-servers-with-jails-running">How to perform updates to NanoBSD servers with Jails running?</a></li>
 <li><a href="#ip-addresses-that-need-to-be-known-by-a-human">IP addresses that need to be known by a human</a></li>
 <li><a href="#resource-records-to-be-stored-in-dnssec">Resource records to be stored in DNS(SEC):</a></li>
 </ul></li>
@@ -45,14 +40,11 @@
 <li><a href="#send-savi">SEND SAVI</a></li>
 <li><a href="#dhcpv6">DHCPv6</a></li>
 <li><a href="#ipsec">IPsec</a></li>
-<li><a href="#kink">KINK</a></li>
 </ul></li>
 <li><a href="#os">OS</a><ul>
 <li><a href="#freebsd">FreeBSD</a></li>
-<li><a href="#nanobsd">NanoBSD</a></li>
 <li><a href="#jails">Jails</a></li>
 <li><a href="#zfs">ZFS</a></li>
-<li><a href="#other-operating-systemscontainersfilesystems">Other Operating Systems/Containers/Filesystems</a></li>
 <li><a href="#host-install-tools">Host Install Tools</a></li>
 <li><a href="#ad-hoc-change-tools">Ad-Hoc Change Tools</a></li>
 </ul></li>
@@ -61,12 +53,7 @@
 <li><a href="#dns">DNS</a><ul>
 <li><a href="#dnssec">DNSSEC</a></li>
 <li><a href="#dane">DANE</a></li>
-<li><a href="#dane-for-email-security">DANE for Email Security</a></li>
-<li><a href="#dnscrypt">DNSCrypt</a></li>
-<li><a href="#dnscurve">DNSCurve</a></li>
-</ul></li>
-<li><a href="#ldap">LDAP</a><ul>
-<li><a href="#ldaps">LDAPS</a></li>
+<li><a href="#danesmimea-for-email-security">DANE/SMIMEA for Email Security</a></li>
 <li><a href="#smime-or-pgp">S/MIME or PGP</a></li>
 </ul></li>
 <li><a href="#kerberos">Kerberos</a></li>
@@ -75,9 +62,6 @@
 </ul></li>
 </ul></li>
 <li><a href="#app-deployment">App Deployment</a><ul>
-<li><a href="#nfs">NFS</a><ul>
-<li><a href="#kerberizednfsv4">KerberizedNFSv4</a></li>
-</ul></li>
 <li><a href="#application-servers">Application Servers</a><ul>
 <li><a href="#nginx">NGINX</a></li>
 </ul></li>
@@ -144,142 +128,8 @@
 </ul>
 <h1 id="implementation"><a href="#TOC">Implementation</a></h1>
 <p>The architecture described in the design is only aimed at the infrastructure setup, not application servers. Each of the services provided can be accessed by other architectures based on different operating systems. So for example, Windows and Linux infrastructures would still be able to query the DNS service without any extra configuration.</p>
-<p>It is also intended that the infrastructure is configured on bare-metal servers at the organisation site. The hardware requirements are scaled according to the organisation requirements. A small business in a single building could use a couple of old desktops; a medium business may use a half-rack of equipment in their headquarters; a large business may use a half-rack of equipment at each site.</p>
-<p>The sizing requirements of each physical server (compute/storage) should prefereably be identical. This makes physical maintenance easier, and requires less hassle organising vendor hardware support. You can then provision VMs/Jails according to standard sizes based on Fibonacci numbers e.g. you have 16 CPU, 192GB RAM, this allows 12 - 1 CPU, 12GB RAM or 6 - 2 CPU, 24GB RAM or 3 - 4 CPU 48GB RAM and you can mix the sizes, but they will always be able to fit onto the hardware.</p>
-<p>During the hardware provisioning, the SD card containing the standard NanoBSD image can be installed. This contains the bare-minimum configuration to allow the configuration management tools to continue the setup. On boot, the server contacts the control machine to download a new image and apply any updates if necessary.</p>
-<p>The host (physical server running NanoBSD) can then complete its setup:</p>
-<ul>
-<li><p>It is preferable to have the hosts (and the infrastructure servers) to have their IPv6 address allocated via DHCPv6, so that they are static. The application and any other servers would then use SLAAC for their IPv6 address assignment.</p></li>
-<li>Generate SSH keys</li>
-<li>Send SSH host public keys and SSHFP records to control machine</li>
-<li>SSH to control machine</li>
-<li>If a new image is available
-<ul>
-<li>Download updated image</li>
-<li>Reboot</li>
-</ul></li>
-<li><p>Install any required packages from local repo</p></li>
-</ul>
-<h2 id="ssh-bootstrapping-problem"><a href="#TOC">SSH Bootstrapping Problem</a></h2>
-<h2 id="problem-statement"><a href="#TOC">Problem Statement</a></h2>
-<p>As part of the provisioning process, the control machine and the new servers it creates must be able to communicate securely with one another, in order to exchange information and configuration data. This must be done without human intervention, so no passwords or interactive sessions. This must also be accomplished as part of the initial bootstrapping, where no other infrastructure yet exists (so no DNS, authentication etc.).</p>
-<p>You do not have any advanced knowledge of the IP address or any other information autogenerated by the provisioned server. Since the IP address may be generated using SLAAC, we have no way of knowing what it is in advance.</p>
-<p>You may omit host key checking, and bypass the trust on first use (TOFU) paradigm. This can be done since configuration or secret data does not yet exist on the provisioned server. Also, we have some confidence of the servers identity since the connection between the server and control machine will be protected by IPsec (preconfigured, and a separate problem).</p>
-<p>This can be accomplished with SSH, however, the authentication and trust setup of the initial connection and subsequent sessions requires some thought.</p>
-<p>We want the control machine, and any other derivative machines to generate their keying material independently. Private keys / passwords should never be sent over the network.</p>
-<p>— Attempting to find a solution —</p>
-<p>As part of the image build process, the public keys of the control machine are included in the image</p>
-<ul>
-<li><p>Host key in a hashed known_hosts file</p>
-<ul>
-<li><h1><a href="#TOC">Find out the ip of the control machine, then use ssh-keyscan or ssh-keygen to generate the hashed host key.</a></h1></li>
-<li>ssh-keygen -F “control_machine_ip” -H | grep -v ^#<br /></li>
-<li><h1><a href="#TOC">When using NanoBSD:</a></h1></li>
-<li>mkdir -p {NANO_WORLDDIR}/root/.ssh</li>
-<li><p>output &gt; {NANO_WORLDDIR}/root/.ssh/known_hosts</p></li>
-<li><p>Alternative, pre-compute the host key (since a host key is just a normal private-public key pair, with no password. Also they can be shared and created on other machines.) and add the pre-computed host key to the image. The SSHFP record is generated and added to DNS by the control machine. Then when the control machine connects it can verify using DNS. The problem with this is that it only works if the DNS infrastructure is set up. How are the DNS servers set up in the first place? It also means that the private host key is included in the image build, which will be transmitted over the network to build the server, which is unacceptable.</p></li>
-<li><p>There could be two processes: one for initial bootstrapping and a second once the basic infrastructure is created.</p></li>
-</ul></li>
-<li><p>User keys in an authorized_keys file</p>
-<ul>
-<li><h1><a href="#TOC">The public key needs to go into either root’s authorized_keys, or a new user.</a></h1></li>
-<li>Allowing login as root opens another security hole. PermitRootLogin needs to be set to yes in sshd_config. May not be that bad since it won’t yet have any configuration data.</li>
-<li>Adding a new user is also difficult. How do you add a new user when the server is powered off, and you dont have any kind of shell access? You can modify files in the filesystem, but once mounted they are set to read only. This problem only affects the initial setup, because after the basic infrastructure is set up, LDAP can be used for user authentication.</li>
-</ul></li>
-</ul>
-<p>Once the server has been built and boots, it can generate its host and user keys.</p>
-<p>The control machine then connects to the server using its public key to authenticate, and pulls the servers host and user public keys.</p>
-<pre><code>- The server can rotate its host / user keys if they were pre-computed during the image build.</code></pre>
-<p>The control machine then adds the SSHFP records to DNS, and the user keys to LDAP</p>
-<p>This means that:</p>
-<ul>
-<li>private keys are not transmitted over the network.</li>
-<li>the control machine can connect securely to the server</li>
-<li>works in the absence of a SSH CA or DNS for validating via a third party</li>
-</ul>
-<p>Alternative method, use a SSH CA on the control machine</p>
-<p>Generate a SSH CA certificate on the control machine, and sign the host key of the control machine Distribute the SSH CA cert onto the image</p>
-<ul>
-<li>ssh-keygen -A</li>
-<li>mkdir ~/ca</li>
-<li>cd ~/ca</li>
-<li>ssh-keygen -f ~/server_ca -t ed25519 -N “”</li>
-<li>ssh-keygen -s ~/server_ca -I CertAuth -h -n wintermute /etc/ssh/ssh_host_ed25519_key.pub</li>
-</ul>
-<p>-</p>
-<p>after host keys are generated using ssh-keygen -A, they need to be saved onto the root filesystem to persist across reboots, otherwise they clear out</p>
-<p><strong>or</strong></p>
-<p>instead of doing all of the above, provision the new vm, then connect to it using ssh -o StrictHostKeyChecking=no, create an authorized_key file that contains the public key of the user that will be connecting from the control machine and add it to the image. Login as root on the provisioned vm, PermitRootLogin yes. Then change the config after that point.</p>
-<p>The problem with this method is that you require advanced knowledge of the IP address of the server, and this isn’t possible. We can’t use DNS since it doesn’t exist yet. The IP address may have been generated by SLAAC.</p>
-<p>— Possible Solution —</p>
-<p>CM=Control Machine</p>
-<p>PM=Provisioned Machine</p>
-<p>CM:</p>
-<ul>
-<li>Generate known_hosts file containing the host key of the CM</li>
-<li>Add new temp user account</li>
-<li>Generate SSH keys for the temp user account</li>
-<li>Generate an authorized_keys file with the public key of the temp user account (and the public key used by the configuration management tools if applicable)</li>
-<li>Add the known_hosts, authorized_keys, and private+public keys to the build image</li>
-<li>Build the image</li>
-<li>Provision the PM using the image</li>
-</ul>
-<p>PM:</p>
-<p>Connect to the CM using the private+public keys of the temp user account, and transfer the PM host keys and other information to the CM</p>
-<p>CM:</p>
-<p>Add PM host keys to CM known_hosts file SSH to PM to apply configuration</p>
-<p>Remove temp user account, and the private+public keys of the account</p>
-<p>PM:</p>
-<p>Remove private+public keys of the temp user account</p>
-<hr />
-<p>Implementation commands: (note that the following commands are quite verbose, and will be replaced with a much easier to read Ansible playbook in future)</p>
-<p>CM:</p>
-<p>Generate known_hosts file containing the host key of the CM</p>
-<ul>
-<li>Need to contruct the known_hosts key using the IP address of the CM followed by the host key</li>
-<li>First we need to find the interface, then use that to find the IP address</li>
-<li>ifconfig <code>ifconfig -l | awk '{print $1}'</code> | grep -w inet | cut -w -f3</li>
-<li>note that if IPv6 is used, change inet to inet6. Also may not work if the incorrect interface is chosen, or if there are multiple interfaces</li>
-<li>The host key also has a “root@$HOSTNAME” string at the end of the line, which needs to be removed in the known_hosts file</li>
-<li><p>So putting the commands together into a single line produces:</p>
-<p>ifconfig <code>ifconfig -l | awk '{print $1}'</code> | grep -w inet | cut -w -f3 &gt; ~/cm_ip &amp;&amp; cat /etc/ssh/ssh_host_ed25519_key.pub &gt;&gt; ~/cm_ip &amp;&amp; cat ~/cm_ip | tr “” &quot; &quot; | sed ’s/root.*//’ &gt; /usr/src/tools/tools/nanobsd/Files/etc/ssh/known_hosts &amp;&amp; rm ~/cm_ip</p></li>
-</ul>
-<p>Add new temp user account</p>
-<pre><code>adduser -f tempuser.txt</code></pre>
-<ul>
-<li><p>Where tempuser.txt contains:</p>
-<p>PM_HOSTNAME-tempuser:::::::/grim/$PM_HOSTNAME::</p></li>
-</ul>
-<p>Generate SSH keys for the temp user account</p>
-<pre><code>su -m $PM_HOSTNAME-tempuser -c &#39;mkdir -p ~/crypto/ssh&#39;
-su -m $PM_HOSTNAME-tempuser -c &#39;ssh-keygen -f ~/crypto/ssh/id_ed25519 -t ed25519 -N &quot;&quot; -E sha256&#39;</code></pre>
-<p>Generate an authorized_keys file with the public key of the temp user account (and the public key used by the configuration management tools if applicable)</p>
-<pre><code>cp -v /grim/$PM_HOSTNAME/crypto/ssh/id_ed25519.pub /grim/$PM_HOSTNAME/crypto/ssh/authorized_keys
-cp -v /grim/$PM_HOSTNAME/crypto/ssh/authorized_keys /usr/src/tools/tools/nanobsd/Files/root/.ssh/authorized_keys</code></pre>
-<p>Add the known_hosts, authorized_keys, and private+public keys to the build image</p>
-<pre><code>cp -v /grim/$PM_HOSTNAME/crypto/ssh/id_ed25519* /usr/src/tools/tools/nanobsd/Files/root/.ssh/</code></pre>
-<p>Build the image</p>
-<pre><code>./nanobuild.sh</code></pre>
-<p>Provision the PM using the image</p>
-<pre><code>./startnano.sh</code></pre>
-<p>PM:</p>
-<p>Connect to the CM using the private+public keys of the temp user account, and transfer the PM host keys and other information to the CM</p>
-<pre><code>scp /etc/ssh/ssh_host_ed25519_key.pub $PM_HOSTNAME-tempuser@$CM_IP:/grim/$PM_HOSTNAME/crypto/ssh</code></pre>
-<p>CM:</p>
-<p>Add PM host keys to CM known_hosts file</p>
-<pre><code>sed &#39;s/^/$PM_IP /&#39; /grim/$PM_HOSTNAME/crypto/ssh/ssh_host_ed25519_key.pub | sed &#39;s/root.*//&#39; &gt;&gt; ~/.ssh/known_hosts</code></pre>
-<p>SSH to PM to apply configuration</p>
-<pre><code>The configuration management tool of choice uses SSH to connect to the PM and apply the configuration</code></pre>
-<p>Remove temp user account, and the private+public keys of the account</p>
-<pre><code>rmuser -y $PM_HOSTNAME-tempuser</code></pre>
-<ul>
-<li>Note that this command also removes the home directory of the temp-user</li>
-</ul>
-<p>PM:</p>
-<p>Remove private+public keys of the temp user account</p>
-<pre><code>rm ~/.ssh/id_ed25519*</code></pre>
 <h2 id="stricthostkeychecking-vs-verifyhostkeydns-problem"><a href="#TOC">StrictHostKeyChecking vs VerifyHostKeyDNS Problem:</a></h2>
-<h3 id="problem-statement-1"><a href="#TOC">Problem Statement</a></h3>
+<h3 id="problem-statement"><a href="#TOC">Problem Statement</a></h3>
 <p>Do the StrictHostKeyChecking and VerifyHostKeyDNS options in ssh_config work together?</p>
 <ul>
 <li>StrictHostKeyChecking - If set to yes, ssh will never automatically add host keys to the known_hosts file and refuses to connect to hosts whose host key has changed(This is the preferred option). The host keys of known hosts will be verified automatically in all cases.</li>
@@ -292,24 +142,21 @@ cp -v /grim/$PM_HOSTNAME/crypto/ssh/authorized_keys /usr/src/tools/tools/nanobsd
 <h2 id="ssh-host-key-rotation"><a href="#TOC">SSH Host Key Rotation</a></h2>
 <p>How do you rotate SSH host keys and update the SSHFP records in DNS(SEC)?</p>
 <p>requirement for renewal is initiated every x days/weeks host generates new host keys host connects to control machine, provides the new SSHFP values and asks for hosts SSHFP records to be updated control machine updates DNS zone info with new SSHFP values if update is successful, remove old values and resign zone. Inform host to remove old host keys if update is unsuccessful, remove new values and report error.</p>
-<h2 id="should-only-kerberos-realm-domain-joined-hosts-be-allowed-to-access-dns-if-so-how"><a href="#TOC">Should only Kerberos Realm (domain) joined hosts be allowed to access DNS? If so, how?</a></h2>
-<p>We may want to only allow hosts under our control from being able to query the DNS servers that we manage. Otherwise anyone could plug a client into the LAN and query DNS. However, we need to determine how other organisations will connect to DNS to get public info like TLSA and SMIMEA records. Split DNS, public/private?</p>
-<p>Does it matter? If a malicious client can do hostname lookups, is that really a problem? The info is secured with DNSSEC so spoofing/poisoning will get detected.</p>
+<p>SSHFP records are available as puppet facts. So if the puppet master is using puppetdb to store fact data, the SSHFP record for every node is stored and is available to query. This could be queried and then used to build up zone record data and published in DNS. Host key rotation could then be achieved by the nodes generating a new key, syncing facts with the puppet master which then in turn updates the DNS records.</p>
 <h2 id="setting-up-ipsec-problem"><a href="#TOC">Setting up IPsec Problem:</a></h2>
-<h3 id="problem-statement-2"><a href="#TOC">Problem Statement</a></h3>
+<h3 id="problem-statement-1"><a href="#TOC">Problem Statement</a></h3>
 <p>How do we set up IPsec between the control machine and machines it creates?</p>
 <p>How do we set up IPsec between the router and machines communicating with it?</p>
 <p>How do we set up IPsec between the router and other sites?</p>
 <h2 id="assigning-ip-addresses-to-jails"><a href="#TOC">Assigning IP addresses to jails</a></h2>
 <p>It is not possible to assign IP addresses to jails using DHCP, they can only be assigned via jail.conf. This introduces the issue that a human would be required to find out a free address and manually enter it into the jail.conf, which becomes additionally complex with long and hard to remember IPv6 addresses. Some of this problem can be mitigated using variables for example by having the subnet prefix as a $PREFIX variable which can then be referenced as e.g. $PREFIX::d3d8.</p>
 <p>Another method available is the ip_hostname parameter in jail.conf which resolves the host.hostname parameters in DNS and all addresses returned by the resolver are added for the jail. So instead of entering the IP into jail.conf, a AAAA record would be manually entered into DNS and the jail would pick it up from there.</p>
+<p>Since only applications that require an external IP address are hosted inside jails, those applications should have a known IP address. This would be services like DNS, which needs a static and human-known IP address. These IP addresses could be hard coded into the DNS record available at the temporary DNS server (unbound) hosted on the control machine which is available during initial bootstrapping. The jails would then use the ip_hostname parameter to lookup their hostname in DNS, from which they would assign the jails IP address. Subsequent hosts would generate their IP address via SLAAC and DNS would be updated via puppet as normal.</p>
 <h2 id="giving-dns-server-information-to-clients"><a href="#TOC">Giving DNS server information to clients</a></h2>
 <p>Rather than manually configuring /etc/resolv.conf for the location of the local DNS servers, this information can be provided either by the router or DHCP server. If you do not want to run a DHCP server and rely solely on SLAAC for address allocation, then you can have the router provide the DNS information. Otherwise, the DHCP server can provide the DNS information. <a href="https://tools.ietf.org/html/rfc8106">RFC8106</a></p>
 <p>The major benefit of this approach is that you do not have to make any manual configurations for the location of the DNS servers on any of your clients. However, one of the drawbacks is experienced during the initial bootstrap when the DNS servers do not yet exist. So the DNS servers will need to have their stub resolvers configured manually.</p>
 <p>Since we have a robust DNSSEC implementation available, it makes sense to store as much crypto/public keys in there as possible rather than having them spread over multiple mechanisms. So rather than TLS certs in 3rd party PKI, SMIME certs in LDAP, SSH host keys in known_hosts files and IPsec public keys distributed manually, you can have TLSA, SMIMEA, SSHFP and IPSECKEY Resource Records stored securely in DNS.</p>
 <p>It is also important for us to have this information in DNS so that it can potentially be referenced by other organisations. If another org needs to access a website, it needs to be secured with TLS which is validated by the TLSA record via DANE. Likewise, if a person in another organisation wants to send an email, they need to know the TLS cert to secure the TLS communication and also the SMIME certificate to encrypt the email itself. By publishing the TLSA record and SMIMEA records in DNS, the other organisation can access this information and be confident that the records are accurate.</p>
-<h2 id="immutable-nanobsd-provisioning"><a href="#TOC">Immutable NanoBSD Provisioning</a></h2>
-<h2 id="how-to-perform-updates-to-nanobsd-servers-with-jails-running"><a href="#TOC">How to perform updates to NanoBSD servers with Jails running?</a></h2>
 <h2 id="ip-addresses-that-need-to-be-known-by-a-human"><a href="#TOC">IP addresses that need to be known by a human</a></h2>
 <ul>
 <li>Router(s)</li>
@@ -326,7 +173,7 @@ cp -v /grim/$PM_HOSTNAME/crypto/ssh/authorized_keys /usr/src/tools/tools/nanobsd
 </ul>
 <p>Dynamic:</p>
 <ul>
-<li>Hostname to dynamic IP for app/other servers (dynamic DNS updates?)</li>
+<li>Hostname to dynamic IP for app/other servers</li>
 <li>SSHFP records</li>
 <li>IPSECKEY records</li>
 <li>TLSA records (for all web/app servers)</li>
@@ -335,6 +182,13 @@ cp -v /grim/$PM_HOSTNAME/crypto/ssh/authorized_keys /usr/src/tools/tools/nanobsd
 <h1 id="bootstrap"><a href="#TOC">Bootstrap</a></h1>
 <h2 id="version-control"><a href="#TOC">Version Control</a></h2>
 <p>Version control is used to track OS configuration files, OS and application binaries/source code and configuration management tool files. The version control tools and repositories should be shared by both infrastructure and applications files.</p>
+<p>While third party hosted services are available, these options are unavailable to an infrastructure with limited internet access. There should also be no need for a dependency on third party infrastructure. In addition, it is often the case that company-confidential data is stored in version control, and the organisation should be encouraged to use version control as much as possible and this is a barrier.</p>
+<p>The other option is to self host. There are a number of options including git and subversion. choose the tool that is best suited to your organisation. git has been chosen as it is open source, familiar to most people and easy to pick up.</p>
+<p>Since Git is a collaborative tool, it is common to install a web version of git such as GitLab to give people a GUI. This is organisation specific, for our use case we will just have git repos stored on a specific server/storage area. All of the tools available to git are usable in the git package.</p>
+<p>Git is also a requirement for R10K, which is used by puppet for managing environments and automatically pushing changes when git commits are detected.</p>
+<p>The configuration for your infrastructure will be stored in git repos, in the form of a puppet control repository for managing puppet environments and also the repo for hosting your infrastructure hardware config. This might be in many different formats, due to the many different platforms available (bare-metal, virtual, cloud). Throughout this design, it assumed that the infrastructure is built on bare metal by default or virtual if deployed in existing environments. Cloud is not considered because they are inherently hosted externally which is not possible in a secure environment. While private cloud options are avaiable, this configuration is way overkill for this design. The design has been purposely built to be lightweight.</p>
+<p>The Hashicorp ecosystem is a well defined and supported method for managing the infrastructure code. The configuration is defined in Terraform, and can be tested using Vagrant provisioning local VMs or cloud instances. Immutable images can be built with the help of Packer.</p>
+<p>While NanoBSD was considered in the past, zfs boot environments are now used.</p>
 <h1 id="implementation-1"><a href="#TOC">Implementation</a></h1>
 <h1 id="provisioning"><a href="#TOC">Provisioning</a></h1>
 <h2 id="ipv6"><a href="#TOC">IPv6</a></h2>
@@ -343,31 +197,22 @@ cp -v /grim/$PM_HOSTNAME/crypto/ssh/authorized_keys /usr/src/tools/tools/nanobsd
 <h3 id="send-savi"><a href="#TOC">SEND SAVI</a></h3>
 <h3 id="dhcpv6"><a href="#TOC">DHCPv6</a></h3>
 <h3 id="ipsec"><a href="#TOC">IPsec</a></h3>
-<h3 id="kink"><a href="#TOC">KINK</a></h3>
 <h2 id="os"><a href="#TOC">OS</a></h2>
 <h3 id="freebsd"><a href="#TOC">FreeBSD</a></h3>
-<h3 id="nanobsd"><a href="#TOC">NanoBSD</a></h3>
 <h3 id="jails"><a href="#TOC">Jails</a></h3>
 <h3 id="zfs"><a href="#TOC">ZFS</a></h3>
-<h3 id="other-operating-systemscontainersfilesystems"><a href="#TOC">Other Operating Systems/Containers/Filesystems</a></h3>
 <h3 id="host-install-tools"><a href="#TOC">Host Install Tools</a></h3>
 <h3 id="ad-hoc-change-tools"><a href="#TOC">Ad-Hoc Change Tools</a></h3>
 <h1 id="configuration-management"><a href="#TOC">Configuration Management</a></h1>
 <h2 id="dns"><a href="#TOC">DNS</a></h2>
 <h3 id="dnssec"><a href="#TOC">DNSSEC</a></h3>
 <h3 id="dane"><a href="#TOC">DANE</a></h3>
-<h3 id="dane-for-email-security"><a href="#TOC">DANE for Email Security</a></h3>
-<h3 id="dnscrypt"><a href="#TOC">DNSCrypt</a></h3>
-<h3 id="dnscurve"><a href="#TOC">DNSCurve</a></h3>
-<h2 id="ldap"><a href="#TOC">LDAP</a></h2>
-<h3 id="ldaps"><a href="#TOC">LDAPS</a></h3>
+<h3 id="danesmimea-for-email-security"><a href="#TOC">DANE/SMIMEA for Email Security</a></h3>
 <h3 id="smime-or-pgp"><a href="#TOC">S/MIME or PGP</a></h3>
 <h2 id="kerberos"><a href="#TOC">Kerberos</a></h2>
 <h2 id="ntp"><a href="#TOC">NTP</a></h2>
 <h3 id="ntpsec"><a href="#TOC">NTPsec</a></h3>
 <h1 id="app-deployment"><a href="#TOC">App Deployment</a></h1>
-<h2 id="nfs"><a href="#TOC">NFS</a></h2>
-<h3 id="kerberizednfsv4"><a href="#TOC">KerberizedNFSv4</a></h3>
 <h2 id="application-servers"><a href="#TOC">Application Servers</a></h2>
 <h3 id="nginx"><a href="#TOC">NGINX</a></h3>
 <h1 id="security-and-compliance"><a href="#TOC">Security and Compliance</a></h1>

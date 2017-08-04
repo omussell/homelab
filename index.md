@@ -756,3 +756,49 @@ Compiling NGINX with ChaCha20 support
         }
     
     }
+
+
+SaltStack Install and Config
+---
+
+```
+pkg install -y py27-salt
+cp -v /usr/local/etc/salt/master{.sample,""}
+cp -v /usr/local/etc/salt/minion{.sample,""}
+sysrc salt_master_enable="YES"
+sysrc salt_minion_enable="YES"
+
+Salt expects state files to exist in the /srv/salt or /etc/salt directories which don't exist by default on FreeBSD so make symlinks instead:
+mkdir -p /srv /usr/local/etc/salt/states
+ln -s /usr/local/etc/salt /etc/salt
+ln -s /usr/local/etc/salt /srv/salt
+
+service salt_master onestart
+service salt_minion onestart
+salt-key -A
+Press y
+
+Create a test file:
+vi /usr/local/etc/salt/states/examples.sls
+
+*In yaml format*
+install_packages:
+  pkg.installed:
+    - pkgs:
+      - vim-lite
+
+Then to run:
+salt '*' state.apply examples
+```
+
+(Installing RAET)
+follow the instructions at https://github.com/saltstack/salt/issues/23196
+
+
+
+
+
+
+
+
+

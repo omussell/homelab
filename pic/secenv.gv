@@ -1,7 +1,7 @@
 digraph SecureInfrastructure {
 
 	VC [shape=box,label="Version Control"];
-	GS [shape=box,label="Gold Server"];
+	CM [shape=box,label="Configuration Management"];
 	AHCT [shape=box,label="Ad-Hoc Change Tools"];
 	HIT [shape=box,label="Host Install Tools"];
 	DIR [shape=box,label="Directory Servers"];
@@ -17,9 +17,9 @@ digraph SecureInfrastructure {
 	MONT [shape=box,label="Monitoring"];
 	CAM [ shape=box,label="Client Application Management"]; 
 
-	VC -> GS;
-	GS -> AHCT;
-	GS -> HIT;
+	VC -> CM;
+	CM -> AHCT;
+	CM -> HIT;
 	AHCT -> DIR;
 	HIT -> DIR;
 	DIR -> AUTH;

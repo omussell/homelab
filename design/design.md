@@ -14,24 +14,8 @@
 - [Design](/homelab/design/design.html)
 - [Implementation](/homelab/design/implementation.html)
 
-Experimental
-===
-Features that aren't production ready, but would be interesting to implement:
-
-- SSH using X509v3 certificates, signed by a central CA (or validated with DANE?)
-- TLS using SIDH with the Microsoft Research OpenSSL patch (also validated with DANE?)
-
 Detailed Design
 ===
-
-<!--
-
-Control machine config, Git, SSH, 2FA?
-Gold server, how are changes propagated? git repo hosted on this server, which each derivative server pulls from? system images can be sent via dd over SSH.
-Main servers - DNS in the form of NSD for authoritative, Unbound for resolving. OpenDNSSEC for key signing, keys stored in SoftHSM. DANE used for D/TLS auth. Kerberos for auth, with LDAP directory services. Everything should be authenticated with Kerberos, SSH, PKINIT, IPsec via KINK, inter-server communication, mail access etc. KerberizedNFSv4 for client file access.  
-Clients, create a thin client build, Irssi-OTR with OpenPGP keys stored in DNS/LDAP
-
--->
 
 IPv6
 ---
@@ -119,34 +103,38 @@ FreeBSD has the IPsec kernel modules built into the kernel as of 11.0, but the d
 StrongSWAN seems to be more popular.
 
 
+Version Control
+---
 
-### KINK ###
-[Kerberized Internet Negotiation of Keys] (KINK) defines a protocol to establish and maintain security associations using the Kerberos authentication system. The central key management provided by Kerberos is efficient because it limits computational cost and limits complexity versus IKE's necessity of using public key cryptography. Initial authentication to the KDC may be performed using asymmetric keys via [Public Key Cryptography for Initial Authentication in Kerberos] (PKINIT).
+Version control is used to track OS configuration files, OS and application binaries/source code and configuration management tool files. The version control tools and repositories should be shared by both infrastructure and applications files. 
+
+While third party hosted services are available, these options are unavailable to an infrastructure with limited internet access. There should also be no need for a dependency on third party infrastructure. In addition, it is often the case that company-confidential data is stored in version control, and the organisation should be encouraged to use version control as much as possible and this is a barrier. 
+
+The other option is to self host. There are a number of options including git and subversion. choose the tool that is best suited to your organisation. git has been chosen as it is open source, familiar to most people and easy to pick up.
 
 
-[Kerberized Internet Negotiation of Keys]: https://tools.ietf.org/html/rfc4430
-[Public Key Cryptography for Initial Authentication in Kerberos]: https://tools.ietf.org/html/rfc4556
+
+Since Git is a collaborative tool, it is common to install a web version of git such as GitLab to give people a GUI. This is organisation specific, for our use case we will just have git repos stored on a specific server/storage area. All of the tools available to git are usable in the git package.
+
+Git is also a requirement for R10K, which is used by puppet for managing environments and automatically pushing changes when git commits are detected.
+
+The configuration for your infrastructure will be stored in git repos, in the form of a puppet control repository for managing puppet environments and also the repo for hosting your infrastructure hardware config. This might be in many different formats, due to the many different platforms available (bare-metal, virtual, cloud). Throughout this design, it assumed that the infrastructure is built on bare metal by default or virtual if deployed in existing environments. Cloud is not considered because they are inherently hosted externally which is not possible in a secure environment. While private cloud options are avaiable, this configuration is way overkill for this design. The design has been purposely built to be lightweight.
+
+
+Configuration Management
+---
+
+By using configuration management tools, we can codify our infrastructure which allows us to follow the same deployment pipeline as the applications we host, are able to perform disaster recovery quicker and have a history of the changes to the infrastructure.
+
+
+
 
 OS
 ---
 The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
 
 ### FreeBSD ###
-[FreeBSD] is an advanced computer operating system used to power modern servers. Its advanced networking, security, and storage features have made FreeBSD the platform of choice for embedded networking and storage devices, and powers many of the [busiest web sites].
-
 FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems. 
-
-### NanoBSD ###
-[NanoBSD] is built via shell script and produces a minimal implementation of FreeBSD which fits on small flash media. The image is customised with a configuration file, which specifies variables and functions to build the image as required. There are three stages to the image build: buildkernel, buildworld and the customise commands. The buildkernel stage is only required to be run once, further configuration changes can skip the buildkernel stage. However, some configuration changes do still require the kernel to be built. Compiling the kernel takes a long time (~30 minutes) and should be done sparingly.
-
-Once the kernel and world have been built, you can customise the state of the environment using the customise commands. These are functions specified at the end of the configuration file. By skipping the buildkernel and buildworld stages, you reduce the image build time to ~20 seconds.
-
-The image is only required to be built once, updated images are deployed via dd to the inactive slice. The system is then rebooted, and boots into the newly updated slice. If there are problems, change the slice back to the original, and reboot. Building the image offline also gives the advantage of being able to test the image easily prior to widespread deployment. You can dd the image to a zfs volume, then use bhyve to run the image as a virtual machine. You can then perform testing to ensure it is correct, before rolling out the image to production.
-
-The flash storage is divided into three parts: the two image partitions or slices (1 and 2) containing the read-only root filesystem where only one is active, and the configuration file partition or /cfg. The /etc and /var directories are md (malloc backed) disks, which means they are located in RAM. On boot, the active slice contains the root filesystem mounted as read-only, which is beneficial since it is stored on flash media which has a limited number of writes. Configuration changes to files in /etc or /var are temporary, since they are located in RAM, and are loaded from the /cfg partition on boot. This means you can change configuration files, and if things go wrong, you can just reboot to clear the RAM. Otherwise if the new configuration is correct, you can mount /cfg, copy the changed files from /etc or /var to /cfg, then unmount again. Also, since the root filesystem is read-only, it is able to survive after an unplanned reboot. There is also no reason to run fsck after a non-graceful shutdown.
-
-Since the configuration files are stored separately to the root filesystem, when switching the active slice, the configuration files are not changed. So updates and upgrades should not have an effect on the running configuration. It is also good operational practice to make sure that any configuration changes are saved to /cfg after testing, so that in the event the server reboots the configuration is still saved. This also gives administrators the flexibility to compile a custom kernel/image in order to include files/packages/kernel modules as part of the image. Doing so could result in faster boot times due to the kernel not having to query the hardware, and a reduced attack surface since unneeded components are removed. This comes at the cost of higher complexity and more difficult maintenance.
-
 
 ### Jails ###
 
@@ -154,8 +142,52 @@ Since the configuration files are stored separately to the root filesystem, when
 - Does not rely on virtualisation, so performance penalty is mitigated
 - Easy to update or upgrade individual jails
 
+Jail parameters (jail.conf)
 
-In this setup, NanoBSD is stored on a SD card which the server uses for the initial boot. There would then be jails stored on ZFS datasets on a zpool made up of local disks (NVMe/SSD). This separation is done so that if the NanoBSD image is borked for some reason (hardware failure, dodgy update) then the zpool should still survive regardless, and so the important application data will also survive. You would sort out the issue with the NanoBSD image, then it would boot as normal.
+- path - Directory which is the root of the jail
+- vnet - jail has its own virtual network stack with interfaces, addresses, routing table etc. - !! - Is this required to allow applications access to the network?
+- persist - allows a jail to exist without any processes, so it won't be removed when stopped.
+- allow.mount - allow users in jail to mount jail-friendly filesystems. May be required for NFS / home directory mounts?
+- exec.prestart - commands to run in the system environment before a jail is created
+- exec.start - commands to run in the jail environment when a jail is created
+
+
+
+OS
+---
+The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
+
+### FreeBSD ###
+FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems. 
+
+### Jails ###
+
+- A process and all descendants are restricted to a chrooted directory tree
+- Does not rely on virtualisation, so performance penalty is mitigated
+- Easy to update or upgrade individual jails
+
+Jail parameters (jail.conf)
+
+- path - Directory which is the root of the jail
+- vnet - jail has its own virtual network stack with interfaces, addresses, routing table etc. - !! - Is this required to allow applications access to the network?
+- persist - allows a jail to exist without any processes, so it won't be removed when stopped.
+- allow.mount - allow users in jail to mount jail-friendly filesystems. May be required for NFS / home directory mounts?
+- exec.prestart - commands to run in the system environment before a jail is created
+- exec.start - commands to run in the jail environment when a jail is created
+
+
+OS
+---
+The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
+
+### FreeBSD ###
+FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems. 
+
+### Jails ###
+
+- A process and all descendants are restricted to a chrooted directory tree
+- Does not rely on virtualisation, so performance penalty is mitigated
+- Easy to update or upgrade individual jails
 
 Jail parameters (jail.conf)
 
@@ -225,25 +257,10 @@ ZFS automatically manages mounting and unmounting file systems without the need 
 
 A zfs dataset can be attached to a jail. A dataset cannot be attached to one jail and the children of the same dataset to other jails. 
 
-
-
-
-
-
-
-
-
-### Other Operating Systems/Containers/Filesystems ###
-While a combination of FreeBSD, Jails and ZFS have been recommended, you are free to use other operating systems like Windows or Linux, other container formats such as LXC or Zones, and other filesystems like BTRFS or EXT. The general concepts are interchangeable.
-
 ### Host Install Tools ###
 
 ### Ad-Hoc Change Tools ###
 rsync. zfs send/receive.
-
-[FreeBSD]: https://www.freebsd.org
-[busiest web sites]: https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/nutshell.html#introduction-nutshell-users
-[NanoBSD]: https://www.freebsd.org/cgi/man.cgi?query=nanobsd
 
 
 DNS
@@ -306,21 +323,6 @@ There are now two scenarios:
 
 <img src="/homelab/pic/chain.svg">
 
-A basic guide of [how DNSSEC works] is found [on the CloudFlare blog].
-
-When a DNS resolver is looking for www.example.com, the .com name servers help the resolver verify the records returned for example, and example helps verify the records returned for www. The root DNS name servers help verify .com, and information pusblished by the root is vetted at the Root Signing Ceremony
-
-
-List of DNSSEC RFCs
-
-- 1
-- 2
-- 3
-
-[how DNSSEC works]: https://www.cloudflare.com/dns/dnssec/how-dnssec-works/
-[on the CloudFlare blog]: https://blog.cloudflare.com/dnssec-an-introduction/
-
-
 ### DANE ###
 DNS-Based Authentication of Named Entities or [DANE] allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server's certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.
 
@@ -382,31 +384,11 @@ A guide to setting up DNSSEC+DANE to guarantee secure email between organisation
 [Secure Domain Name System Deployment Guide]: http://dx.doi.org/10.6028/NIST.SP.800-81-2
 [Trustworthy Email]: http://dx.doi.org/10.6028/NIST.SP.800-177
 
-### DNSCrypt ###
-
-### DNSCurve ###
-
-
-
-
-LDAP
----
-### LDAPS ###
-### S/MIME or PGP ###
-
-Kerberos
----
-
 
 NTP
 ---
 
 ### NTPsec ###
-
-
-NFS
----
-### KerberizedNFSv4
 
 Application Servers
 ---
@@ -415,24 +397,6 @@ Application Servers
 
 Security and Crypto
 ---
-### Against DNSSEC (and DANE) ###
-- Cryptography worst practices, Daniel J. Bernstein [slides], [video]
-- [DNSSEC in Chrome] (2014)
-- [Why not DANE in browsers], Adam Langley (2015)
-
-Counterpoints:
-
-- [Dan Kaminsky]
-- [EasyDNS]
-
-
-[slides]: http://cr.yp.to/talks/2012.03.08-1/slides.pdf
-[video]: https://vimeo.com/18279777
-[Dan Kaminsky]: https://dankaminsky.com/2011/01/05/djb-ccc/
-[EasyDNS]: http://blog.easydns.org/2015/08/06/for-dnssec/
-[DNSSEC in Chrome]: https://groups.google.com/forum/#!topic/mozilla.dev.security/xylVm_kD_WE 
-[Why not DANE in browsers]: https://www.imperialviolet.org/2015/01/17/notdane.html
-
 ### TLS ###
 
 ### SSH ###
@@ -511,24 +475,6 @@ The client sends its chosen algorithm details and key exchange method to the hos
 - **PubkeyAcceptedKeyTypes ssh-ed25519-cert-v01@openssh.com** - Prefer use of DJB's cipher. Key types for public key authentication.
 - **PubkeyAuthentication yes** - Use public key authentication
 - GlobalKnownHostsFile /etc/ssh/known_hosts - Specifies the file containing known host keys. 
-- UserKnownHostsFile /etc/ssh/known_hosts - Specifies the file containing known host keys. Should be specified if the GlobalKnownHostsFile is not checked for some reason. Can be overridden by the user specifying a new option at an interactive prompt.
-- **RevokedHostKeys KRL** - Specifies revoked public keys. Keys listed in this file will be refused for host authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the host keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!
-
-For host key checking, there are two options:
-
-1. 
-
-- **StrictHostKeyChecking yes** - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH's to a server, does it need to "accept" the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!
-- **UpdateHostKeys yes** - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_config as "HostKey ssh_host_ed25519_key", and the new keys would also be specified: "HostKey ssh_host_ed25519_key_new". The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified as if you were connecting for the first time. 
-
-These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to regularly SSH to servers in order to maintain the known_hosts files.
-
-2.
-
-- **VerifyHostKeyDNS yes** - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.
-
-Since this option is reliant on DNS and that DNSSEC is set up correctly, it would be preferred to be used in centralised networks. 
-
 
 **sshd_config**
 
@@ -551,6 +497,20 @@ Since this option is reliant on DNS and that DNSSEC is set up correctly, it woul
 - **RevokedKeys KRL** - Specifies revoked public keys. Keys listed in this file will be refused for public key authentication. The KRL can be generated with ssh-keygen. !! Introduces complexity, as the KRL must be updated whenever the keys are changed. This may make host key rotation more difficult. This may be mitigated by storing host keys in DNS using SSHFP records, since removing the SSHFP RR from DNS is equivalent to revoking the key (this is specified in the VerifyHostKeyDNS setting below. !!
 - **UseDNS yes** - Tells sshd to look up the remote host name and check that the resolved host name for the remote IP address maps back to the same IP address.
 
+For host key checking, there are two options:
+
+1. 
+
+- **StrictHostKeyChecking yes** - SSH will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed. This option forces the user to manually add all new hosts. !! This introduces additional complexity, as the known_hosts file must be managed manually. This option prevents connection to hosts that have had their host key changed, which is desirable, but it needs to be determined if this option works with automation. If a service account SSH's to a server, does it need to "accept" the key if it does not exist in the known_hosts file? The behaviour of this setting when used in conjunction with VerifyHostKeyDNS needs to be verified as well. Needs testing !!
+- **UpdateHostKeys yes** - SSH accepts notifications of additional host keys from the server sent after authentication has completed and add them to the known_hosts file. This allows the server to provide alternate host keys and key rotation by sending replacement host keys before the old ones are removed. The keys are specified in sshd_config as "HostKey ssh_host_ed25519_key", and the new keys would also be specified: "HostKey ssh_host_ed25519_key_new". The old keys would then be removed at a later time. However, this requires a user to connect during the grace period in order for the new keys to be added to the known_hosts file. After this period, the keys must be verified as if you were connecting for the first time. 
+
+These options would be preferred in a peer to peer / decentralised network, since it implies that each server manages its connections to other servers. This also requires users to regularly SSH to servers in order to maintain the known_hosts files.
+
+2.
+
+- **VerifyHostKeyDNS yes** - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS. The integrity of the SSHFP resource records in DNS is provided by DNSSEC, since the SSHFP RRset is signed and the signature can be validated by resolvers. This option requires the servers to communicate their fingerprints to the DNS.
+
+Since this option is reliant on DNS and that DNSSEC is set up correctly, it would be preferred to be used in centralised networks. 
 
 SSHFP records are generated by running "ssh-keygen -r $(hostname)".  
 
@@ -603,9 +563,6 @@ Continuous Delivery:
 - Build quality in
 - Everybody has responsibility for the release process
 - Improve continuously
-
-The commands and philosphy throughout this document focus on using the native tools as part of the OS, rather than the commands for a specific configuration management tool. This is done so that the system administrators know what is being configured at the most basic level, and so they can use the tools manually or through shell scripts. It also means that the configurations will work independent of the configuration management tool that is chosen.
-
 
 Authorisation / Access Control Lists
 ---
@@ -690,7 +647,7 @@ How to backup and restore:
 Calculate the latency/data limits required to perform above backups/restores
 
 ### Redundancy ###
-OS, hard drive, zfs, multiple core servers with master/slave, database replication, multiple load balancers. Services are behind a load balancer
+OS, hard drive, zfs. Services are behind a load balancer
 
 ### Replicated databases ###
 
@@ -709,43 +666,6 @@ Logging to central servers
 Unspecific Operational Requirements
 ---
 
-### Assigning IPv6 Addresses to Clients ### 
-
-### Static or Dynamic IPv6 Addresses (DHCPv6 or SLAAC) ###
-
-### IPv6 Security ###
-While SEND has been recommended to prevent spoofing attacks, it is non-trivial to deploy since it requires a trust anchor and CGA uses asymmetric key cryptography which is computationally expensive and may not be suitable on low-end devices. One alternative as proposed in [RFC6105]/[RFC7113], is Router Advertisement Guard (RA-Guard). This relies on an environment where all messages between IPv6 devices go through the controlled L2 networking devices. It then filters RAs based on a set of criteria, from simply "RA disallow on a given interface" to "RA allowed from SEND authorised sources only".
-
-[RFC6105]: https://tools.ietf.org/html/rfc6105
-[RFC7113]: https://tools.ietf.org/html/rfc7113
-
-
-### Hostname Conventions ###
-
-### Choosing an Operating System ###
-
-### Choosing a Configuration Management Tool ###
-
-### Scheduling with cron ###
-
-The cron utility searches the user crontabs (/etc/cron.d on Linux or /var/cron/tabs on FreeBSD) for crontab files which are named after accounts in /etc/passwd. crontabs found are loaded into memory. A crontab file contains instructions to the cron daemon in the form "run this command at this time on this date". Each user has their own crontab, and commands in a crontab will be executed as the user who owns the crontab. The system crontab, /etc/crontab, should not be modified.
-
-cron then wakes up every minute and checks all crontabs to see if a command should be run in the current minute. Before running a command from an account crontab, cron checks the status of the account with pam and skips the command if the account is locked out or expired. Commands from /etc/crontab bypass this check. 
-
-
-Scaling
-===
-AKF Scaling Cube
-
-- Replicate the entire system (horizontal duplication)
-- Split the system into individual functions, services or resources (functional or service splits)
-- Split the system into individual chunks (lookup or formulaic splits)
-
-Horizontal - Many replicas behind a load balancer. If each transaction can be completed independently on all replicas, the performance improvement is proportional to the number of replicas, for example, adding more replicas, disk spindles or network connections.
-
-
-!!
-
 User Access
 ===
 - Documents
@@ -753,13 +673,3 @@ User Access
 - Email
 - Instant Messaging
 - Working remotely
-
-<!---
-
-- Documents - Access documents through a website? Should be bound by authentication/authorisation. Version controlled documents. Like Sharepoint, but not terrible.
-- Applications - web-access only preferred, TLS available, bound by authentication/authorisation. 
-- Email - How does ProtonMail do it? Usually a lot of protections and anti-spam required, but if orgs are able to authoritativly validate each other, you are only able to receive emails from those orgs that have been validated, everything else is binned. Or if an org does spam, its quick to pinpoint and can be made untrusted.
-- Instant Messaging - IRC with OTR, e.g. irc with PGP support.
-- Working remotely - won't happen in a super-secure infra, but less secure may allow it. Could be done like MIT, with public SSH servers that require Kerberos name+pass and the user certificate. Then you could get X forwarded over SSH or instead of SSH, an SSL/TLS VPN that gives access to the internal network.
-
---->
