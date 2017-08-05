@@ -825,14 +825,30 @@ You can also use git as a pillar source (host your specific config data in versi
 `https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#using-git-as-an-external-pillar-source`
 
 
-(Installing RAET)
-follow the instructions at https://github.com/saltstack/salt/issues/23196
+Installing RAET
+---
+
+The instructions below are incorrect, as the salt_master service isnt starting. This needs some investigative work, as it seems to be a freebsd thing...
+
+```
+pkg install -y libsodium py27-libnacl py27-ioflo py27-raet
+Edit /srv/salt/master and /srv/salt/minion and add:
+transport: raet
+Then restart the services:
+service salt_master onerestart
+service salt_minion onerestart
+salt-key 
+salt-key -A
+
+If you get the error "No buffer space available" follow the instructions at https://github.com/saltstack/salt/issues/23196 to change the kern.ipc.maxsockbuf value. The services will also need restarting, then continue with the key acceptance.
+```
 
 
+Salt equivalent of hiera-eyaml
+---
 
+Salt.runners.nacl
 
-
-
-
-
+Similar to hiera-eyaml, it is used for encrypting data stored in pillar:
+`https://docs.saltstack.com/en/latest/ref/runners/all/salt.runners.nacl.html`
 

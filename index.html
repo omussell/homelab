@@ -711,4 +711,18 @@ Results are ouput to /var/log/lynis-report.dat</code></pre>
 <h2 id="salt-equivalent-to-r10k-and-using-git-as-a-pillar-source">Salt equivalent to R10K and using git as a pillar source</h2>
 <p>If the git server is also a minion, you can use Reactor to signal to the master to update the fileserver on each git push: <code>https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#refreshing-gitfs-upon-push</code></p>
 <p>You can also use git as a pillar source (host your specific config data in version control) <code>https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#using-git-as-an-external-pillar-source</code></p>
-<p>(Installing RAET) follow the instructions at https://github.com/saltstack/salt/issues/23196</p>
+<h2 id="installing-raet">Installing RAET</h2>
+<p>The instructions below are incorrect, as the salt_master service isnt starting. This needs some investigative work, as it seems to be a freebsd thing...</p>
+<pre><code>pkg install -y libsodium py27-libnacl py27-ioflo py27-raet
+Edit /srv/salt/master and /srv/salt/minion and add:
+transport: raet
+Then restart the services:
+service salt_master onerestart
+service salt_minion onerestart
+salt-key 
+salt-key -A
+
+If you get the error &quot;No buffer space available&quot; follow the instructions at https://github.com/saltstack/salt/issues/23196 to change the kern.ipc.maxsockbuf value. The services will also need restarting, then continue with the key acceptance.</code></pre>
+<h2 id="salt-equivalent-of-hiera-eyaml">Salt equivalent of hiera-eyaml</h2>
+<p>Salt.runners.nacl</p>
+<p>Similar to hiera-eyaml, it is used for encrypting data stored in pillar: <code>https://docs.saltstack.com/en/latest/ref/runners/all/salt.runners.nacl.html</code></p>
