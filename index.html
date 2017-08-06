@@ -662,6 +662,44 @@ http {
     }
 
 }</code></pre>
+<h2 id="nsdunbound-setup">NSD+Unbound setup</h2>
+<p>Set up the unbound/nsd-control</p>
+<p><code>local-unbound-setup</code></p>
+<p><code>nsd-control-setup</code></p>
+<p>nsd.conf</p>
+<p>server: port: 5353</p>
+<p>/usr/local/etc/nsd/home.lan.zone</p>
+<pre><code>$ORIGIN home.lan. ;
+$TTL 86400 ;
+
+@ IN SOA ns1.home.lan. admin.home.lan. (
+        2017080619 ;
+        28800 ;
+        7200 ;
+        864000 ;
+        86400 ;
+        )
+
+        NS ns1.home.lan.
+
+ns1 IN A 192.168.1.15
+jail IN A 192.168.1.15</code></pre>
+<p>/usr/local/etc/nsd/home.lan.reverse</p>
+<pre><code>$ORIGIN home.lan.
+$TTL 86400
+
+0.1.168.192.in-addr.arpa. IN SOA ns1.home.lan. admin.home.lan. (
+        2017080619
+        28800
+        7200
+        864000
+        86400
+        )
+
+        NS ns1.home.lan.
+
+15.1.168.192.in-addr.arpa. IN PTR jail
+15.1.168.192.in-addr.arpa. IN PTR ns1</code></pre>
 <h2 id="saltstack-install-and-config">SaltStack Install and Config</h2>
 <pre><code>pkg install -y py27-salt
 cp -v /usr/local/etc/salt/master{.sample,&quot;&quot;}

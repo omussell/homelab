@@ -758,6 +758,60 @@ Compiling NGINX with ChaCha20 support
     }
 
 
+NSD+Unbound setup
+---
+
+Set up the unbound/nsd-control
+
+`local-unbound-setup`
+
+`nsd-control-setup`
+
+nsd.conf
+
+server:
+  port: 5353
+
+/usr/local/etc/nsd/home.lan.zone
+
+```
+$ORIGIN home.lan. ;
+$TTL 86400 ;
+
+@ IN SOA ns1.home.lan. admin.home.lan. (
+        2017080619 ;
+        28800 ;
+        7200 ;
+        864000 ;
+        86400 ;
+        )
+
+        NS ns1.home.lan.
+
+ns1 IN A 192.168.1.15
+jail IN A 192.168.1.15
+```
+
+/usr/local/etc/nsd/home.lan.reverse
+
+```
+$ORIGIN home.lan.
+$TTL 86400
+
+0.1.168.192.in-addr.arpa. IN SOA ns1.home.lan. admin.home.lan. (
+        2017080619
+        28800
+        7200
+        864000
+        86400
+        )
+
+        NS ns1.home.lan.
+
+15.1.168.192.in-addr.arpa. IN PTR jail
+15.1.168.192.in-addr.arpa. IN PTR ns1
+```
+
 SaltStack Install and Config
 ---
 
