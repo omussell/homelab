@@ -666,6 +666,7 @@ http {
 <p>Set up the unbound/nsd-control</p>
 <p><code>local-unbound-setup</code></p>
 <p><code>nsd-control-setup</code></p>
+<p>sysrc nsd_enable=&quot;YES&quot; sysrc local_unbound_enable=&quot;YES&quot;</p>
 <p>nsd.conf</p>
 <p>server: port: 5353</p>
 <p>/usr/local/etc/nsd/home.lan.zone</p>
@@ -700,6 +701,27 @@ $TTL 86400
 
 15.1.168.192.in-addr.arpa. IN PTR jail
 15.1.168.192.in-addr.arpa. IN PTR ns1</code></pre>
+<p>pkg install -y opendnssec pkg install -y softhsm</p>
+<p>Edit /usr/local/etc/softhsm.conf 0:/var/lib/softhsm/slot0.db</p>
+<p>Initialise the token database: softhsm --init-token --slot 0 --label &quot;OpenDNSSEC&quot; Enter the PIN for the SO and then the USER.</p>
+<p>Make sure opendnssec has permission to access the token database: chown opendnssec /var/lib/softhsm/slot0.db chgrp opendnssec /var/lib/softhsm/slot0.db</p>
+<p>Edit /usr/local/etc/opendnssec/conf.xml</p>
+<pre><code>&lt;Repository name=&quot;SoftHSM&quot;&gt;
+        &lt;Module&gt;/usr/local/lib/softhsm/libsofthsm.so&lt;/Module&gt;
+        &lt;TokenLabel&gt;OpenDNSSEC&lt;/TokenLabel&gt;
+        &lt;PIN&gt;1234&lt;/PIN&gt;
+        &lt;SkipPublicKey/&gt;
+&lt;/Repository&gt;</code></pre>
+<p>Edit /usr/local/etc/opendnssec/kasp.xml. Change unixtime to datecounter in the Serial parameter.</p>
+<p>This allows us to use YYYYMMDDXX format for the SOA SERIAL values.</p>
+<pre><code>&lt;Zone&gt;
+        &lt;PropagationDelay&gt;PT300S&lt;/PropagationDelay&gt;
+        &lt;SOA&gt;
+                &lt;TTL&gt;PT300S&lt;/TTL&gt;
+                &lt;Minimum&gt;PT300S&lt;/Minimum&gt;
+                &lt;Serial&gt;datecounter&lt;/Serial&gt;
+        &lt;/SOA&gt;
+&lt;/Zone&gt;</code></pre>
 <h2 id="saltstack-install-and-config">SaltStack Install and Config</h2>
 <pre><code>pkg install -y py27-salt
 cp -v /usr/local/etc/salt/master{.sample,&quot;&quot;}

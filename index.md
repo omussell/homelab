@@ -767,6 +767,9 @@ Set up the unbound/nsd-control
 
 `nsd-control-setup`
 
+sysrc nsd_enable="YES"
+sysrc local_unbound_enable="YES"
+
 nsd.conf
 
 server:
@@ -811,6 +814,48 @@ $TTL 86400
 15.1.168.192.in-addr.arpa. IN PTR jail
 15.1.168.192.in-addr.arpa. IN PTR ns1
 ```
+
+pkg install -y opendnssec
+pkg install -y softhsm
+
+Edit /usr/local/etc/softhsm.conf
+0:/var/lib/softhsm/slot0.db
+
+Initialise the token database:
+softhsm --init-token --slot 0 --label "OpenDNSSEC"
+Enter the PIN for the SO and then the USER.
+
+Make sure opendnssec has permission to access the token database:
+chown opendnssec /var/lib/softhsm/slot0.db
+chgrp opendnssec /var/lib/softhsm/slot0.db
+
+Edit /usr/local/etc/opendnssec/conf.xml
+
+```
+<Repository name="SoftHSM">
+        <Module>/usr/local/lib/softhsm/libsofthsm.so</Module>
+        <TokenLabel>OpenDNSSEC</TokenLabel>
+        <PIN>1234</PIN>
+        <SkipPublicKey/>
+</Repository>
+```
+
+Edit /usr/local/etc/opendnssec/kasp.xml. Change unixtime to datecounter in the Serial parameter.
+
+This allows us to use YYYYMMDDXX format for the SOA SERIAL values.
+
+```
+<Zone>
+        <PropagationDelay>PT300S</PropagationDelay>
+        <SOA>
+                <TTL>PT300S</TTL>
+                <Minimum>PT300S</Minimum>
+                <Serial>datecounter</Serial>
+        </SOA>
+</Zone>
+```
+
+
 
 SaltStack Install and Config
 ---
