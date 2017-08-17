@@ -786,3 +786,23 @@ If you get the error &quot;No buffer space available&quot; follow the instructio
 <h2 id="salt-equivalent-of-hiera-eyaml">Salt equivalent of hiera-eyaml</h2>
 <p>Salt.runners.nacl</p>
 <p>Similar to hiera-eyaml, it is used for encrypting data stored in pillar: <code>https://docs.saltstack.com/en/latest/ref/runners/all/salt.runners.nacl.html</code></p>
+<h2 id="install-gogs-self-hosted-git">Install Gogs (self-hosted git)</h2>
+<pre><code>pkg install -y go git gcc
+pw useradd git -m
+su - git
+GOPATH=$HOME/go; export GOPATH
+echo &#39;GOPATH=$HOME/go; export GOPATH&#39; &gt;&gt; ~/.profile
+cc=gcc go get -u --tags sqlite github.com/gogits/gogs
+ln -s go/src/github.com/gogits/gogs gogs
+cd gogs
+CC=gcc go build --tags sqlite
+mkdir -p custom/conf
+vim custom/conf/app.ini</code></pre>
+<p>custom/conf/app.ini ``` RUN_USER = git RUN_MODE = prod</p>
+<p>[database] DB_TYPE = sqlite3 PATH = data/gogs.db</p>
+<p>[repository] ROOT = /home/git/gogs-repositories SCRIPT_TYPE = sh</p>
+<p>[server] DOMAIN = localhost ROOT_URL = http://localhost/ HTTP_PORT = 3000 LANDING_PAGE = explore</p>
+<p>[session] PROVIDER = file</p>
+<p>[log] MODE = file</p>
+<p>[security] INSTALL_LOCK = true SECRET_KEY = supersecret</p>
+<p>```</p>

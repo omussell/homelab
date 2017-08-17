@@ -951,3 +951,51 @@ Salt.runners.nacl
 Similar to hiera-eyaml, it is used for encrypting data stored in pillar:
 `https://docs.saltstack.com/en/latest/ref/runners/all/salt.runners.nacl.html`
 
+
+Install Gogs (self-hosted git)
+---
+
+```
+pkg install -y go git gcc
+pw useradd git -m
+su - git
+GOPATH=$HOME/go; export GOPATH
+echo 'GOPATH=$HOME/go; export GOPATH' >> ~/.profile
+cc=gcc go get -u --tags sqlite github.com/gogits/gogs
+ln -s go/src/github.com/gogits/gogs gogs
+cd gogs
+CC=gcc go build --tags sqlite
+mkdir -p custom/conf
+vim custom/conf/app.ini
+```
+
+custom/conf/app.ini
+```
+RUN_USER = git
+RUN_MODE = prod
+
+[database]
+DB_TYPE = sqlite3
+PATH = data/gogs.db
+
+[repository]
+ROOT = /home/git/gogs-repositories
+SCRIPT_TYPE = sh
+
+[server]
+DOMAIN = localhost
+ROOT_URL = http://localhost/
+HTTP_PORT = 3000
+LANDING_PAGE = explore
+
+[session]
+PROVIDER = file
+
+[log]
+MODE = file
+
+[security]
+INSTALL_LOCK = true
+SECRET_KEY = supersecret
+
+```
