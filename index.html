@@ -798,11 +798,31 @@ cd gogs
 CC=gcc go build --tags sqlite
 mkdir -p custom/conf
 vim custom/conf/app.ini</code></pre>
-<p>custom/conf/app.ini ``` RUN_USER = git RUN_MODE = prod</p>
-<p>[database] DB_TYPE = sqlite3 PATH = data/gogs.db</p>
-<p>[repository] ROOT = /home/git/gogs-repositories SCRIPT_TYPE = sh</p>
-<p>[server] DOMAIN = localhost ROOT_URL = http://localhost/ HTTP_PORT = 3000 LANDING_PAGE = explore</p>
-<p>[session] PROVIDER = file</p>
-<p>[log] MODE = file</p>
-<p>[security] INSTALL_LOCK = true SECRET_KEY = supersecret</p>
-<p>```</p>
+<p>custom/conf/app.ini</p>
+<pre><code>RUN_USER = git
+RUN_MODE = prod
+
+[database]
+DB_TYPE = sqlite3
+PATH = data/gogs.db
+
+[repository]
+ROOT = /home/git/gogs-repositories
+SCRIPT_TYPE = sh
+
+[server]
+DOMAIN = localhost
+ROOT_URL = http://localhost/
+HTTP_PORT = 3000
+LANDING_PAGE = explore
+
+[session]
+PROVIDER = file
+
+[log]
+MODE = file
+
+[security]
+INSTALL_LOCK = true
+SECRET_KEY = supersecret
+</code></pre>
