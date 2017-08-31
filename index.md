@@ -1000,3 +1000,24 @@ INSTALL_LOCK = true
 SECRET_KEY = supersecret
 
 ```
+
+To run, as the git user run /home/git/go/src/github.com/gogs/gogs web
+
+In the github.com folder, there is a scripts directory which contains init scripts for various OSes to start gogs as a normal service. In addition, there is a supervisor program file. So to run gogs with supervisor:
+
+```
+pkg install -y py27-supervisor
+cat /home/git/go/src/github.com/gogits/gogs/scripts/supervisor/gogs >> /usr/local/etc/supervisord.conf
+sysrc supervisord_enable="YES"
+supervisord -c /usr/local/etc/supervisord.conf
+supervisorctl -c /usr/local/etc/supervisord.conf
+```
+
+That being said, I didn't get supervisor to work... and used the init script instead.
+
+cp -v /home/git/go/src/github.com/gogits/gogs/scripts/init/freebsd/gogs /etc/rc.d
+I needed to amend the gogs_directory path to be /home/git/go/src/github.com/gogits/gogs
+chmod 555 /etc/rc.d/gogs
+sysrc gogs_enable="YES"
+service gogs start
+

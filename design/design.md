@@ -106,19 +106,29 @@ StrongSWAN seems to be more popular.
 Version Control
 ---
 
-Version control is used to track OS configuration files, OS and application binaries/source code and configuration management tool files. The version control tools and repositories should be shared by both infrastructure and applications files. 
+Version control is used to track OS configuration files, OS and application binaries/source code and configuration management tool files. The version control tools and repositories should be shared by both infrastructure and application files. 
 
 While third party hosted services are available, these options are unavailable to an infrastructure with limited internet access. There should also be no need for a dependency on third party infrastructure. In addition, it is often the case that company-confidential data is stored in version control, and the organisation should be encouraged to use version control as much as possible and this is a barrier. 
 
-The other option is to self host. There are a number of options including git and subversion. choose the tool that is best suited to your organisation. git has been chosen as it is open source, familiar to most people and easy to pick up.
+Version control tools tend to be one of two models: centralised and decentralised. A centralised keeps one copy of the versioned code and admins will pull down a working copy of specific files to work on. The changes are then checked back in. With a DVCS the entire repository and its history are downloaded at once, worked on then the changes are checked in to some agreed upon location for collaboration.
+
+Centralised:
+
+- Easier to back up
+- One source of truth
+- One place for authentication and access control
+- Can perform tests/CI on code before/after it is merged
+
+
+Decentralised:
+
+- Everyone has a copy of the history, backups are implicit
 
 
 
-Since Git is a collaborative tool, it is common to install a web version of git such as GitLab to give people a GUI. This is organisation specific, for our use case we will just have git repos stored on a specific server/storage area. All of the tools available to git are usable in the git package.
+Version control should be used to manage only one machine in each distinct infrastructure, the infrastructure master (puppet master, salt master, chef server etc.). Changes to any other machine in the infrastructure would be done from this server.
 
-Git is also a requirement for R10K, which is used by puppet for managing environments and automatically pushing changes when git commits are detected.
 
-The configuration for your infrastructure will be stored in git repos, in the form of a puppet control repository for managing puppet environments and also the repo for hosting your infrastructure hardware config. This might be in many different formats, due to the many different platforms available (bare-metal, virtual, cloud). Throughout this design, it assumed that the infrastructure is built on bare metal by default or virtual if deployed in existing environments. Cloud is not considered because they are inherently hosted externally which is not possible in a secure environment. While private cloud options are avaiable, this configuration is way overkill for this design. The design has been purposely built to be lightweight.
 
 
 Configuration Management
