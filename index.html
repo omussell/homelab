@@ -845,3 +845,6 @@ service gogs start
 sysrc jenkins_enable=&quot;YES&quot;
 service jenkins start</code></pre>
 <p>Access via a browser at http://$IP:8180/jenkins</p>
+<h2 id="install-buildbot">Install buildbot</h2>
+<p>``` pkg install -y buildbot buildbot-www buildbot create-master master cd ./master cp master.cfg.sample master.cfg buildbot start master (look at twistd.log if there are errors during startup)</p>
+<p>Access via a browser at http://$IP:8010/</p>

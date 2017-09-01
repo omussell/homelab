@@ -1035,3 +1035,15 @@ service jenkins start
 
 Access via a browser at http://$IP:8180/jenkins
 
+Install buildbot
+---
+
+```
+pkg install -y buildbot buildbot-www
+buildbot create-master master
+cd ./master
+cp master.cfg.sample master.cfg
+buildbot start master
+(look at twistd.log if there are errors during startup)
+
+Access via a browser at http://$IP:8010/
