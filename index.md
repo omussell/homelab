@@ -1015,9 +1015,11 @@ supervisorctl -c /usr/local/etc/supervisord.conf
 
 That being said, I didn't get supervisor to work... and used the init script instead.
 
+```
 cp -v /home/git/go/src/github.com/gogits/gogs/scripts/init/freebsd/gogs /etc/rc.d
 I needed to amend the gogs_directory path to be /home/git/go/src/github.com/gogits/gogs
 chmod 555 /etc/rc.d/gogs
 sysrc gogs_enable="YES"
 service gogs start
 
+```
