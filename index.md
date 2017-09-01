@@ -1023,3 +1023,15 @@ sysrc gogs_enable="YES"
 service gogs start
 
 ```
+
+Install Jenkins (CI)
+---
+
+```
+pkg install -y jenkins
+sysrc jenkins_enable="YES"
+service jenkins start
+```
+
+Access via a browser at http://$IP:8180/jenkins
+

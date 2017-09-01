@@ -840,3 +840,8 @@ chmod 555 /etc/rc.d/gogs
 sysrc gogs_enable=&quot;YES&quot;
 service gogs start
 </code></pre>
+<h2 id="install-jenkins-ci">Install Jenkins (CI)</h2>
+<pre><code>pkg install -y jenkins
+sysrc jenkins_enable=&quot;YES&quot;
+service jenkins start</code></pre>
+<p>Access via a browser at http://$IP:8180/jenkins</p>
