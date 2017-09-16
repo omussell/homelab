@@ -1,0 +1,1 @@
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL6lyIxPcjcvbs+kcZMiNQ41G+NPnJGy5zLD06BWmZ+F pi@raspberrypi
