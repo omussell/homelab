@@ -138,54 +138,6 @@ By using configuration management tools, we can codify our infrastructure which 
 
 
 
-
-OS
----
-The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
-
-### FreeBSD ###
-FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems. 
-
-### Jails ###
-
-- A process and all descendants are restricted to a chrooted directory tree
-- Does not rely on virtualisation, so performance penalty is mitigated
-- Easy to update or upgrade individual jails
-
-Jail parameters (jail.conf)
-
-- path - Directory which is the root of the jail
-- vnet - jail has its own virtual network stack with interfaces, addresses, routing table etc. - !! - Is this required to allow applications access to the network?
-- persist - allows a jail to exist without any processes, so it won't be removed when stopped.
-- allow.mount - allow users in jail to mount jail-friendly filesystems. May be required for NFS / home directory mounts?
-- exec.prestart - commands to run in the system environment before a jail is created
-- exec.start - commands to run in the jail environment when a jail is created
-
-
-
-OS
----
-The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
-
-### FreeBSD ###
-FreeBSD was chosen as the operating system due to the benefits of NanoBSD, Jails and ZFS. However, the tools and configurations are platform agnostic, and can be ported to other Unix-like operating systems. 
-
-### Jails ###
-
-- A process and all descendants are restricted to a chrooted directory tree
-- Does not rely on virtualisation, so performance penalty is mitigated
-- Easy to update or upgrade individual jails
-
-Jail parameters (jail.conf)
-
-- path - Directory which is the root of the jail
-- vnet - jail has its own virtual network stack with interfaces, addresses, routing table etc. - !! - Is this required to allow applications access to the network?
-- persist - allows a jail to exist without any processes, so it won't be removed when stopped.
-- allow.mount - allow users in jail to mount jail-friendly filesystems. May be required for NFS / home directory mounts?
-- exec.prestart - commands to run in the system environment before a jail is created
-- exec.start - commands to run in the jail environment when a jail is created
-
-
 OS
 ---
 The general server design would be a generic NanoBSD image occupying a flash device such as SD card serving as the operating system. Physical drives (either spinning disk or SSD) will be formatted with ZFS, on top of which the base for the jails will reside. Data used by the applications such as databases are stored on discrete storage appliances.
@@ -548,7 +500,7 @@ The output is a list of SSHFP records in the format:
 Configuration Management
 ---
 
-Traditional system administration follows the "waterfall" method, where each step: gather requirements, design, implement, test, verify, deploy; is performed by a different team, and often conducted by hand. Each step or team has an end goal after which the product is handed over to the new team. The methodology documented in the papers at infrastructures.org, now referred to as DevOps, adds a layer of abstraction to the administration of services. By describing the infrastructure in structured configuration files, you leave the implementation up to the configuration management tool. So rather than specifying how to install a package for multiple operating systems, you merely say that you want the package installed, and leave the implementation up to the configuration management tool. 
+Traditional system administration follows the "waterfall" method, where each step: gather requirements, design, implement, test, verify, deploy; is performed by a different team, and often conducted by hand. Each step or team has an end goal after which the product is handed over to the new team. The methodology documented in the papers at infrastructures.org, now referred to as DevOps, adds a layer of abstraction to the administration of services. By describing the infrastructure in structured configuration files, you leave the implementation up to the configuration management tool. So rather than specifying how to install a package for multiple operating systems, you say that you want the package installed, and leave the implementation up to the configuration management tool. 
 
 Also, the idea of idempotency is important. Rather than having a script that says "service $SERVICE start" which doesn't check if the service is already started, you instead say that you want a service to be in a started state. The configuration management tool then periodically checks the state of the service, and changes it to the desired state if necessary.
 
