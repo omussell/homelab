@@ -1,0 +1,30 @@
+digraph structs {
+#	dnskey [shape=record, label="DNSKEY RRset"];
+#	struct1 [shape=record, label="DNSKEY Public KSK"];
+#	struct2 [shape=record, label="DNSKEY Public ZSK"];
+#	verified [shape=record, label="RRSIG Signature"];
+#
+#	struct1 -> dnskey [style=dotted];
+#	struct2 -> dnskey [style=dotted];
+#	dnskey -> verified;
+
+	subgraph {
+	
+		node [style=filled];
+		label = "pf";
+		color=blue;
+		NGINX -> "NGINX Unit" -> "Application(s)" -> Base -> Kernel;
+	}
+
+	"DNS(SEC) / DANE";
+
+	"DNS(SEC) / DANE" -> NGINX [label="TLS certificate / TLSA RR"];
+	"Buildbot (CI)" -> "Application(s)";
+	"Buildbot (CI)" -> "NGINX Unit";
+	"NGINX Unit" -> Base [label="Daemontools"];
+
+	"OpenBSD Router" -> Kernel [label="IPv6 SLAAC"];
+	"OpenBSD Postfix" -> Base [label="(S/MIME) Mail"];
+
+
+}
