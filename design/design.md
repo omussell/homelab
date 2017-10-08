@@ -53,7 +53,7 @@ IPv6 address are mapped to hostnames in DNS using [AAAA resource records]. Rever
 
 
 [SLAAC]: https://tools.ietf.org/html/rfc4862
-[NDP]: https://tools.ietf.org/html/rfc4861
+#[NDP]: https://tools.ietf.org/html/rfc4861
 [Duplicate Address Detection]: https://tools.ietf.org/html/rfc4862#section-5.4
 [Neighbor Unreachability Detection]: https://tools.ietf.org/html/rfc4861#section-7.3
 [AAAA resource records]: https://tools.ietf.org/html/rfc3596

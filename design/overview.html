@@ -6,6 +6,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Oliver Mussell" />
   <title>Bootstrapping a Secure Infrastructure</title>
+  <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="/homelab/design/style.css" type="text/css" />
 </head>
 <body>
@@ -29,21 +30,21 @@
 - Hosted on Github Pages
 
 -->
-
 <ul>
 <li><a href="/homelab/design/overview.html">Overview</a></li>
 <li><a href="/homelab/design/design.html">Design</a></li>
 <li><a href="/homelab/design/implementation.html">Implementation</a></li>
 </ul>
-<h1 id="summary"><a href="#TOC">Summary</a></h1>
+<h1 id="summary">Summary</h1>
 <p>Create an infrastructure with an emphasis on security, resiliency and ease of maintenance.</p>
-<h1 id="end-goal"><a href="#TOC">End Goal</a></h1>
+<h1 id="end-goal">End Goal</h1>
 <p>Produce a working implementation of a secure, resilient and easy to maintain infrastructure. This will be published in the form of version-controlled configuration documents, with the philosophy and background of the chosen configuration documented here. Anyone should be able to download the base operating system, and the configuration documents should convert that base OS into the desired state.</p>
-<p>Puppet will be used for configuration management. The configuration documents will be self-documenting using rdoc for markup. In addition, RSpec unit tests, serverspec integration tests and beaker end to end tests will be used to validate the infrastructure.</p>
-<h1 id="background"><a href="#TOC">Background</a></h1>
-<p>Further, the intent is for the infrastructure to work regardless of participating in the wider internet. The design is aimed at organisations that have strict security and uptime requirements (government/critical physical infrastructure), although there is nothing preventing other organisations from adopting this design and/or changing it to suit them.</p>
+<p>The documentation on this site is split into two sections, Design and Implementation. The Design documents what the infrastructure <em>should</em> look like in high level terms while never actually stating particular tools. The Implementation is a working version that follows the design.</p>
+<p>A secondary objective is to allow users to choose which software to use by having each component of the infrastructure being modular and interchangable. So while a particular tool may be used for a given task, the design will only</p>
+<h1 id="background">Background</h1>
+<p>The intent is for the infrastructure to work regardless of participating in the wider internet. The design is aimed at organisations that have strict security and uptime requirements (government/critical physical infrastructure), although there is nothing preventing other organisations from adopting this design and/or changing it to suit them.</p>
 <p>Organisations would likely still use the existing internet infrastructure in order to connect between their sites, however, there is the option to not be dependent on the third-party PKI and DNS systems. By removing the dependencies between organisations, there is greater decentralisation which allows more freedom.</p>
-<h1 id="high-level-design"><a href="#TOC">High-Level Design</a></h1>
-<img src="/homelab/pic/secenv.svg">
+<h1 id="high-level-design">High-Level Design</h1>
+<p><img src="/homelab/pic/secenv.svg"></p>
 </body>
 </html>
