@@ -12,8 +12,18 @@ sshd:
       - file: /etc/ssh/sshd_config
       - file: /etc/ssh/ssh_config
 
-# In rc.conf:
-# sshd_enable="YES"
-# sshd_rsa_enable="NO"
-# sshd_ecdsa_enable="NO"
-# sshd_ed25519_enable="YES"
+sshd_enable:
+  sysrc.managed:
+    - value: "YES"
+
+sshd_rsa_enable:
+  sysrc.managed:
+    - value: "NO"
+
+sshd_ecdsa_enable:
+  sysrc.managed:
+    - value: "NO"
+
+sshd_ed25519_enable:
+  sysrc.managed:
+    - value: "YES"
