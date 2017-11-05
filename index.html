@@ -475,7 +475,7 @@ server:
     interface: 0.0.0.0
     local-zone: &quot;local.&quot; static
     local-data: &quot;finn.local. A 192.168.1.18&quot;
-
+    
 NSD (name server daemon) is an authoritative only, memory efficient, highly
 secure and simple to configure open source domain name server. NSD acts as 
 the authoritative name server, while Unbound acts as the validating, 
@@ -654,7 +654,7 @@ http {
         ssl_prefer_server_ciphers  on;
     ssl_protocols TLSv1.2;
     ssl_ecdh_curve X25519;
-
+    
     location / {
             root   /usr/local/www/;
             index  index.html index.htm;
@@ -854,3 +854,8 @@ buildbot start master
 (look at twistd.log if there are errors during startup)
 
 Access via a browser at http://$IP:8010/</code></pre>
+<h2 id="install-hugo-and-basic-site">Install Hugo and basic site</h2>
+<h1 id="note-hugo-is-not-the-right-package.-it-is-completely-different-and">note 'hugo' is not the right package. It is completely different and</h1>
+<h1 id="will-take-a-long-time-to-download-before-you-realise-its-the-wrong-thing.">will take a long time to download before you realise its the wrong thing.</h1>
+<p>pkg install -y gohugo git</p>
+<p>git clone your files to the server Run <code>hugo</code> in the directory to build the assets, which will be placed into the public directory. Run <code>hugo server --baseUrl=/ --port=1313 --appendPort=false</code> Note that the baseURL is /. This is because it wasn't rendering the css at all when I used a server name or IP address. In production, this should be the domain name of the website followed by a forward slash. You can then visit your server at port 1313.</p>
