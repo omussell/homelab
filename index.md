@@ -1049,6 +1049,39 @@ buildbot start master
 Access via a browser at http://$IP:8010/
 ```
 
+```
+sysrc buildbot_enable="YES"
+sysrc buildbot_basedir="/var/www/buildbot"
+service buildbot start
+```
+
+If using the localworker for testing: `pkg install -y buildbot-worker`
+
+With postgres backend:
+
+```
+master.cfg
+c['db'] = {
+    'db_url' : "postgresql://buildbotuser:testpass@localhost/buildbotdb",
+}
+
+pkg install -y postgresql96-server
+# Follow the instructions it gives about running initdb
+sysrc postgresql_enable=YES
+service postgresql start
+
+pip install psycopg2
+
+# Create the database
+createdb buildbotdb -h localhost -U postgres
+
+# Amend pg_hba.conf in /var/db/postgres
+
+psql -U postgres
+\connect buildbotdb
+create role buildbotuser
+```
+
 Install Hugo and basic site
 ---
 
@@ -1061,3 +1094,4 @@ Run `hugo` in the directory to build the assets, which will be placed into the p
 Run `hugo server --baseUrl=/ --port=1313 --appendPort=false`
 Note that the baseURL is /. This is because it wasn't rendering the css at all when I used a server name or IP address. In production, this should be the domain name of the website followed by a forward slash.
 You can then visit your server at port 1313. 
+For the baseUrl when using github pages, you should use the repo name surrounded by slashes, like /grim/.

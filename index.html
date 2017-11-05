@@ -854,8 +854,33 @@ buildbot start master
 (look at twistd.log if there are errors during startup)
 
 Access via a browser at http://$IP:8010/</code></pre>
+<pre><code>sysrc buildbot_enable=&quot;YES&quot;
+sysrc buildbot_basedir=&quot;/var/www/buildbot&quot;
+service buildbot start</code></pre>
+<p>If using the localworker for testing: <code>pkg install -y buildbot-worker</code></p>
+<p>With postgres backend:</p>
+<pre><code>master.cfg
+c[&#39;db&#39;] = {
+    &#39;db_url&#39; : &quot;postgresql://buildbotuser:testpass@localhost/buildbotdb&quot;,
+}
+
+pkg install -y postgresql96-server
+# Follow the instructions it gives about running initdb
+sysrc postgresql_enable=YES
+service postgresql start
+
+pip install psycopg2
+
+# Create the database
+createdb buildbotdb -h localhost -U postgres
+
+# Amend pg_hba.conf in /var/db/postgres
+
+psql -U postgres
+\connect buildbotdb
+create role buildbotuser</code></pre>
 <h2 id="install-hugo-and-basic-site">Install Hugo and basic site</h2>
 <h1 id="note-hugo-is-not-the-right-package.-it-is-completely-different-and">note 'hugo' is not the right package. It is completely different and</h1>
 <h1 id="will-take-a-long-time-to-download-before-you-realise-its-the-wrong-thing.">will take a long time to download before you realise its the wrong thing.</h1>
 <p>pkg install -y gohugo git</p>
-<p>git clone your files to the server Run <code>hugo</code> in the directory to build the assets, which will be placed into the public directory. Run <code>hugo server --baseUrl=/ --port=1313 --appendPort=false</code> Note that the baseURL is /. This is because it wasn't rendering the css at all when I used a server name or IP address. In production, this should be the domain name of the website followed by a forward slash. You can then visit your server at port 1313.</p>
+<p>git clone your files to the server Run <code>hugo</code> in the directory to build the assets, which will be placed into the public directory. Run <code>hugo server --baseUrl=/ --port=1313 --appendPort=false</code> Note that the baseURL is /. This is because it wasn't rendering the css at all when I used a server name or IP address. In production, this should be the domain name of the website followed by a forward slash. You can then visit your server at port 1313. For the baseUrl when using github pages, you should use the repo name surrounded by slashes, like /grim/.</p>
