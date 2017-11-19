@@ -942,6 +942,25 @@ salt-key -A
 If you get the error "No buffer space available" follow the instructions at https://github.com/saltstack/salt/issues/23196 to change the kern.ipc.maxsockbuf value. The services will also need restarting, then continue with the key acceptance.
 ```
 
+UPDATE:
+RAET support isn't enabled in the default package. If you install py27-salt and run `pkg info py27-salt` you can see in the options `RAET: off`. In order to use RAET, you need to build the py27-salt port.
+
+```
+pkg remove -y py27-salt
+portsnap fetch extract
+cd /usr/ports/sysutil/py-salt
+make config
+# Press space to select RAET
+make install
+Edit /srv/salt/master and /srv/salt/minion and add:
+transport: raet
+Then restart the services:
+service salt_master restart
+service salt_minion restart
+salt-key 
+salt-key -A
+```
+
 
 Salt equivalent of hiera-eyaml
 ---
