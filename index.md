@@ -57,6 +57,9 @@ Automating FreeBSD Jail Creation
     When finished, take a snapshot
     zfs snapshot zroot/jails/template@1
 
+    Create the new jails zfs dataset
+    zfs clone zroot/jails/template@1 zroot/jails/testjail
+
     Edit /etc/jail.conf
     # Global settings applied to all jails
 
