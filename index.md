@@ -3,6 +3,7 @@ Homelab
 
 ###Bootstrapping a Secure Infrastructure###
 
+- [GRIM](/grim/overview.html)
 - [Overview](/homelab/design/overview.html)
 - [Design](/homelab/design/design.html)
 - [Implementation](/homelab/design/implementation.html)
