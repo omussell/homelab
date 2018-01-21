@@ -1,7 +1,7 @@
 <h1 id="homelab">Homelab</h1>
 <h3 id="bootstrapping-a-secure-infrastructure">Bootstrapping a Secure Infrastructure</h3>
 <ul>
-<li><a href="/grim/overview.html">GRIM</a></li>
+<li><a href="/grim/overview">GRIM</a></li>
 <li><a href="/homelab/design/overview.html">Overview</a></li>
 <li><a href="/homelab/design/design.html">Design</a></li>
 <li><a href="/homelab/design/implementation.html">Implementation</a></li>
@@ -479,7 +479,7 @@ server:
     interface: 0.0.0.0
     local-zone: &quot;local.&quot; static
     local-data: &quot;finn.local. A 192.168.1.18&quot;
-    
+
 NSD (name server daemon) is an authoritative only, memory efficient, highly
 secure and simple to configure open source domain name server. NSD acts as 
 the authoritative name server, while Unbound acts as the validating, 
@@ -658,7 +658,7 @@ http {
         ssl_prefer_server_ciphers  on;
     ssl_protocols TLSv1.2;
     ssl_ecdh_curve X25519;
-    
+
     location / {
             root   /usr/local/www/;
             index  index.html index.htm;
@@ -907,3 +907,94 @@ Run `hugo server --baseUrl=/ --port=1313 --appendPort=false`
 Note that the baseURL is /. This is because it wasn&#39;t rendering the css at all when I used a server name or IP address. In production, this should be the domain name of the website followed by a forward slash.
 You can then visit your server at port 1313. 
 For the baseUrl when using github pages, you should use the repo name surrounded by slashes, like /grim/.</code></pre>
+<h2 id="postgresql-10.1-install">Postgresql 10.1 install</h2>
+<p>pkg install -y postgresql10-server postgresql10-client sysrc postgresql_enable=YES service postgresql initdb service postgresql start</p>
+<h2 id="postgresql-10.1-scram-authentication">Postgresql 10.1 SCRAM Authentication</h2>
+<p>su - postgres psql set password_encryption = 'scram-sha-256'; create role app_db with password 'foo'; select substring(rolpassword, 1, 14) from pg_authid where rolname = 'app_db';</p>
+<h2 id="postgresql-10.1-using-repmgr-database-replication-wal-g-for-wal-archiving-and-minio-for-s3-compatible-storage">Postgresql 10.1 using repmgr (database replication), WAL-G for wal archiving, and minio for S3 compatible storage</h2>
+<h1 id="for-this-i-created-two-bhyve-vms-to-host-postgresql-and-a-jail-on-the-host-for-minio">For this, I created two bhyve VMs to host postgresql and a jail on the host for minio</h1>
+<h1 id="make-sure-postgresql-is-running">Make sure postgresql is running</h1>
+<h1 id="carry-out-the-following-steps-on-both-primary-and-replicas">Carry out the following steps on both primary and replicas</h1>
+<h1 id="the-current-packaged-version-of-repmgr-is-3.3.1-which-isnt-the-latest.">The current packaged version of repmgr is 3.3.1 which isn't the latest.</h1>
+<h1 id="the-latest-is-4.0.1-so-we-need-to-compile-it-ourself-and-put-files-into-the-correct-locations">The latest is 4.0.1, so we need to compile it ourself, and put files into the correct locations</h1>
+<pre><code>fetch https://repmgr.org/download/repmgr-4.0.1.tar.gz
+tar -zvxf repmgr-4.0.1.tar.gz
+./configure
+pkg install -y gmake
+gmake</code></pre>
+<h1 id="copy-the-repmgr-files-to-their-correct-locations">Copy the repmgr files to their correct locations</h1>
+<pre><code>cp -v repmgr /var/db/postgres
+cp -v repmgr--4.0.sql /usr/local/share/postgresql/extension/
+cp -v repmgr.control /usr/local/share/postgresql/extension</code></pre>
+<p>vim /var/db/postgrs/data10/postgresql.conf # Add lines:</p>
+<pre><code>include_dir = &#39;postgresql.conf.d&#39;
+listen_addresses = &#39;\*&#39;</code></pre>
+<p>vim /var/db/postgres/data10/postgresql.conf.d/postgresql.replication.conf # Add lines</p>
+<pre><code>max_wal_senders = 10
+wal_level = &#39;replica&#39;
+wal_keep_segments = 5000
+hot_standby = on
+archive_mode = on
+archive_command = &#39;wal-g stuff here&#39;</code></pre>
+<p>vim /var/db/postgres/data10/pg_hba.conf # Add lines: # Please note, for testing purposes, these rules are wide open and allow everything. # Dont do this in production, use a specific role with a password and restrict to a specific address</p>
+<pre><code>local   all     all         trust
+host    all     all 0.0.0.0/0   trust
+host    replication all 0.0.0.0/0   trust</code></pre>
+<p>vim /usr/local/etc/repmgr.conf # Add lines:</p>
+<pre><code>node_id=1 # arbitrary number, each node needs to be unique
+node_name=postgres-db1 # this nodes hostname
+conninfo=&#39;host=192.168.1.10 user=repmgr dbname=repmgr&#39; # the host value should be a hostname if DNS is working</code></pre>
+<h1 id="on-the-primary">On the primary</h1>
+<pre><code>su - postgres
+createuser -s repmgr
+createdb repmgr -O repmgr
+
+repmgr -f /usr/local/etc/repmgr.conf primary register
+repmgr -f /usr/local/etc/repmgr.conf cluster show</code></pre>
+<h1 id="on-a-standby">On a standby</h1>
+<pre><code>su - postgres
+psql &#39;host=node1 user=repmgr dbname=repmgr&#39;</code></pre>
+<h1 id="to-clone-the-primary-the-data-directory-on-the-standby-node-must-exist-but-be-empty">To clone the primary, the data directory on the standby node must exist but be empty</h1>
+<pre><code>rm -rf /var/db/postgres/data10/
+mkdir -p /var/db/postgres/data10
+chown postgres:postgres /var/db/postgres/data10</code></pre>
+<h1 id="dry-run-first-to-check-for-problems">Dry run first to check for problems</h1>
+<p><code>repmgr -h node1 -U repmgr -d repmgr -f /usr/local/etc/repmgr.conf standby clone --dry-run</code></p>
+<h1 id="if-its-ok-run-it">If its ok, run it</h1>
+<p><code>repmgr -h node1 -U repmgr -d repmgr -f /usr/local/etc/repmgr.conf standby clone</code></p>
+<h1 id="on-the-primary-1">On the primary</h1>
+<pre><code>su - postgres
+psql -d repmgr
+select * from pg_stat_replication;</code></pre>
+<h1 id="on-the-standby">On the standby</h1>
+<pre><code>repmgr -f /usr/local/etc/repmgr.conf standby register
+repmgr -f /usr/local/etc/repmgr.conf cluster show</code></pre>
+<h1 id="install-minio">Install minio</h1>
+<pre><code>pkg install -y minio
+sysrc minio_enable=YES
+sysrc minio_disks=/home/user/test
+mkdir -p /home/user/test
+chown minio:minio /home/user/test
+service minio start
+# The access keys are in /usr/local/etc/minio/config.json
+# You can change them in this file and restart the service to take effect</code></pre>
+<h1 id="on-the-primary-2">On the primary</h1>
+<h1 id="wal-g">WAL-G</h1>
+<pre><code>pkg install -y go
+mkdir -p /root/go
+setenv GOPATH /root/go
+cd go
+go get github.com/wal-g/wal-g
+cd src/github.com/wal-g/wal-g
+make all
+make install
+cp /root/go/bin/wal-g /usr/local/bin</code></pre>
+<h1 id="wal-g-requires-certain-environment-variables-to-be-set">WAL-G requires certain environment variables to be set</h1>
+<h1 id="this-can-be-done-using-envdir-part-of-the-daemontools-package">This can be done using envdir, part of the daemontools package</h1>
+<p>pkg install -y daemontools</p>
+<h1 id="setup-is-now-complete.">Setup is now complete.</h1>
+<h1 id="for-operations-a-base-backup-needs-to-be-taken-on-a-regular-basis-probably-via-a-cron-job-running-the-following-command-as-postgres-user">For operations, a base backup needs to be taken on a regular basis probably via a cron job, running the following command as postgres user</h1>
+<p><code>wal-g backup-push /var/db/postgres/data10</code></p>
+<h1 id="then-the-archive_command-in-the-postgresql.replication.conf-should-be-set-to-the-wal-push-command">Then the archive_command in the postgresql.replication.conf should be set to the wal-push command</h1>
+<p><code>wal-g wal-push /var/db/postgres/data10</code></p>
+<h1 id="to-restore-backup-fetch-and-wal-fetch-can-be-used-to-pull-the-latest-base-backup-and-the-necessary-wal-logs-to-recover-to-the-latest-transaction">To restore, backup-fetch and wal-fetch can be used to pull the latest base backup and the necessary wal logs to recover to the latest transaction</h1>
