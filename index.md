@@ -1144,14 +1144,13 @@ select substring(rolpassword, 1, 14) from pg_authid where rolname = 'app_db';
 Postgresql 10.1 using repmgr (database replication), WAL-G for wal archiving, and minio for S3 compatible storage
 ---
 
-# For this, I created two bhyve VMs to host postgresql and a jail on the host for minio
+For this, I created two bhyve VMs to host postgresql and a jail on the host for minio
 
-# Make sure postgresql is running
+Make sure postgresql is running
 
-# Carry out the following steps on both primary and replicas
+Carry out the following steps on both primary and replicas
 
-# The current packaged version of repmgr is 3.3.1 which isn't the latest.
-# The latest is 4.0.1, so we need to compile it ourself, and put files into the correct locations
+The current packaged version of repmgr is 3.3.1 which isn't the latest. The latest is 4.0.1, so we need to compile it ourself, and put files into the correct locations
 
 ```
 fetch https://repmgr.org/download/repmgr-4.0.1.tar.gz
@@ -1161,7 +1160,7 @@ pkg install -y gmake
 gmake
 ```
 
-# Copy the repmgr files to their correct locations
+Copy the repmgr files to their correct locations
 
 ```
 cp -v repmgr /var/db/postgres
@@ -1171,7 +1170,8 @@ cp -v repmgr.control /usr/local/share/postgresql/extension
 
 
 vim /var/db/postgrs/data10/postgresql.conf 
-# Add lines: 
+
+Add lines: 
 
 ```
 include_dir = 'postgresql.conf.d'
@@ -1179,7 +1179,8 @@ listen_addresses = '\*'
 ```
 
 vim /var/db/postgres/data10/postgresql.conf.d/postgresql.replication.conf
-# Add lines
+
+Add lines:
 
 ```
 max_wal_senders = 10
@@ -1191,9 +1192,9 @@ archive_command = 'wal-g stuff here'
 ```
 
 vim /var/db/postgres/data10/pg_hba.conf
-# Add lines:
-# Please note, for testing purposes, these rules are wide open and allow everything.
-# Dont do this in production, use a specific role with a password and restrict to a specific address
+
+Add lines:
+Please note, for testing purposes, these rules are wide open and allow everything. Dont do this in production, use a specific role with a password and restrict to a specific address
 
 ```
 local	all		all			trust
@@ -1202,7 +1203,8 @@ host	replication	all	0.0.0.0/0	trust
 ```
 
 vim /usr/local/etc/repmgr.conf
-# Add lines:
+
+Add lines:
 
 ```
 node_id=1 # arbitrary number, each node needs to be unique
@@ -1210,7 +1212,7 @@ node_name=postgres-db1 # this nodes hostname
 conninfo='host=192.168.1.10 user=repmgr dbname=repmgr' # the host value should be a hostname if DNS is working
 ```
 
-# On the primary
+On the primary
 
 ```
 su - postgres
@@ -1221,14 +1223,14 @@ repmgr -f /usr/local/etc/repmgr.conf primary register
 repmgr -f /usr/local/etc/repmgr.conf cluster show
 ```
 
-# On a standby
+On a standby
 
 ```
 su - postgres
 psql 'host=node1 user=repmgr dbname=repmgr'
 ```
 
-# To clone the primary, the data directory on the standby node must exist but be empty
+To clone the primary, the data directory on the standby node must exist but be empty
 
 ```
 rm -rf /var/db/postgres/data10/
@@ -1236,13 +1238,15 @@ mkdir -p /var/db/postgres/data10
 chown postgres:postgres /var/db/postgres/data10
 ```
 
-# Dry run first to check for problems
+Dry run first to check for problems
+
 `repmgr -h node1 -U repmgr -d repmgr -f /usr/local/etc/repmgr.conf standby clone --dry-run`
 
-# If its ok, run it
+If its ok, run it
+
 `repmgr -h node1 -U repmgr -d repmgr -f /usr/local/etc/repmgr.conf standby clone`
 
-# On the primary
+On the primary
 
 ```
 su - postgres
@@ -1250,14 +1254,14 @@ psql -d repmgr
 select * from pg_stat_replication;
 ```
 
-# On the standby
+On the standby
 
 ```
 repmgr -f /usr/local/etc/repmgr.conf standby register
 repmgr -f /usr/local/etc/repmgr.conf cluster show
 ```
 
-# Install minio
+Install minio
 
 ```
 pkg install -y minio
@@ -1270,8 +1274,8 @@ service minio start
 # You can change them in this file and restart the service to take effect
 ```
 
-# On the primary
-# WAL-G
+On the primary
+WAL-G
 
 ```
 pkg install -y go
@@ -1285,17 +1289,19 @@ make install
 cp /root/go/bin/wal-g /usr/local/bin
 ```
 
-# WAL-G requires certain environment variables to be set
-# This can be done using envdir, part of the daemontools package
+WAL-G requires certain environment variables to be set. This can be done using envdir, part of the daemontools package
+
 pkg install -y daemontools
 
-# Setup is now complete. 
+Setup is now complete. 
 
-# For operations, a base backup needs to be taken on a regular basis probably via a cron job, running the following command as postgres user
+For operations, a base backup needs to be taken on a regular basis probably via a cron job, running the following command as postgres user
+
 `wal-g backup-push /var/db/postgres/data10`
 
-# Then the archive_command in the postgresql.replication.conf should be set to the wal-push command
+Then the archive_command in the postgresql.replication.conf should be set to the wal-push command
+
 `wal-g wal-push /var/db/postgres/data10`
 
-# To restore, backup-fetch and wal-fetch can be used to pull the latest base backup and the necessary wal logs to recover to the latest transaction
+To restore, backup-fetch and wal-fetch can be used to pull the latest base backup and the necessary wal logs to recover to the latest transaction
 
