@@ -1127,19 +1127,23 @@ For the baseUrl when using github pages, you should use the repo name surrounded
 Postgresql 10.1 install
 ---
 
+```
 pkg install -y postgresql10-server postgresql10-client
 sysrc postgresql_enable=YES
 service postgresql initdb
 service postgresql start
+```
 
 Postgresql 10.1 SCRAM Authentication
 ---
 
+```
 su - postgres
 psql
 set password_encryption = 'scram-sha-256';
 create role app_db with password 'foo';
 select substring(rolpassword, 1, 14) from pg_authid where rolname = 'app_db';
+```
 
 Postgresql 10.1 using repmgr (database replication), WAL-G for wal archiving, and minio for S3 compatible storage
 ---
