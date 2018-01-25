@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+
+        <title>Hugo</title>
+
+        <link rel="stylesheet" href="/css/stylesheet.css">
+    </head>
+    <body>
+        <section id="page-title">
+            <h1><a href="/">Homelab</a></h1>
+        </section>
+
+
+
+<section class="blog-post">
+    <h1>Hugo</h1>
+    <div class="blog-post-subheader">
+        January 25, 2018
+    </div>
+    <div class="blog-post-content">
+        <p>Install hugo</p>
+
+<pre><code># note 'hugo' is not the right package. It is completely different and 
+# will take a long time to download before you realise its the wrong thing.
+pkg install -y gohugo git
+</code></pre>
+
+<p>Run <code>hugo</code> in the directory to build the assets, which will be placed into the public directory.</p>
+
+<p>Run <code>hugo server --baseUrl=/ --port=1313 --appendPort=false</code></p>
+
+<p>Note that the baseURL is /. This is because it wasn&rsquo;t rendering the css at all when I used a server name or IP address. In production, this should be the domain name of the website followed by a forward slash.</p>
+
+<p>You can then visit your server at port 1313.</p>
+
+<p>For the baseUrl when using github pages, you should use the repo name surrounded by slashes, like /grim/.</p>
+
+<p>Themes can be viewed at themes.gohugo.io. They usually have instructions on how to use it.</p>
+
+    </div>
+</section>
+
+    </body>
+</html>
