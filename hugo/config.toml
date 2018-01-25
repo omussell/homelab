@@ -1,0 +1,7 @@
+baseURL = "/"
+languageCode = "en-gb"
+title = "Homelab"
+theme = "elephants"
+
+[params]
+    sitename = "Homelab"
