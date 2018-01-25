@@ -2,6 +2,7 @@ baseURL = "/homelab/"
 languageCode = "en-gb"
 title = "Homelab"
 theme = "elephants"
+publishDir = "../docs"
 
 [params]
     sitename = "Homelab"
