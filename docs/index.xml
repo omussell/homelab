@@ -6,10 +6,21 @@
     <description>Recent content on Homelab</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Thu, 25 Jan 2018 22:35:25 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 30 Jan 2018 21:52:35 +0000</lastBuildDate>
     
 	<atom:link href="/homelab/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Application Build/Packaging</title>
+      <link>/homelab/posts/pkg-build/</link>
+      <pubDate>Tue, 30 Jan 2018 21:52:35 +0000</pubDate>
+      
+      <guid>/homelab/posts/pkg-build/</guid>
+      <description>Create a new tagged release on the git repository
+git tag 1.4.0  Create a tarball of the git repository at the particular tag revision. Extracts a folder called app-1.4.0 which contains the contents of the repository at tag 1.4.0.
+git archive --format=tar.gz --prefix=app-1.4.0/ -o ~/app-1.4.0.tar.gz 1.4.0  fpm The fpm ruby gem can be used to convert common package formats into other common package formats, like virtualenv&amp;rsquo;s into freebsd packages.</description>
+    </item>
     
     <item>
       <title>Postgresql 10.1 with replication and WAL archiving</title>
