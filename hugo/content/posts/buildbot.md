@@ -5,6 +5,7 @@ draft: false
 ---
 
 Install the buildbot master
+---
 
 ```
 pkg install -y buildbot buildbot-www
@@ -42,3 +43,27 @@ c['db'] = {
 
 pip install psycopg2
 ```
+Install a buildbot worker
+---
+
+Install the package and enable 
+
+```
+pkg install -y py27-buildbot-worker
+sysrc buildbot_worker_enable=YES
+sysrc buildbot_basedir="/usr/local/etc/buildbot_worker"
+```
+
+Before you start the worker, you need to create its config
+```
+buildbot-worker create-worker <basedir> 		     <master_name> <worker_name> <worker_password>
+buildbot-worker create-worker /usr/local/etc/buildbot_worker 192.168.1.19  foo 		 pass
+```
+
+Start the service
+
+```
+service buildbot_worker start
+```
+
+The config file on the master will then need updating with the worker name and password, and optionally add it to be used for specific builds.
