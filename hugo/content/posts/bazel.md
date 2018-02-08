@@ -82,10 +82,20 @@ A built binary should be output to the ~/.cache directory. Once a binary has bee
 When attempting to use bazel in any capacity like `bazel run ...` or `bazel build ...` it would give the following error:
 
 ```
-ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//:packages.txt', but this target could not be found because of: no such package '@go_sdk//': Unsupported operating system: freebsd
-ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//:files', but this target could not be found because of: no such package '@go_sdk//': Unsupported operating system: freebsd
-ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//:tools', but this target could not be found because of: no such package '@go_sdk//': Unsupported operating system: freebsd
-ERROR: Analysis of target '//:gazelle' failed; build aborted: no such package '@go_sdk//': Unsupported operating system: freebsd
+ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
+:packages.txt', but this target could not be found because of: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
+:files', but this target could not be found because of: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
+:tools', but this target could not be found because of: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+ERROR: Analysis of target '//:gazelle' failed; build aborted: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
 ```
 
 I think this is caused by bazel attempting to download and build go which isn't necessary as we've already installed via the package anyway. In the WORKSPACE file, change the `go_register_toolchains()` line to `go_register_toolchains(go_version="host")` as documented at https://github.com/bazelbuild/rules_go/blob/master/go/toolchains.rst#using-the-installed-go-sdk. This will force bazel to use the already installed go tools.
