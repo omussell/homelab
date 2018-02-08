@@ -23,7 +23,7 @@ Bazel requires some files so that it knows what and where to build. As an exampl
     </item>
     
     <item>
-      <title>Application Build/Packaging</title>
+      <title>Application Packaging with fpm</title>
       <link>/homelab/posts/pkg-build/</link>
       <pubDate>Tue, 30 Jan 2018 21:52:35 +0000</pubDate>
       

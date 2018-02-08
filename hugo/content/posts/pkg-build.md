@@ -1,5 +1,5 @@
 ---
-title: "Application Build/Packaging"
+title: "Application Packaging with fpm"
 date: 2018-01-30T21:52:35Z
 draft: false
 ---
