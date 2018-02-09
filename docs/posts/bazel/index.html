@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+
+        <title>Building Go programs using Bazel</title>
+
+        <link rel="stylesheet" href="/homelab/css/stylesheet.css">
+    </head>
+    <body>
+        <section id="page-title">
+            <h1><a href="/">Homelab</a></h1>
+        </section>
+
+
+
+<section class="blog-post">
+    <h1>Building Go programs using Bazel</h1>
+    <div class="blog-post-subheader">
+        February 8, 2018
+    </div>
+    <div class="blog-post-content">
+        
+
+<p>Bazel is a build tool created by Google which operates similarly to their internal build tool, Blaze. It is primarily concerned with generating artifacts from compiled languages like C, C++, Go etc.</p>
+
+<p><code>pkg install -y bazel</code></p>
+
+<p>Bazel requires some files so that it knows what and where to build. As an example, we are going to compile a simple go program with no dependencies (literally print a single string to stdout).</p>
+
+<pre><code>// ~/go/src/github.com/omussell/go_tests/main.go
+
+package main
+
+import &quot;fmt&quot;
+
+func main() {
+	fmt.Println(&quot;test&quot;)
+}
+</code></pre>
+
+<p>A file called WORKSPACE should be created at the root of the directory. This is used by bazel to determine source code locations relative to the WORKSPACE file and differentiate other packages in the same directory. Then a BUILD.bazel file should also be created at the root of the directory.</p>
+
+<h2 id="gazelle">Gazelle</h2>
+
+<p>Instead of creating BUILD files by hand, we can use the Gazelle tool to iterate over a go source tree and dynamically generate BUILD files. We can also let bazel itself run gazelle.</p>
+
+<p>Note that gazelle doesn&rsquo;t work without bash, and the gazelle.bash file has a hardcoded path to <code>/bin/bash</code> which of course is not available on FreeBSD by default.</p>
+
+<pre><code>pkg install -y bash
+ln -s /usr/local/bin/bash /bin/bash
+</code></pre>
+
+<p>In the WORKSPACE file:</p>
+
+<pre><code>http_archive(
+    name = &quot;io_bazel_rules_go&quot;,
+    url = &quot;https://github.com/bazelbuild/rules_go/releases/download/0.9.0/rules_go-0.9.0.tar.gz&quot;,
+    sha256 = &quot;4d8d6244320dd751590f9100cf39fd7a4b75cd901e1f3ffdfd6f048328883695&quot;,
+)
+http_archive(
+    name = &quot;bazel_gazelle&quot;,
+    url = &quot;https://github.com/bazelbuild/bazel-gazelle/releases/download/0.9/bazel-gazelle-0.9.tar.gz&quot;,
+    sha256 = &quot;0103991d994db55b3b5d7b06336f8ae355739635e0c2379dea16b8213ea5a223&quot;,
+)
+load(&quot;@io_bazel_rules_go//go:def.bzl&quot;, &quot;go_rules_dependencies&quot;, &quot;go_register_toolchains&quot;)
+go_rules_dependencies()
+go_register_toolchains(go_version=&quot;host&quot;)
+load(&quot;@bazel_gazelle//:deps.bzl&quot;, &quot;gazelle_dependencies&quot;)
+gazelle_dependencies()
+</code></pre>
+
+<p>In the BUILD.bazel file:</p>
+
+<pre><code>load(&quot;@bazel_gazelle//:def.bzl&quot;, &quot;gazelle&quot;)
+
+gazelle(
+    name = &quot;gazelle&quot;,
+    prefix = &quot;github.com/omussell/go_tests&quot;,
+)
+</code></pre>
+
+<p>Then to run:</p>
+
+<pre><code>bazel run //:gazelle
+bazel build //:go_tests
+</code></pre>
+
+<p>A built binary should be output to the ~/.cache directory. Once a binary has been built once, Bazel will only build again if the source code changes. Otherwise, any subsequent runs just complete successfully extremely quickly.</p>
+
+<p>When attempting to use bazel in any capacity like <code>bazel run ...</code> or <code>bazel build ...</code> it would give the following error:</p>
+
+<pre><code>ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
+:packages.txt', but this target could not be found because of: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
+:files', but this target could not be found because of: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
+:tools', but this target could not be found because of: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+ERROR: Analysis of target '//:gazelle' failed; build aborted: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+</code></pre>
+
+<p>I think this is caused by bazel attempting to download and build go which isn&rsquo;t necessary as we&rsquo;ve already installed via the package anyway. In the WORKSPACE file, change the <code>go_register_toolchains()</code> line to <code>go_register_toolchains(go_version=&quot;host&quot;)</code> as documented at <a href="https://github.com/bazelbuild/rules_go/blob/master/go/toolchains.rst#using-the-installed-go-sdk">https://github.com/bazelbuild/rules_go/blob/master/go/toolchains.rst#using-the-installed-go-sdk</a>. This will force bazel to use the already installed go tools.</p>
+
+<h2 id="ci-with-buildbot">CI with Buildbot</h2>
+
+<p>Example buildbot config:</p>
+
+<pre><code>factory.addStep(steps.Git(repourl='git://github.com/omussell/go_tests.git', mode='incremental'))
+factory.addStep(steps.ShellCommand(command=[&quot;go&quot;, &quot;fix&quot;],))
+factory.addStep(steps.ShellCommand(command=[&quot;go&quot;, &quot;vet&quot;],))
+factory.addStep(steps.ShellCommand(command=[&quot;go&quot;, &quot;fmt&quot;],))
+factory.addStep(steps.ShellCommand(command=[&quot;bazel&quot;, &quot;run&quot;, &quot;//:gazelle&quot;],))
+factory.addStep(steps.ShellCommand(command=[&quot;bazel&quot;, &quot;build&quot;, &quot;//:go_tests&quot;],))
+</code></pre>
+
+    </div>
+</section>
+
+    </body>
+</html>

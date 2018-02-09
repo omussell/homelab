@@ -6,13 +6,24 @@
     <description>Recent content in Posts on Homelab</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Tue, 30 Jan 2018 21:52:35 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 08 Feb 2018 17:50:00 +0000</lastBuildDate>
     
 	<atom:link href="/homelab/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Application Build/Packaging</title>
+      <title>Building Go programs using Bazel</title>
+      <link>/homelab/posts/bazel/</link>
+      <pubDate>Thu, 08 Feb 2018 17:50:00 +0000</pubDate>
+      
+      <guid>/homelab/posts/bazel/</guid>
+      <description>Bazel is a build tool created by Google which operates similarly to their internal build tool, Blaze. It is primarily concerned with generating artifacts from compiled languages like C, C++, Go etc.
+pkg install -y bazel
+Bazel requires some files so that it knows what and where to build. As an example, we are going to compile a simple go program with no dependencies (literally print a single string to stdout).</description>
+    </item>
+    
+    <item>
+      <title>Application Packaging with fpm</title>
       <link>/homelab/posts/pkg-build/</link>
       <pubDate>Tue, 30 Jan 2018 21:52:35 +0000</pubDate>
       
