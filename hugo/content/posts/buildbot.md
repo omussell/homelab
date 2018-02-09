@@ -8,7 +8,7 @@ Install the buildbot master
 ---
 
 ```
-pkg install -y buildbot buildbot-www
+pkg install -y py36-buildbot py36-buildbot-www
 ```
 
 You need to create the config files directory
@@ -31,14 +31,14 @@ service buildbot start
 
 Access via a browser at http://$IP:8010/
 
-If using the localworker for testing: `pkg install -y buildbot-worker`
+If using the localworker for testing: `pkg install -y py36-buildbot-worker`
 
 With postgres backend:
 
 ```
 master.cfg
 c['db'] = {
-    'db_url' : "postgresql://buildbotuser:testpass@localhost/buildbotdb",
+	'db_url' : "postgresql://buildbot:password@192.168.1.10/buildbotdb",
 }
 
 pip install psycopg2

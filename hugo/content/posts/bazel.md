@@ -140,3 +140,5 @@ factory.addStep(steps.ShellCommand(command=["go", "fmt"],))
 factory.addStep(steps.ShellCommand(command=["bazel", "run", "//:gazelle"],))
 factory.addStep(steps.ShellCommand(command=["bazel", "build", "//:go_tests"],))
 ```
+
+I needed to rebuild the buildbot jail because it was borked, and after rebuilding it I was surprised that bazel worked without any more configuration. I just needed to install the git, go and bazel packages and run the buildbot config as described above and it ran through and rebuilt everything from scratch. This is one of the major advantages of keeping the build files (WORKSPACE and BUILD.bazel) alongside the source code. I am sure that if desired, anyone with a bazel setup would be able to build this code as well and the outputs would be identical.
