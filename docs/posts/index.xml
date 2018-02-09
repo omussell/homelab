@@ -60,10 +60,10 @@ Note that the baseURL is /. This is because it wasn&amp;rsquo;t rendering the cs
       <pubDate>Thu, 25 Jan 2018 22:19:58 +0000</pubDate>
       
       <guid>/homelab/posts/buildbot/</guid>
-      <description>Install the buildbot master pkg install -y buildbot buildbot-www  You need to create the config files directory
+      <description>Install the buildbot master pkg install -y py36-buildbot py36-buildbot-www  You need to create the config files directory
 buildbot create-master master cd ./master cp master.cfg.sample master.cfg buildbot start master (look at twistd.log if there are errors during startup)  Enable the services and start
 sysrc buildbot_enable=&amp;quot;YES&amp;quot; sysrc buildbot_basedir=&amp;quot;/var/www/buildbot&amp;quot; service buildbot start  Access via a browser at http://$IP:8010/
-If using the localworker for testing: pkg install -y buildbot-worker
+If using the localworker for testing: pkg install -y py36-buildbot-worker
 With postgres backend:</description>
     </item>
     
