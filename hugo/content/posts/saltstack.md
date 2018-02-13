@@ -7,7 +7,7 @@ draft: false
 Install the salt package
 
 ```
-pkg install -y py27-salt
+pkg install -y py36-salt
 ```
 
 Copy the sample files to create the master and/or minion configuration files
@@ -72,7 +72,7 @@ Salt Formulas
 Install the GitFS backend, this allows you to serve files from git repos.
 
 ```
-pkg install -y py27-pygit2
+pkg install -y py36-gitpython
 ```
 
 Edit the `/usr/local/etc/salt/master` configuration file:
