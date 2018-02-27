@@ -86,7 +86,7 @@ mkdir -p custom/conf vim custom/conf/app.</description>
       
       <guid>/homelab/posts/saltstack/</guid>
       <description>Install the salt package
-pkg install -y py27-salt  Copy the sample files to create the master and/or minion configuration files
+pkg install -y py36-salt  Copy the sample files to create the master and/or minion configuration files
 cp -v /usr/local/etc/salt/master{.sample,&amp;quot;&amp;quot;} cp -v /usr/local/etc/salt/minion{.sample,&amp;quot;&amp;quot;}  Set the master/minion services to start on boot
 sysrc salt_master_enable=&amp;quot;YES&amp;quot; sysrc salt_minion_enable=&amp;quot;YES&amp;quot;  Salt expects state files to exist in the /srv/salt or /etc/salt directories which don&amp;rsquo;t exist by default on FreeBSD so make symlinks instead:
 ln -s /usr/local/etc/salt /etc/salt ln -s /usr/local/etc/salt /srv/salt  Start the services</description>
