@@ -116,3 +116,37 @@ factory.addStep(steps.ShellCommand(command=["bazel", "build", "//:go_tests"],))
 ```
 
 I needed to rebuild the buildbot jail because it was borked, and after rebuilding it I was surprised that bazel worked without any more configuration. I just needed to install the git, go and bazel packages and run the buildbot config as described above and it ran through and rebuilt everything from scratch. This is one of the major advantages of keeping the build files (WORKSPACE and BUILD.bazel) alongside the source code. I am sure that if desired, anyone with a bazel setup would be able to build this code as well and the outputs would be identical.
+
+
+Adding dependencies
+---
+
+In order to have Bazel automatically build dependencies we need to make a some changes to the WORKSPACE file. I've extended the example program to pull in a library that generates fake data and prints a random name when invoked.
+
+
+```
+package main
+
+import "github.com/brianvoe/gofakeit"
+import "fmt"
+
+func main() {
+        gofakeit.Seed(0)
+        fmt.Println(gofakeit.Name())
+        //      fmt.Println("test")
+}
+```
+
+The following needs to be appended to the WORKSPACE file:
+
+```
+load("@io_bazel_rules_go//go:def.bzl", "go_repository")
+
+go_repository(
+    name = "com_github_brianvoe_gofakeit",
+    importpath = "github.com/brianvoe/gofakeit",
+    commit = "b0b2ecfdf447299dd6bcdef91001692fc349ce4c",
+)
+```
+
+The go_repository rule is used when a dependency is required that does not have a BUILD.bzl file in their repo.
