@@ -1,5 +1,5 @@
 ---
-title: "Hugo"
+title: "Building static sites with Hugo"
 date: 2018-01-25T22:31:45Z
 draft: false
 ---

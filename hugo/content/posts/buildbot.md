@@ -1,5 +1,5 @@
 ---
-title: "Buildbot"
+title: "Continuous Integration with Buildbot"
 date: 2018-01-25T22:19:58Z
 draft: false
 ---

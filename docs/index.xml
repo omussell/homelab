@@ -6,10 +6,22 @@
     <description>Recent content on Homelab</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Thu, 08 Feb 2018 17:50:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 27 Feb 2018 20:34:14 +0000</lastBuildDate>
     
 	<atom:link href="/homelab/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Packaging and Distributing Go Applications</title>
+      <link>/homelab/posts/go-pkg/</link>
+      <pubDate>Tue, 27 Feb 2018 20:34:14 +0000</pubDate>
+      
+      <guid>/homelab/posts/go-pkg/</guid>
+      <description>Now that we&amp;rsquo;ve built the go application and its dependencies we now need to package it up to distribute across the infrastructure.
+Packaging with fpm The below command is an example of what we would want to run:
+fpm -s dir -t freebsd -n ~/go_test --version 1.0.0 --prefix /usr/local/bin go_tests
+But this has a few issues. Rather than putting the finished package into ~/go_test, it would be better in a dedicated directory like /var/packages or similar.</description>
+    </item>
     
     <item>
       <title>Building Go programs using Bazel</title>
@@ -43,7 +55,7 @@ git archive --format=tar.gz --prefix=app-1.4.0/ -o ~/app-1.4.0.tar.gz 1.4.0  fpm
     </item>
     
     <item>
-      <title>Hugo</title>
+      <title>Building static sites with Hugo</title>
       <link>/homelab/posts/hugo/</link>
       <pubDate>Thu, 25 Jan 2018 22:31:45 +0000</pubDate>
       
@@ -55,7 +67,7 @@ Note that the baseURL is /. This is because it wasn&amp;rsquo;t rendering the cs
     </item>
     
     <item>
-      <title>Buildbot</title>
+      <title>Continuous Integration with Buildbot</title>
       <link>/homelab/posts/buildbot/</link>
       <pubDate>Thu, 25 Jan 2018 22:19:58 +0000</pubDate>
       
