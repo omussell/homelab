@@ -35,8 +35,9 @@
 
 <p>But this has a few issues. Rather than putting the finished package into <code>~/go_test</code>, it would be better in a dedicated directory like <code>/var/packages</code> or similar. The version number is hard coded which obviously isn&rsquo;t always going to be correct. You would want to instead have your CI tool set to only run the packaging command when a new tag/release is created, and then have the version number derived from the tag/release number. It also includes the <code>--prefix</code> flag to specify the path to prepend to any files in the package. This is required as when the package is installed/extracted, the files will be extracted to the full path as specified in the package. So in this instance the <code>/usr/local/bin/go_tests</code> file is extracted.</p>
 
-<p>For now, I&rsquo;m getting by with the following command which will overwrite the finished package if it already exists.
-<code>fpm -f -s dir -t freebsd -n ~/go_test --prefix /usr/local/bin go_tests</code></p>
+<p>For now, I&rsquo;m getting by with the following command which will overwrite the finished package if it already exists.</p>
+
+<p><code>fpm -f -s dir -t freebsd -n ~/go_test --prefix /usr/local/bin go_tests</code></p>
 
 <h1 id="local-freebsd-repository">Local FreeBSD Repository</h1>
 
