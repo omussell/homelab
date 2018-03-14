@@ -6,10 +6,20 @@
     <description>Recent content on Homelab</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <lastBuildDate>Tue, 27 Feb 2018 20:34:14 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 14 Mar 2018 21:47:09 +0000</lastBuildDate>
     
 	<atom:link href="/homelab/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Handling Go Dependencies</title>
+      <link>/homelab/posts/go-deps/</link>
+      <pubDate>Wed, 14 Mar 2018 21:47:09 +0000</pubDate>
+      
+      <guid>/homelab/posts/go-deps/</guid>
+      <description>During development, you will often use go get to download libraries for import into the program which is useful for development but not so useful when building the finished product. Managing these dependencies over time is a hassle as they change frequently and can sometimes disappear entirely.
+The dep tool provides a way of automatically scanning your import statements and evaluating all of the dependencies. It create some files Gopkg.</description>
+    </item>
     
     <item>
       <title>Packaging and Distributing Go Applications</title>

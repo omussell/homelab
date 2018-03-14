@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+
+        <title>Handling Go Dependencies</title>
+
+        <link rel="stylesheet" href="/homelab/css/stylesheet.css">
+    </head>
+    <body>
+        <section id="page-title">
+            <h1><a href="/">Homelab</a></h1>
+        </section>
+
+
+
+<section class="blog-post">
+    <h1>Handling Go Dependencies</h1>
+    <div class="blog-post-subheader">
+        March 14, 2018
+    </div>
+    <div class="blog-post-content">
+        
+
+<p>During development, you will often use <code>go get</code> to download libraries for import into the program which is useful for development but not so useful when building the finished product. Managing these dependencies over time is a hassle as they change frequently and can sometimes disappear entirely.</p>
+
+<p>The <code>dep</code> tool provides a way of automatically scanning your import statements and evaluating all of the dependencies. It create some files <code>Gopkg.toml</code> and <code>Gopkg.lock</code> which contain the location and latest Git SHA of your dependencies.</p>
+
+<p><code>dep</code> is installed via <code>curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh</code></p>
+
+<p>Run <code>dep init</code> to create the initial files, then as your develop run <code>dep ensure</code> to update dependencies to the latest version.</p>
+
+<p>The <code>dep</code> tool also downloads a copy of all dependencies into a <code>vendor</code> folder at the root of your project. This provides a backup in case a dependency disappears and provides the facility for reproducible builds.</p>
+
+<h2 id="bazel-gazelle">Bazel / Gazelle</h2>
+
+<p>With our dependencies being updated, we would also need to update the WORKSPACE file so that Bazel/Gazelle knows about them as well. Gazelle requires the location and git commit hash in order to pull down the correct dependencies, but this is laborious to perform manually.</p>
+
+<p>Thankfully, we can run a command to have gazelle pull in all of the dependencies from the <code>Gopkg.lock</code> file and update the WORKSPACE file automatically. Bazel will then pull in all of the dependencies correctly without any manual intervention.</p>
+
+<p><code>gazelle update-repos -from_file Gopkg.lock</code></p>
+
+<p>As part of ongoing development, you would periodically run</p>
+
+<p><code>dep ensure</code></p>
+
+<p>followed by</p>
+
+<p><code>gazelle update-repos -from_file Gopkg.lock</code></p>
+
+<p>to keep all of the dependencies up to date and generate the new WORKSPACE file.</p>
+
+    </div>
+</section>
+
+    </body>
+</html>
