@@ -1,0 +1,135 @@
+digraph structs {
+node [shape=record];
+
+	# Common parts
+	copperplate [shape=record, label="Copper plate"];
+	plasticbar [shape=record, label="Plastic bar"];
+	steelplate [shape=record, label="Steel plate"];
+	copperore [shape=record, label="Copper ore"];
+	ironplate [shape=record, label="Iron plate"];
+	ironore [shape=record, label="Iron ore"];
+	coal [shape=record, label="Coal"];
+	petroleumgas [shape=record, label="Petroleum gas"];
+
+	# Rocket parts
+	rocket [shape=record, label="Rocket part"];
+	lowdensitystructure [shape=record, label="Low density structure"];
+	rocketcontrolunit [shape=record, label="Rocket control unit"];
+	rocketfuel [shape=record, label="Rocket fuel"];
+	processingunit [shape=record, label="Processing unit"];
+	advancedcircuit [shape=record, label="Advanced cicruit"];
+	electroniccircuit [shape=record, label="Electronic circuit"];
+	irongearwheel [shape=record, label="Iron gear wheel"];
+	coppercable [shape=record, label="Copper cable"];
+	sulfuricacid [shape=record, label="Sulfuric acid"];
+	water [shape=record, label="Water"];
+	sulfur [shape=record, label="Sulfur"];
+	speedmodule [shape=record, label="Speed module"];
+	solidfuel [shape=record, label="Solid fuel"];
+	heavyoil [shape=record, label="Heavy oil"];
+	lightoil [shape=record, label="Light oil"];
+
+	satellite [shape=record, label="Satellite"];
+	accumulator [shape=record, label="Accumulator"];
+	battery [shape=record, label="Battery"];
+	radar [shape=record, label="Radar"];
+	solarpanel [shape=record, label="Solar panel"];
+
+	# Rocket part
+	lowdensitystructure -> rocket;
+	rocketcontrolunit -> rocket;
+	rocketfuel -> rocket;
+
+	# Low density structure
+	copperplate -> lowdensitystructure;
+	plasticbar -> lowdensitystructure;
+	steelplate -> lowdensitystructure;
+
+	# Copper plate
+	copperore -> copperplate;
+
+	# Iron plate
+	ironore -> ironplate;
+
+	# Steel plate
+	ironplate -> steelplate;
+
+	# Plastic bar
+	coal -> plasticbar;
+	petroleumgas -> plasticbar;
+
+	# Rocket control unit
+	processingunit -> rocketcontrolunit;
+	speedmodule -> rocketcontrolunit;
+
+	# Processing unit
+	advancedcircuit -> processingunit;
+	electroniccircuit -> processingunit;
+
+	# Advanced circuit
+	coppercable -> advancedcircuit;
+	electroniccircuit -> advancedcircuit;
+	plasticbar -> advancedcircuit;
+
+	# Electronic circuit
+	coppercable -> electroniccircuit;
+	ironplate -> electroniccircuit;
+
+	# Sulfuric acid
+	ironplate -> sulfuricacid;
+	sulfur -> sulfuricacid;
+	water -> sulfuricacid;
+
+	# Sulfur
+	water -> sulfur;
+	petroleumgas -> sulfur;
+
+	# Speed module
+	advancedcircuit -> speedmodule;
+	electroniccircuit -> speedmodule;
+	
+	# Copper cable
+	copperplate -> coppercable;
+
+	# Rocket fuel
+	solidfuel -> rocketfuel;
+
+	# Solid fuel
+	heavyoil -> solidfuel;
+	lightoil -> solidfuel;
+	petroleumgas -> solidfuel;
+
+	# Satellite
+	accumulator -> satellite;
+	lowdensitystructure -> satellite;
+	processingunit -> satellite;
+	radar -> satellite;
+	rocketfuel -> satellite;
+	solarpanel -> satellite;
+
+	# Accumulator
+	battery -> accumulator;
+	ironplate -> accumulator;
+
+	# Battery
+	ironplate -> battery;
+	copperplate -> battery;
+	sulfuricacid -> battery;
+	
+	# Iron gear wheel
+	ironplate -> irongearwheel;
+	
+	# Radar
+	electroniccircuit -> radar;
+	irongearwheel -> radar;
+	ironplate -> radar;
+
+	# Solar panel
+	copperplate -> solarpanel;
+	electroniccircuit -> solarpanel;
+	steelplate -> solarpanel;
+	
+
+	
+
+}
