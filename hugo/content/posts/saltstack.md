@@ -72,7 +72,7 @@ Salt Formulas
 Install the GitFS backend, this allows you to serve files from git repos.
 
 ```
-pkg install -y py36-gitpython
+pkg install -y git py36-gitpython
 ```
 
 Edit the `/usr/local/etc/salt/master` configuration file:
