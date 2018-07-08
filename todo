@@ -1,6 +1,3 @@
-Start first round of implementation build
-IPv6 router build
-Local package cache for freebsd packages
-pkgbase
-translate non-base package init services into daemontools services
-
+Try Openstack
+Use NAS for block storage
+Provision FreeBSD VMs
