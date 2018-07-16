@@ -162,3 +162,20 @@ ifconfig_bridge0="addm re0 addm tap0 addm tap1 addm tap2"
 ```
 
 Then when you provision vms, assign one of the tap interfaces to them.
+
+vm-bhyve
+---
+
+A better way for managing a bhyve hypervisor.
+
+Follow the instructions on the repo.
+
+When adding the switch to a network interface, it doesn't work with re0. tap1 works, but then internet doesnt work in the VMs. Needs sorting.
+
+zfs 
+
+bsd-cloud-init should be tested, it sets hostname based on openstack image name.
+
+otherwise, if we figure out how to make a template VM, you could set the hostname as part of transferring over the rc.conf file
+
+create template VM, start it, zfs send/recv?
