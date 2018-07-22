@@ -8,7 +8,7 @@
 
         <title>Bhyve VM Creation</title>
 
-        <link rel="stylesheet" href="/homelab/css/stylesheet.css">
+        <link rel="stylesheet" href="/css/stylesheet.css">
     </head>
     <body>
         <section id="page-title">
@@ -156,6 +156,22 @@ ifconfig_bridge0=&quot;addm re0 addm tap0 addm tap1 addm tap2&quot;
 </code></pre>
 
 <p>Then when you provision vms, assign one of the tap interfaces to them.</p>
+
+<h2 id="vm-bhyve">vm-bhyve</h2>
+
+<p>A better way for managing a bhyve hypervisor.</p>
+
+<p>Follow the instructions on the repo.</p>
+
+<p>When adding the switch to a network interface, it doesn&rsquo;t work with re0. tap1 works, but then internet doesnt work in the VMs. Needs sorting.</p>
+
+<p>zfs</p>
+
+<p>bsd-cloud-init should be tested, it sets hostname based on openstack image name.</p>
+
+<p>otherwise, if we figure out how to make a template VM, you could set the hostname as part of transferring over the rc.conf file</p>
+
+<p>create template VM, start it, zfs send/recv?</p>
 
     </div>
 </section>
