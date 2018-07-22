@@ -1,5 +1,5 @@
-#baseURL = "/homelab/"
-baseURL = "https://omussell.github.io/homelab/"
+baseURL = "/homelab/"
+#baseURL = "https://omussell.github.io"
 languageCode = "en-gb"
 title = "Homelab"
 theme = "elephants"

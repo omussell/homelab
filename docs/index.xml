@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Homelab</title>
-    <link>https://omussell.github.io/homelab/</link>
+    <link>/homelab/</link>
     <description>Recent content on Homelab</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <lastBuildDate>Wed, 14 Mar 2018 21:47:09 +0000</lastBuildDate>
     
-	<atom:link href="https://omussell.github.io/homelab/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/homelab/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Handling Go Dependencies</title>
-      <link>https://omussell.github.io/homelab/posts/go-deps/</link>
+      <link>/homelab/posts/go-deps/</link>
       <pubDate>Wed, 14 Mar 2018 21:47:09 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/go-deps/</guid>
+      <guid>/homelab/posts/go-deps/</guid>
       <description>During development, you will often use go get to download libraries for import into the program which is useful for development but not so useful when building the finished product. Managing these dependencies over time is a hassle as they change frequently and can sometimes disappear entirely.
 The dep tool provides a way of automatically scanning your import statements and evaluating all of the dependencies. It create some files Gopkg.</description>
     </item>
     
     <item>
       <title>Packaging and Distributing Go Applications</title>
-      <link>https://omussell.github.io/homelab/posts/go-pkg/</link>
+      <link>/homelab/posts/go-pkg/</link>
       <pubDate>Tue, 27 Feb 2018 20:34:14 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/go-pkg/</guid>
+      <guid>/homelab/posts/go-pkg/</guid>
       <description>Now that we&amp;rsquo;ve built the go application and its dependencies we now need to package it up to distribute across the infrastructure.
 Packaging with fpm The below command is an example of what we would want to run:
 fpm -s dir -t freebsd -n ~/go_test --version 1.0.0 --prefix /usr/local/bin go_tests
@@ -35,10 +35,10 @@ But this has a few issues. Rather than putting the finished package into ~/go_te
     
     <item>
       <title>Building Go programs using Bazel</title>
-      <link>https://omussell.github.io/homelab/posts/bazel/</link>
+      <link>/homelab/posts/bazel/</link>
       <pubDate>Thu, 08 Feb 2018 17:50:00 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/bazel/</guid>
+      <guid>/homelab/posts/bazel/</guid>
       <description>Bazel is a build tool created by Google which operates similarly to their internal build tool, Blaze. It is primarily concerned with generating artifacts from compiled languages like C, C++, Go etc.
 pkg install -y bazel
 Bazel requires some files so that it knows what and where to build. As an example, we are going to compile a simple go program with no dependencies (literally print a single string to stdout).</description>
@@ -46,10 +46,10 @@ Bazel requires some files so that it knows what and where to build. As an exampl
     
     <item>
       <title>Application Packaging with fpm</title>
-      <link>https://omussell.github.io/homelab/posts/pkg-build/</link>
+      <link>/homelab/posts/pkg-build/</link>
       <pubDate>Tue, 30 Jan 2018 21:52:35 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/pkg-build/</guid>
+      <guid>/homelab/posts/pkg-build/</guid>
       <description>Create a new tagged release on the git repository
 git tag 1.4.0  Create a tarball of the git repository at the particular tag revision. Extracts a folder called app-1.4.0 which contains the contents of the repository at tag 1.4.0.
 git archive --format=tar.gz --prefix=app-1.4.0/ -o ~/app-1.4.0.tar.gz 1.4.0  fpm The fpm ruby gem can be used to convert common package formats into other common package formats, like virtualenv&amp;rsquo;s into freebsd packages.</description>
@@ -57,19 +57,19 @@ git archive --format=tar.gz --prefix=app-1.4.0/ -o ~/app-1.4.0.tar.gz 1.4.0  fpm
     
     <item>
       <title>Postgresql 10.1 with replication and WAL archiving</title>
-      <link>https://omussell.github.io/homelab/posts/pgsql10/</link>
+      <link>/homelab/posts/pgsql10/</link>
       <pubDate>Thu, 25 Jan 2018 22:35:25 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/pgsql10/</guid>
+      <guid>/homelab/posts/pgsql10/</guid>
       <description>Postgresql 10.1 install pkg install -y postgresql10-server postgresql10-client sysrc postgresql_enable=YES service postgresql initdb service postgresql start  Postgresql 10.1 SCRAM Authentication su - postgres psql set password_encryption = &#39;scram-sha-256&#39;; create role app_db with password &#39;foo&#39;; select substring(rolpassword, 1, 14) from pg_authid where rolname = &#39;app_db&#39;;  Postgresql 10.1 using repmgr for database replication, WAL-G for WAL archiving, and minio for S3 compatible storage For this, I created two bhyve VMs to host postgresql and a jail on the host for minio</description>
     </item>
     
     <item>
       <title>Building static sites with Hugo</title>
-      <link>https://omussell.github.io/homelab/posts/hugo/</link>
+      <link>/homelab/posts/hugo/</link>
       <pubDate>Thu, 25 Jan 2018 22:31:45 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/hugo/</guid>
+      <guid>/homelab/posts/hugo/</guid>
       <description>Install hugo
 # note &#39;hugo&#39; is not the right package. It is completely different and # will take a long time to download before you realise its the wrong thing. pkg install -y gohugo git  Run hugo in the directory to build the assets, which will be placed into the public directory.
 Run hugo server --baseUrl=/ --port=1313 --appendPort=false
@@ -78,10 +78,10 @@ Note that the baseURL is /. This is because it wasn&amp;rsquo;t rendering the cs
     
     <item>
       <title>Continuous Integration with Buildbot</title>
-      <link>https://omussell.github.io/homelab/posts/buildbot/</link>
+      <link>/homelab/posts/buildbot/</link>
       <pubDate>Thu, 25 Jan 2018 22:19:58 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/buildbot/</guid>
+      <guid>/homelab/posts/buildbot/</guid>
       <description>Install the buildbot master pkg install -y py36-buildbot py36-buildbot-www  You need to create the config files directory
 buildbot create-master master cd ./master cp master.cfg.sample master.cfg buildbot start master (look at twistd.log if there are errors during startup)  Enable the services and start
 sysrc buildbot_enable=&amp;quot;YES&amp;quot; sysrc buildbot_basedir=&amp;quot;/var/www/buildbot&amp;quot; service buildbot start  Access via a browser at http://$IP:8010/
@@ -91,10 +91,10 @@ With postgres backend:</description>
     
     <item>
       <title>Self-hosted git with Gogs</title>
-      <link>https://omussell.github.io/homelab/posts/gogs/</link>
+      <link>/homelab/posts/gogs/</link>
       <pubDate>Thu, 25 Jan 2018 22:15:59 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/gogs/</guid>
+      <guid>/homelab/posts/gogs/</guid>
       <description>There is now a package for gogs so just
 pkg install -y gogs sysrc gogs_enable=YES service gogs start  To compile
 pkg install -y go git gcc pw useradd git -m su - git GOPATH=$HOME/go; export GOPATH echo &#39;GOPATH=$HOME/go; export GOPATH&#39; &amp;gt;&amp;gt; ~/.profile cc=gcc go get -u --tags sqlite github.com/gogits/gogs ln -s go/src/github.com/gogits/gogs gogs cd gogs CC=gcc go build --tags sqlite  Set up the config file
@@ -103,10 +103,10 @@ mkdir -p custom/conf vim custom/conf/app.</description>
     
     <item>
       <title>Saltstack Install and Configuration</title>
-      <link>https://omussell.github.io/homelab/posts/saltstack/</link>
+      <link>/homelab/posts/saltstack/</link>
       <pubDate>Thu, 25 Jan 2018 21:59:48 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/saltstack/</guid>
+      <guid>/homelab/posts/saltstack/</guid>
       <description>Install the salt package
 pkg install -y py36-salt  Copy the sample files to create the master and/or minion configuration files
 cp -v /usr/local/etc/salt/master{.sample,&amp;quot;&amp;quot;} cp -v /usr/local/etc/salt/minion{.sample,&amp;quot;&amp;quot;}  Set the master/minion services to start on boot
@@ -116,10 +116,10 @@ ln -s /usr/local/etc/salt /etc/salt ln -s /usr/local/etc/salt /srv/salt  Start t
     
     <item>
       <title>NSD and Unbound Configuration</title>
-      <link>https://omussell.github.io/homelab/posts/nsd-unbound/</link>
+      <link>/homelab/posts/nsd-unbound/</link>
       <pubDate>Thu, 25 Jan 2018 21:42:12 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/nsd-unbound/</guid>
+      <guid>/homelab/posts/nsd-unbound/</guid>
       <description>Set up the unbound/nsd-control
 local-unbound-setup nsd-control-setup  Enable NSD and Unbound to start in /etc/rc.conf
 sysrc nsd_enable=&amp;quot;YES&amp;quot; sysrc local_unbound_enable=&amp;quot;YES&amp;quot;  Set a different listening port for NSD in /usr/local/etc/nsd.conf
@@ -129,10 +129,10 @@ $ORIGIN home.lan. ; $TTL 86400 ; @ IN SOA ns1.home.lan. admin.home.lan. ( 201708
     
     <item>
       <title>Compiling NGINX with ChaCha20 support</title>
-      <link>https://omussell.github.io/homelab/posts/nginx-chacha20/</link>
+      <link>/homelab/posts/nginx-chacha20/</link>
       <pubDate>Thu, 25 Jan 2018 21:31:44 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/nginx-chacha20/</guid>
+      <guid>/homelab/posts/nginx-chacha20/</guid>
       <description>Make a working directory
 mkdir ~/nginx cd ~/nginx  Install some dependencies
 pkg install -y ca_root_nss pcre perl5  Pull the source files
@@ -144,10 +144,10 @@ cd ~/nginx/openssl-1.1.0e.tar.gz ./config make make install  The compiled OpenSS
     
     <item>
       <title>Bhyve VM Creation</title>
-      <link>https://omussell.github.io/homelab/posts/bhyve-creation/</link>
+      <link>/homelab/posts/bhyve-creation/</link>
       <pubDate>Thu, 25 Jan 2018 21:14:11 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/bhyve-creation/</guid>
+      <guid>/homelab/posts/bhyve-creation/</guid>
       <description>Bhyve Initial Setup Enable the tap interface in /etc/sysctl.conf and load it on the currently running system
 net.link.tap.up_on_open=1 sysctl -f /etc/sysctl.conf  Enable bhyve, serial console and bridge/tap interface kernel modules in /boot/loader.conf. Reboot to apply changes or use kldload.
 vmm_load=&amp;quot;YES&amp;quot; nmdm_load=&amp;quot;YES&amp;quot; if_bridge_load=&amp;quot;YES&amp;quot; if_tap_load=&amp;quot;YES&amp;quot;  Set up the network interfaces in /etc/rc.conf
@@ -157,10 +157,10 @@ zfs create -V16G -o volmode=dev zroot/testvm  Download the installation image</d
     
     <item>
       <title>FreeBSD Jail Creation</title>
-      <link>https://omussell.github.io/homelab/posts/jail-creation/</link>
+      <link>/homelab/posts/jail-creation/</link>
       <pubDate>Thu, 25 Jan 2018 21:01:11 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/jail-creation/</guid>
+      <guid>/homelab/posts/jail-creation/</guid>
       <description>Create a template dataset
 zfs create -o mountpoint=/usr/local/jails zroot/jails zfs create -p zroot/jails/template  Download the base files into a new directory
 mkdir ~/jails fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.1-RELEASE/base.txz -o ~/jails  Extract the base files into the template directory (mountpoint)
@@ -170,10 +170,10 @@ cp /etc/resolv.conf /usr/local/jails/template/etc/resolv.conf  When finished, ta
     
     <item>
       <title>Hardware</title>
-      <link>https://omussell.github.io/homelab/posts/hardware/</link>
+      <link>/homelab/posts/hardware/</link>
       <pubDate>Tue, 23 Jan 2018 22:51:29 +0000</pubDate>
       
-      <guid>https://omussell.github.io/homelab/posts/hardware/</guid>
+      <guid>/homelab/posts/hardware/</guid>
       <description>Virtualisation Host Gigabyte Brix Pro GB-BXI7-4770R
  Intel Core i7-4770R (quad core 3.2GHz) 16GB RAM 250GB mSATA SSD 250GB 2.5 inch SSD  NAS HP ProLiant G8 Microserver G1610T
  Intel Celeron G1610T (dual core 2.3 GHz) 16GB RAM 2 x 250GB SSD 2 x 3TB HDD  Management Raspberry Pi 2 Model B - Quad core 1GB RAM - 8GB MicroSD (w/ NOOBS)</description>

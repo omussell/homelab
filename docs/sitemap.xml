@@ -3,94 +3,94 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/go-deps/</loc>
+    <loc>/homelab/posts/go-deps/</loc>
     <lastmod>2018-03-14T21:47:09+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/go-pkg/</loc>
+    <loc>/homelab/posts/go-pkg/</loc>
     <lastmod>2018-02-27T20:34:14+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/bazel/</loc>
+    <loc>/homelab/posts/bazel/</loc>
     <lastmod>2018-02-08T17:50:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/pkg-build/</loc>
+    <loc>/homelab/posts/pkg-build/</loc>
     <lastmod>2018-01-30T21:52:35+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/pgsql10/</loc>
+    <loc>/homelab/posts/pgsql10/</loc>
     <lastmod>2018-01-25T22:35:25+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/hugo/</loc>
+    <loc>/homelab/posts/hugo/</loc>
     <lastmod>2018-01-25T22:31:45+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/buildbot/</loc>
+    <loc>/homelab/posts/buildbot/</loc>
     <lastmod>2018-01-25T22:19:58+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/gogs/</loc>
+    <loc>/homelab/posts/gogs/</loc>
     <lastmod>2018-01-25T22:15:59+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/saltstack/</loc>
+    <loc>/homelab/posts/saltstack/</loc>
     <lastmod>2018-01-25T21:59:48+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/nsd-unbound/</loc>
+    <loc>/homelab/posts/nsd-unbound/</loc>
     <lastmod>2018-01-25T21:42:12+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/nginx-chacha20/</loc>
+    <loc>/homelab/posts/nginx-chacha20/</loc>
     <lastmod>2018-01-25T21:31:44+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/bhyve-creation/</loc>
+    <loc>/homelab/posts/bhyve-creation/</loc>
     <lastmod>2018-01-25T21:14:11+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/jail-creation/</loc>
+    <loc>/homelab/posts/jail-creation/</loc>
     <lastmod>2018-01-25T21:01:11+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/hardware/</loc>
+    <loc>/homelab/posts/hardware/</loc>
     <lastmod>2018-01-23T22:51:29+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/categories/</loc>
+    <loc>/homelab/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/</loc>
+    <loc>/homelab/</loc>
     <lastmod>2018-03-14T21:47:09+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/posts/</loc>
+    <loc>/homelab/posts/</loc>
     <lastmod>2018-03-14T21:47:09+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://omussell.github.io/homelab/tags/</loc>
+    <loc>/homelab/tags/</loc>
     <priority>0</priority>
   </url>
   
