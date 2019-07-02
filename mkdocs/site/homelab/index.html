@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Homelab - GRIM</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Homelab";
+    var mkdocs_page_input_path = "homelab.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> GRIM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../design/">Design</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../implementation/">Implementation</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Homelab</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#massively-scalable-web-applications">Massively scalable Web Applications</a></li>
+    
+
+    <li class="toctree-l2"><a href="#architecture">Architecture</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#tls-termination">TLS Termination</a></li>
+        
+            <li><a class="toctree-l3" href="#caching">Caching</a></li>
+        
+            <li><a class="toctree-l3" href="#dynamic-content">Dynamic Content</a></li>
+        
+            <li><a class="toctree-l3" href="#proxying-and-authentication">Proxying and authentication</a></li>
+        
+            <li><a class="toctree-l3" href="#application-server">Application server</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#example-architecture">Example Architecture</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#tls-termination-hitch">TLS Termination - Hitch</a></li>
+        
+            <li><a class="toctree-l3" href="#caching-varnish">Caching - Varnish</a></li>
+        
+            <li><a class="toctree-l3" href="#dynamic-content-varnish-edge-side-includes-vcl-pipe">Dynamic Content - Varnish Edge Side Includes / VCL Pipe</a></li>
+        
+            <li><a class="toctree-l3" href="#proxying-and-authentication-nginx">Proxying and authentication - NGINX</a></li>
+        
+            <li><a class="toctree-l3" href="#application-server-nginx-unit">Application server - NGINX Unit</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#alternative-example-architecture">Alternative Example architecture</a></li>
+    
+
+    <li class="toctree-l2"><a href="#nginx-tcpudp-proxy">NGINX TCP/UDP proxy</a></li>
+    
+
+    <li class="toctree-l2"><a href="#nginx-unit">NGINX Unit</a></li>
+    
+
+    <li class="toctree-l2"><a href="#odoo-erpcrm">Odoo ERP/CRM</a></li>
+    
+
+    <li class="toctree-l2"><a href="#zfs-be-pkgbase">ZFS BE + PkgBase</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#zfs-boot-environments">ZFS Boot Environments</a></li>
+        
+            <li><a class="toctree-l3" href="#pkgbase">PkgBase</a></li>
+        
+            <li><a class="toctree-l3" href="#zfs-be-pkgbase-working-together">ZFS BE + PkgBase working together</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#handling-go-dependencies">Handling Go Dependencies</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#bazel-gazelle">Bazel / Gazelle</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#packaging-go-applications">Packaging Go Applications</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#packaging-with-fpm">Packaging with fpm</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#building-go-programs-using-bazel">Building Go programs using Bazel</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#gazelle">Gazelle</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#ci-with-buildbot">CI with Buildbot</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#adding-dependencies">Adding dependencies</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#postgresql-101-with-replication">PostgreSQL 10.1 with replication</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#postgresql-101-scram-authentication">PostgreSQL 10.1 SCRAM Authentication</a></li>
+        
+            <li><a class="toctree-l3" href="#postgresql-101-using-repmgr-for-database-replication-wal-g-for-wal-archiving-and-minio-for-s3-compatible-storage">PostgreSQL 10.1 using repmgr for database replication, WAL-G for WAL archiving, and minio for S3 compatible storage</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#static-sites-with-hugo">Static sites with Hugo</a></li>
+    
+
+    <li class="toctree-l2"><a href="#self-hosted-git">Self-hosted Git</a></li>
+    
+
+    <li class="toctree-l2"><a href="#saltstack-install-and-config">Saltstack install and config</a></li>
+    
+
+    <li class="toctree-l2"><a href="#_1">*</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#salt-formulas">Salt Formulas</a></li>
+        
+            <li><a class="toctree-l3" href="#salt-equivalent-to-r10k-and-using-git-as-a-pillar-source">Salt equivalent to R10K and using git as a pillar source</a></li>
+        
+            <li><a class="toctree-l3" href="#installing-raet">Installing RAET</a></li>
+        
+            <li><a class="toctree-l3" href="#salt-equivalent-of-hiera-eyaml">Salt equivalent of hiera-eyaml</a></li>
+        
+            <li><a class="toctree-l3" href="#nsd-and-unbound-config">NSD and Unbound config</a></li>
+        
+            <li><a class="toctree-l3" href="#compiling-nginx-with-chacha20-support">Compiling NGINX with ChaCha20 support</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#_2">*</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#bhyve-vm-creation">Bhyve VM creation</a></li>
+        
+            <li><a class="toctree-l3" href="#jail-creation">Jail Creation</a></li>
+        
+            <li><a class="toctree-l3" href="#hardware">Hardware</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">GRIM</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Homelab</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h2 id="massively-scalable-web-applications">Massively scalable Web Applications</h2>
+<p>HTTPS Request -&gt; Hitch &lt;-&gt; Varnish &lt;-&gt; Varnish ESI &lt;-&gt; NGINX &lt;-&gt; NGINX Unit</p>
+<p>Scaling cube:
+X - Horizontal - More servers
+Y - Vertical - Bigger servers
+Z - Depth - Sharding</p>
+<p>X - Scale by adding more servers of same size. Requests can be evenly distributed amongst them.
+Y - Give more CPU+RAM to servers
+Z - Distribute requests to specific groups of servers. Maybe geo location so servers are specific to a region. Maybe for caching its splitting the cache up into partitions.</p>
+<h2 id="architecture">Architecture</h2>
+<h3 id="tls-termination">TLS Termination</h3>
+<p>HTTPS to the edge. This is the main interface for users to the web application. Usually paired with load balancers to manage traffic ingress.</p>
+<h3 id="caching">Caching</h3>
+<p>Cache some content to improve resource load times</p>
+<h3 id="dynamic-content">Dynamic Content</h3>
+<p>Resources that can't be cached, and should be passed to the application server to be generated</p>
+<h3 id="proxying-and-authentication">Proxying and authentication</h3>
+<p>Routing requests to the correct application server. Using API keys for authentication.</p>
+<h3 id="application-server">Application server</h3>
+<p>The application running as a web server to receive uncacheable requests</p>
+<h2 id="example-architecture">Example Architecture</h2>
+<h3 id="tls-termination-hitch">TLS Termination - Hitch</h3>
+<p><a href="https://hitch-tls.org">Hitch</a> is an implementation of a TLS proxy by the makers of Varnish. It is simple and performs one job.</p>
+<p>X - Multiple hitch servers behind load balancer
+Y - Bigger servers
+Z - Load balancers for specific geo regions. Load balancers for specific domains so hitch servers only get a subset of requests.</p>
+<h3 id="caching-varnish">Caching - Varnish</h3>
+<p>X - Multiple varnish caches. Maybe shared cache.
+Y - Bigger servers. More RAM means more content can be cached.
+Z - Sharded cache objects</p>
+<h3 id="dynamic-content-varnish-edge-side-includes-vcl-pipe">Dynamic Content - Varnish Edge Side Includes / VCL Pipe</h3>
+<p>X - 
+Y - 
+Z - </p>
+<h3 id="proxying-and-authentication-nginx">Proxying and authentication - NGINX</h3>
+<p>X - 
+Y - 
+Z - </p>
+<h3 id="application-server-nginx-unit">Application server - NGINX Unit</h3>
+<p>X - 
+Y - 
+Z - </p>
+<h2 id="alternative-example-architecture">Alternative Example architecture</h2>
+<p>One issue with the architecture described above is that communication between layers is done via HTTP rather than HTTPS. Hitch and Varnish do not support HTTPS backends.</p>
+<p>An alternative would be to use NGINX for all layers, since it can use HTTPS upstreams.</p>
+<h2 id="nginx-tcpudp-proxy">NGINX TCP/UDP proxy</h2>
+<p>NGINX needs to be compiled with the --with-stream option. It can't be dynamic, which is the default. In the config file you need to add:</p>
+<pre><code>load_module /usr/local/libexec/nginx/ngx_stream_module.so;
+</code></pre>
+
+<p>Then in the config file:</p>
+<pre><code>stream {
+
+  server {
+
+    listen 80;
+    proxy_pass 192.168.1.15:80;
+
+  }
+
+  server {
+
+    # Override the default stream type of TCP with UDP
+    listen 53;
+    proxy_pass 192.168.1.15:53 udp;
+
+  }
+
+}
+</code></pre>
+
+<h2 id="nginx-unit">NGINX Unit</h2>
+<p>NGINX Unit running a django app. </p>
+<pre><code>pkg install -y python36 py36-sqlite3 unit py36-unit
+sysrc unitd_enable=&quot;YES&quot;
+service unitd start
+</code></pre>
+
+<p>Unit is controlled by a sockfile, which by default is <code>/var/run/unit/control.unit.sock</code></p>
+<p>Get the current running config:</p>
+<pre><code>curl --unix-socket /var/run/unit/control.unit.sock http://localhost/config
+</code></pre>
+
+<p>Put a new config in place from a file:</p>
+<pre><code>curl -X PUT -d @/home/seagull/mysite/config.json --unix-socket /var/run/unit/control.unit.sock http://127.0.0.1/config
+</code></pre>
+
+<p>The config file:</p>
+<pre><code>{
+        &quot;listeners&quot;: {
+                &quot;127.0.0.1:8300&quot;: {
+                        &quot;application&quot;: &quot;mysite&quot;
+                }
+        },
+
+        &quot;applications&quot;: {
+                &quot;mysite&quot;: {
+                        &quot;type&quot;: &quot;python3.6&quot;,
+                        &quot;processes&quot;: 5,
+                        &quot;path&quot;: &quot;/home/seagull/mysite/&quot;,
+                        &quot;home&quot;: &quot;/home/seagull/venv/&quot;,
+                        &quot;module&quot;: &quot;mysite.wsgi&quot;,
+                        &quot;user&quot;: &quot;seagull&quot;,
+                        &quot;group&quot;: &quot;seagull&quot;
+                }
+        },
+
+        &quot;access_log&quot;: &quot;/var/log/unit/access.log&quot;
+}
+
+</code></pre>
+
+<h2 id="odoo-erpcrm">Odoo ERP/CRM</h2>
+<p><a href="https://www.odoo.com">Odoo</a> is an open source ERP/CRM solution. It uses Python and PostgreSQL for the backend and simply Less CSS for the frontend.</p>
+<p>Download the source code</p>
+<p><code>git clone https://github.com/odoo/odoo.git --branch 11.0 --depth 1</code></p>
+<p>Install the dependencies</p>
+<pre><code>pkg install -y git python35 postgresql10-server postgresql10-client
+
+#Pillow deps: 
+pkg install -y jpeg-turbo tiff webp lcms2 freetype2 libxslt
+
+#LDAP install doesnt work out of the box:
+pkg install -y openldap-client
+cp -v /usr/local/include/lber.h $venv/include
+</code></pre>
+
+<p>Install requirements</p>
+<p><code>pip install -r requirements.txt</code></p>
+<p>Create the default database and role</p>
+<pre><code>create role odoo with password 'odoo';
+alter role odoo with login;
+alter role odoo with createdb;
+create database odoo with owner odoo;
+</code></pre>
+
+<p>Frontend setup</p>
+<pre><code>pkg install -y npm node-npm8
+
+#For some reason npm kept crashing but installing a previous version of npm works?
+
+npm install -g npm@5.6.0
+
+npm install less
+</code></pre>
+
+<p>Run the service:</p>
+<p><code>./odoo-bin --config ./local.cfg</code></p>
+<p>A rc.d script does not exist, so that would need to be created manually, which shouldn't be too difficult.</p>
+<p>Default admin login didnt work so not sure what admin_password in the config file is doing, it doesnt work...</p>
+<p>Click on the manage databases button and create a database
+This creates a new database in postgresql, hence the createdb perms required on the role</p>
+<p>You also need to change the dbfilter setting to allow access to that database</p>
+<p>Attachments appear to be stored in the database by default (wow...). </p>
+<p>Set data_dir = $filepath to store documents / attachments on the filesystem rather than in the database. It stores binary files with long random strings for the names. The file information is stored in the ir_attachment table. If you inspect the web page via Chrome devtools, look at the network tab and click on the file download, you can see in the form data the id and filename which can be queried in the database for the correct info.</p>
+<p>Otherwise just <code>select * from ir_attachment where name like '%Williams%';</code></p>
+<pre><code>test=# select * from ir_attachment where id = 441;
+ id  |      name       |   datas_fname   | description |  res_name  |  res_model   | res_field | res_id |        create_date         | create_uid | company_id |  type  | url | public | access_token | db_datas |                 store_fname                 | file_size |                 checksum                 |      mimetype      | index_content | write_uid |         write_date
+-----+-----------------+-----------------+-------------+------------+--------------+-----------+--------+----------------------------+------------+------------+--------+-----+--------+--------------+----------+---------------------------------------------+-----------+------------------------------------------+--------------------+---------------+-----------+----------------------------
+ 441 | Williams_CV.doc | Williams_CV.doc |             | Programmer | hr.applicant |           |      8 | 2018-08-27 14:44:24.955914 |          1 |          1 | binary |     | f      |              |          | f8/f82ead4ee74f14d9bdecdb38272c17cfd732fd7a |     10240 | f82ead4ee74f14d9bdecdb38272c17cfd732fd7a | application/msword | application   |         1 | 2018-08-27 14:44:24.955914
+(1 row)
+
+</code></pre>
+
+<h2 id="zfs-be-pkgbase">ZFS BE + PkgBase</h2>
+<h3 id="zfs-boot-environments">ZFS Boot Environments</h3>
+<p>With a standard zfs on root set up, you have one zpool with all the mount points on a ZFS dataset within the pool. With ZFS boot environments, you have a zpool with one or more ZFS datasets, where each dataset contains the whole kernel+base. The bootfs value of the zpool can be changed between the different ZFS datasets to change which is booted into. </p>
+<p>An incredibly simple ZFS BE can be created by creating a new ZFS dataset, extracting the kernel/base tarballs to it and then setting the bootfs property to that dataset. </p>
+<p>ZFS BE's can be started as a jail, or even as a bhyve VM if the kernel also needs to be tested. Once the BE has been tested and confirmed to be working, you can use zfs send/recv to distribute the dataset to other machines.</p>
+<h3 id="pkgbase">PkgBase</h3>
+<p>Packaging the FreeBSD base system (including kernel). At the moment the entirety of the kernel or base are compiled and distributed as single tarballs. Coming in the 12.0 release is the ability to have a packaged base system using the pkg tool. This means that both base and third party software are managed by pkg instead of having freebsd-update et al plus pkg. </p>
+<p>With PkgBase we can specify what base packages to include in our installation rather than having to compile it manually or use something like NanoBSD. This leads to smaller and specialised images with reduced attack surface.</p>
+<h3 id="zfs-be-pkgbase-working-together">ZFS BE + PkgBase working together</h3>
+<p>So if a ZFS BE is just a dataset with kernel/base files and PkgBase lets us control the base system with packages, we can instead create a ZFS dataset and install the packages as needed into the dataset instead. In this way we can have a specialised ZFS BE that is easy to control with pkg.</p>
+<h2 id="handling-go-dependencies">Handling Go Dependencies</h2>
+<p>During development, you will often use <code>go get</code> to download libraries for import into the program which is useful for development but not so useful when building the finished product. Managing these dependencies over time is a hassle as they change frequently and can sometimes disappear entirely.</p>
+<p>The <code>dep</code> tool provides a way of automatically scanning your import statements and evaluating all of the dependencies. It create some files <code>Gopkg.toml</code> and <code>Gopkg.lock</code> which contain the location and latest Git SHA of your dependencies.</p>
+<p><code>dep</code> is installed via <code>curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh</code></p>
+<p>Run <code>dep init</code> to create the initial files, then as your develop run <code>dep ensure</code> to update dependencies to the latest version.</p>
+<p>The <code>dep</code> tool also downloads a copy of all dependencies into a <code>vendor</code> folder at the root of your project. This provides a backup in case a dependency disappears and provides the facility for reproducible builds.</p>
+<h3 id="bazel-gazelle">Bazel / Gazelle</h3>
+<p>With our dependencies being updated, we would also need to update the WORKSPACE file so that Bazel/Gazelle knows about them as well. Gazelle requires the location and git commit hash in order to pull down the correct dependencies, but this is laborious to update manually.</p>
+<p>Thankfully, we can run a command to have gazelle pull in all of the dependencies from the <code>Gopkg.lock</code> file and update the WORKSPACE file automatically. Bazel will then pull in all of the dependencies correctly without any manual intervention.</p>
+<p><code>gazelle update-repos -from_file Gopkg.lock</code></p>
+<p>As part of ongoing development, you would periodically run</p>
+<p><code>dep ensure</code> </p>
+<p>followed by</p>
+<p><code>gazelle update-repos -from_file Gopkg.lock</code></p>
+<p>to keep all of the dependencies up to date and generate the new WORKSPACE file.</p>
+<h2 id="packaging-go-applications">Packaging Go Applications</h2>
+<p>Now that we've built the go application and its dependencies we now need to package it up to distribute across the infrastructure.</p>
+<h3 id="packaging-with-fpm">Packaging with fpm</h3>
+<p>The below command is an example of what we would want to run:</p>
+<p><code>fpm -s dir -t freebsd -n ~/go_test --version 1.0.0 --prefix /usr/local/bin go_tests</code></p>
+<p>But this has a few issues. Rather than putting the finished package into <code>~/go_test</code>, it would be better in a dedicated directory like <code>/var/packages</code> or similar. The version number is hard coded which obviously isn't always going to be correct. You would want to instead have your CI tool set to only run the packaging command when a new tag/release is created, and then have the version number derived from the tag/release number. It also includes the <code>--prefix</code> flag to specify the path to prepend to any files in the package. This is required as when the package is installed/extracted, the files will be extracted to the full path as specified in the package. So in this instance the <code>/usr/local/bin/go_tests</code> file is extracted.</p>
+<p>For now, I'm getting by with the following command which will overwrite the finished package if it already exists.</p>
+<p><code>fpm -f -s dir -t freebsd -n ~/go_test --prefix /usr/local/bin go_tests</code></p>
+<h2 id="building-go-programs-using-bazel">Building Go programs using Bazel</h2>
+<p>Bazel is a build tool created by Google which operates similarly to their internal build tool, Blaze. It is primarily concerned with generating artifacts from compiled languages like C, C++, Go etc. </p>
+<p><code>pkg install -y bazel</code></p>
+<p>Bazel requires some files so that it knows what and where to build. As an example, we are going to compile a simple go program with no dependencies (literally print a single string to stdout).</p>
+<pre><code>// ~/go/src/github.com/omussell/go_tests/main.go
+
+package main
+
+import &quot;fmt&quot;
+
+func main() {
+    fmt.Println(&quot;test&quot;)
+}
+</code></pre>
+
+<p>A file called WORKSPACE should be created at the root of the directory. This is used by bazel to determine source code locations relative to the WORKSPACE file and differentiate other packages in the same directory. Then a BUILD.bazel file should also be created at the root of the directory. </p>
+<h3 id="gazelle">Gazelle</h3>
+<p>Instead of creating BUILD files by hand, we can use the Gazelle tool to iterate over a go source tree and dynamically generate BUILD files. We can also let bazel itself run gazelle.</p>
+<p>Note that gazelle doesn't work without bash, and the gazelle.bash file has a hardcoded path to <code>/bin/bash</code> which of course is not available on FreeBSD by default.</p>
+<pre><code>pkg install -y bash
+ln -s /usr/local/bin/bash /bin/bash
+</code></pre>
+
+<p>In the WORKSPACE file:</p>
+<pre><code>http_archive(
+    name = &quot;io_bazel_rules_go&quot;,
+    url = &quot;https://github.com/bazelbuild/rules_go/releases/download/0.9.0/rules_go-0.9.0.tar.gz&quot;,
+    sha256 = &quot;4d8d6244320dd751590f9100cf39fd7a4b75cd901e1f3ffdfd6f048328883695&quot;,
+)
+http_archive(
+    name = &quot;bazel_gazelle&quot;,
+    url = &quot;https://github.com/bazelbuild/bazel-gazelle/releases/download/0.9/bazel-gazelle-0.9.tar.gz&quot;,
+    sha256 = &quot;0103991d994db55b3b5d7b06336f8ae355739635e0c2379dea16b8213ea5a223&quot;,
+)
+load(&quot;@io_bazel_rules_go//go:def.bzl&quot;, &quot;go_rules_dependencies&quot;, &quot;go_register_toolchains&quot;)
+go_rules_dependencies()
+go_register_toolchains(go_version=&quot;host&quot;)
+load(&quot;@bazel_gazelle//:deps.bzl&quot;, &quot;gazelle_dependencies&quot;)
+gazelle_dependencies()
+</code></pre>
+
+<p>In the BUILD.bazel file:</p>
+<pre><code>load(&quot;@bazel_gazelle//:def.bzl&quot;, &quot;gazelle&quot;)
+
+gazelle(
+    name = &quot;gazelle&quot;,
+    prefix = &quot;github.com/omussell/go_tests&quot;,
+)
+</code></pre>
+
+<p>Then to run:</p>
+<pre><code>bazel run //:gazelle
+bazel build //:go_tests
+</code></pre>
+
+<p>A built binary should be output to the ~/.cache directory. Once a binary has been built once, Bazel will only build again if the source code changes. Otherwise, any subsequent runs just complete successfully extremely quickly.</p>
+<p>When attempting to use bazel in any capacity like <code>bazel run ...</code> or <code>bazel build ...</code> it would give the following error:</p>
+<pre><code>ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
+:packages.txt', but this target could not be found because of: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
+:files', but this target could not be found because of: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
+:tools', but this target could not be found because of: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+ERROR: Analysis of target '//:gazelle' failed; build aborted: no such package '@go_sdk//': 
+Unsupported operating system: freebsd
+</code></pre>
+
+<p>I think this is caused by bazel attempting to download and build go which isn't necessary as we've already installed via the package anyway. In the WORKSPACE file, change the <code>go_register_toolchains()</code> line to <code>go_register_toolchains(go_version="host")</code> as documented at https://github.com/bazelbuild/rules_go/blob/master/go/toolchains.rst#using-the-installed-go-sdk. This will force bazel to use the already installed go tools.</p>
+<h2 id="ci-with-buildbot">CI with Buildbot</h2>
+<p>Example buildbot config:</p>
+<pre><code>factory.addStep(steps.Git(repourl='git://github.com/omussell/go_tests.git', mode='incremental'))
+factory.addStep(steps.ShellCommand(command=[&quot;go&quot;, &quot;fix&quot;],))
+factory.addStep(steps.ShellCommand(command=[&quot;go&quot;, &quot;vet&quot;],))
+factory.addStep(steps.ShellCommand(command=[&quot;go&quot;, &quot;fmt&quot;],))
+factory.addStep(steps.ShellCommand(command=[&quot;bazel&quot;, &quot;run&quot;, &quot;//:gazelle&quot;],))
+factory.addStep(steps.ShellCommand(command=[&quot;bazel&quot;, &quot;build&quot;, &quot;//:go_tests&quot;],))
+</code></pre>
+
+<p>I needed to rebuild the buildbot jail because it was borked, and after rebuilding it I was surprised that bazel worked without any more configuration. I just needed to install the git, go and bazel packages and run the buildbot config as described above and it ran through and rebuilt everything from scratch. This is one of the major advantages of keeping the build files (WORKSPACE and BUILD.bazel) alongside the source code. I am sure that if desired, anyone with a bazel setup would be able to build this code as well and the outputs would be identical.</p>
+<h3 id="adding-dependencies">Adding dependencies</h3>
+<p>In order to have Bazel automatically build dependencies we need to make a some changes to the WORKSPACE file. I've extended the example program to pull in a library that generates fake data and prints a random name when invoked.</p>
+<pre><code>package main
+
+import &quot;github.com/brianvoe/gofakeit&quot;
+import &quot;fmt&quot;
+
+func main() {
+        gofakeit.Seed(0)
+        fmt.Println(gofakeit.Name())
+        //      fmt.Println(&quot;test&quot;)
+}
+</code></pre>
+
+<p>The following needs to be appended to the WORKSPACE file:</p>
+<pre><code>load(&quot;@io_bazel_rules_go//go:def.bzl&quot;, &quot;go_repository&quot;)
+
+go_repository(
+    name = &quot;com_github_brianvoe_gofakeit&quot;,
+    importpath = &quot;github.com/brianvoe/gofakeit&quot;,
+    commit = &quot;b0b2ecfdf447299dd6bcdef91001692fc349ce4c&quot;,
+)
+</code></pre>
+
+<p>The go_repository rule is used when a dependency is required that does not have a BUILD.bzl file in their repo.</p>
+<h2 id="postgresql-101-with-replication">PostgreSQL 10.1 with replication</h2>
+<pre><code>pkg install -y postgresql10-server postgresql10-client
+sysrc postgresql_enable=YES
+service postgresql initdb
+service postgresql start
+</code></pre>
+
+<h3 id="postgresql-101-scram-authentication">PostgreSQL 10.1 SCRAM Authentication</h3>
+<pre><code>su - postgres
+psql
+set password_encryption = 'scram-sha-256';
+create role app_db with password 'foo';
+select substring(rolpassword, 1, 14) from pg_authid where rolname = 'app_db';
+</code></pre>
+
+<h3 id="postgresql-101-using-repmgr-for-database-replication-wal-g-for-wal-archiving-and-minio-for-s3-compatible-storage">PostgreSQL 10.1 using repmgr for database replication, WAL-G for WAL archiving, and minio for S3 compatible storage</h3>
+<p>For this, I created two bhyve VMs to host postgresql and a jail on the host for minio</p>
+<p>Make sure postgresql is running</p>
+<p>Carry out the following steps on both primary and replicas</p>
+<p>The current packaged version of repmgr is 3.3.1 which isn't the latest. The latest is 4.0.1, so we need to compile it ourself, and put files into the correct locations</p>
+<pre><code>fetch https://repmgr.org/download/repmgr-4.0.1.tar.gz
+tar -zvxf repmgr-4.0.1.tar.gz
+./configure
+pkg install -y gmake
+gmake
+</code></pre>
+
+<p>Copy the repmgr files to their correct locations</p>
+<pre><code>cp -v repmgr /var/db/postgres
+cp -v repmgr--4.0.sql /usr/local/share/postgresql/extension/
+cp -v repmgr.control /usr/local/share/postgresql/extension
+</code></pre>
+
+<p>vim /var/db/postgrs/data10/postgresql.conf </p>
+<p>Add lines: </p>
+<pre><code>include_dir = 'postgresql.conf.d'
+listen_addresses = '\*'
+</code></pre>
+
+<p>vim /var/db/postgres/data10/postgresql.conf.d/postgresql.replication.conf</p>
+<p>Add lines:</p>
+<pre><code>max_wal_senders = 10
+wal_level = 'replica'
+wal_keep_segments = 5000
+hot_standby = on
+archive_mode = on
+archive_command = 'wal-g stuff here'
+</code></pre>
+
+<p>vim /var/db/postgres/data10/pg_hba.conf</p>
+<p>Add lines:
+Please note, for testing purposes, these rules are wide open and allow everything. Dont do this in production, use a specific role with a password and restrict to a specific address</p>
+<pre><code>local   all     all         trust
+host    all     all 0.0.0.0/0   trust
+host    replication all 0.0.0.0/0   trust
+</code></pre>
+
+<p>vim /usr/local/etc/repmgr.conf</p>
+<p>Add lines:</p>
+<pre><code>node_id=1 # arbitrary number, each node needs to be unique
+node_name=postgres-db1 # this nodes hostname
+conninfo='host=192.168.1.10 user=repmgr dbname=repmgr' # the host value should be a hostname if DNS is working
+</code></pre>
+
+<p>On the primary</p>
+<pre><code>su - postgres
+createuser -s repmgr
+createdb repmgr -O repmgr
+
+repmgr -f /usr/local/etc/repmgr.conf primary register
+repmgr -f /usr/local/etc/repmgr.conf cluster show
+</code></pre>
+
+<p>On a standby</p>
+<pre><code>su - postgres
+psql 'host=node1 user=repmgr dbname=repmgr'
+</code></pre>
+
+<p>To clone the primary, the data directory on the standby node must exist but be empty</p>
+<pre><code>rm -rf /var/db/postgres/data10/
+mkdir -p /var/db/postgres/data10
+chown postgres:postgres /var/db/postgres/data10
+</code></pre>
+
+<p>Dry run first to check for problems</p>
+<p><code>repmgr -h node1 -U repmgr -d repmgr -f /usr/local/etc/repmgr.conf standby clone --dry-run</code></p>
+<p>If its ok, run it</p>
+<p><code>repmgr -h node1 -U repmgr -d repmgr -f /usr/local/etc/repmgr.conf standby clone</code></p>
+<p>On the primary</p>
+<pre><code>su - postgres
+psql -d repmgr
+select * from pg_stat_replication;
+</code></pre>
+
+<p>On the standby</p>
+<pre><code>repmgr -f /usr/local/etc/repmgr.conf standby register
+repmgr -f /usr/local/etc/repmgr.conf cluster show
+</code></pre>
+
+<p>Install minio</p>
+<pre><code>pkg install -y minio
+sysrc minio_enable=YES
+sysrc minio_disks=/home/user/test
+mkdir -p /home/user/test
+chown minio:minio /home/user/test
+service minio start
+# The access keys are in /usr/local/etc/minio/config.json
+# You can change them in this file and restart the service to take effect
+</code></pre>
+
+<p>On the primary
+WAL-G</p>
+<pre><code>pkg install -y go
+mkdir -p /root/go
+setenv GOPATH /root/go
+cd go
+go get github.com/wal-g/wal-g
+cd src/github.com/wal-g/wal-g
+make all
+make install
+cp /root/go/bin/wal-g /usr/local/bin
+</code></pre>
+
+<p>WAL-G requires certain environment variables to be set. This can be done using envdir, part of the daemontools package</p>
+<p>pkg install -y daemontools</p>
+<p>Setup is now complete. </p>
+<p>For operations, a base backup needs to be taken on a regular basis probably via a cron job, running the following command as postgres user</p>
+<p><code>wal-g backup-push /var/db/postgres/data10</code></p>
+<p>Then the archive_command in the postgresql.replication.conf should be set to the wal-push command</p>
+<p><code>wal-g wal-push /var/db/postgres/data10</code></p>
+<p>To restore, backup-fetch and wal-fetch can be used to pull the latest base backup and the necessary wal logs to recover to the latest transaction</p>
+<h2 id="static-sites-with-hugo">Static sites with Hugo</h2>
+<pre><code># note 'hugo' is not the right package. It is completely different and 
+# will take a long time to download before you realise its the wrong thing.
+pkg install -y gohugo git
+</code></pre>
+
+<p>Run <code>hugo</code> in the directory to build the assets, which will be placed into the public directory. </p>
+<p>Run <code>hugo server --baseUrl=/ --port=1313 --appendPort=false</code></p>
+<p>Note that the baseURL is /. This is because it wasn't rendering the css at all when I used a server name or IP address. In production, this should be the domain name of the website followed by a forward slash.</p>
+<p>You can then visit your server at port 1313. </p>
+<p>For the baseUrl when using github pages, you should use the repo name surrounded by slashes, like /grim/.</p>
+<p>Themes can be viewed at themes.gohugo.io. They usually have instructions on how to use it.</p>
+<h2 id="self-hosted-git">Self-hosted Git</h2>
+<p>There is now a package for gogs so just</p>
+<pre><code>pkg install -y gogs
+sysrc gogs_enable=YES
+service gogs start
+</code></pre>
+
+<p>To compile</p>
+<pre><code>pkg install -y go git gcc
+pw useradd git -m
+su - git
+GOPATH=$HOME/go; export GOPATH
+echo 'GOPATH=$HOME/go; export GOPATH' &gt;&gt; ~/.profile
+cc=gcc go get -u --tags sqlite github.com/gogits/gogs
+ln -s go/src/github.com/gogits/gogs gogs
+cd gogs
+CC=gcc go build --tags sqlite
+
+</code></pre>
+
+<p>Set up the config file</p>
+<pre><code>mkdir -p custom/conf
+
+vim custom/conf/app.ini
+
+RUN_USER = git
+RUN_MODE = prod
+
+[database]
+DB_TYPE = sqlite3
+PATH = data/gogs.db
+
+[repository]
+ROOT = /home/git/gogs-repositories
+SCRIPT_TYPE = sh
+
+[server]
+DOMAIN = localhost
+ROOT_URL = http://localhost/
+HTTP_PORT = 3000
+LANDING_PAGE = explore
+
+[session]
+PROVIDER = file
+
+[log]
+MODE = file
+
+[security]
+INSTALL_LOCK = true
+SECRET_KEY = supersecret
+
+</code></pre>
+
+<p>To run, as the git user run <code>/home/git/go/src/github.com/gogs/gogs web</code></p>
+<pre><code>cp -v /home/git/go/src/github.com/gogits/gogs/scripts/init/freebsd/gogs /etc/rc.d
+I needed to amend the gogs_directory path to be /home/git/go/src/github.com/gogits/gogs
+chmod 555 /etc/rc.d/gogs
+sysrc gogs_enable=&quot;YES&quot;
+service gogs start
+
+</code></pre>
+
+<h2 id="saltstack-install-and-config">Saltstack install and config</h2>
+<p>Install the salt package</p>
+<pre><code>pkg install -y py36-salt
+</code></pre>
+
+<p>Copy the sample files to create the master and/or minion configuration files</p>
+<pre><code>cp -v /usr/local/etc/salt/master{.sample,&quot;&quot;}
+cp -v /usr/local/etc/salt/minion{.sample,&quot;&quot;}
+</code></pre>
+
+<p>Set the master/minion services to start on boot</p>
+<pre><code>sysrc salt_master_enable=&quot;YES&quot;
+sysrc salt_minion_enable=&quot;YES&quot;
+</code></pre>
+
+<p>Salt expects state files to exist in the /srv/salt or /etc/salt directories which don't exist by default on FreeBSD so make symlinks instead:</p>
+<pre><code>ln -s /usr/local/etc/salt /etc/salt
+ln -s /usr/local/etc/salt /srv/salt
+</code></pre>
+
+<p>Start the services</p>
+<pre><code>service salt_master onestart
+service salt_minion onestart
+</code></pre>
+
+<p>Accept minion keys sent to the master</p>
+<pre><code>salt-key -A
+# Press y to accept
+</code></pre>
+
+<p>Create a test state file</p>
+<pre><code>vi /usr/local/etc/salt/states/examples.sls
+</code></pre>
+
+<pre><code>---
+
+install_packages:
+  pkg.installed:
+    - pkgs:
+      - vim-lite
+</code></pre>
+
+<p>Then apply the examples state</p>
+<pre><code>salt '*' state.apply examples
+</code></pre>
+
+<h1 id="_1">*</h1>
+<h3 id="salt-formulas">Salt Formulas</h3>
+<p>Install the GitFS backend, this allows you to serve files from git repos.</p>
+<pre><code>pkg install -y git py36-gitpython
+</code></pre>
+
+<p>Edit the <code>/usr/local/etc/salt/master</code> configuration file:</p>
+<pre><code>fileserver_backend:
+  - git
+  - roots
+gitfs_remotes:
+  - https://github.com/saltstack-formulas/lynis-formula
+</code></pre>
+
+<p>Restart the master. If master and minion are the same node, restart the minion service as well.</p>
+<pre><code>service salt_master onerestart
+</code></pre>
+
+<p>The formulas can then be used in the state file</p>
+<pre><code>include:
+  - lynis
+</code></pre>
+
+<h3 id="salt-equivalent-to-r10k-and-using-git-as-a-pillar-source">Salt equivalent to R10K and using git as a pillar source</h3>
+<p>If the git server is also a minion, you can use Reactor to signal to the master to update the fileserver on each git push:</p>
+<p><code>https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#refreshing-gitfs-upon-push</code></p>
+<p>You can also use git as a pillar source (host your specific config data in version control)</p>
+<p><code>https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#using-git-as-an-external-pillar-source</code></p>
+<h3 id="installing-raet">Installing RAET</h3>
+<p>RAET support isn't enabled in the default package. If you install py27-salt and run <code>pkg info py27-salt</code> you can see in the options <code>RAET: off</code>. In order to use RAET, you need to build the py27-salt port.</p>
+<p>Compile the port</p>
+<pre><code>pkg remove -y py27-salt
+portsnap fetch extract
+cd /usr/ports/sysutil/py-salt
+make config
+# Press space to select RAET
+make install
+</code></pre>
+
+<p>Edit <code>/srv/salt/master</code> and <code>/srv/salt/minion</code> and add</p>
+<pre><code>transport: raet
+</code></pre>
+
+<p>Then restart the services</p>
+<pre><code>service salt_master restart
+service salt_minion restart
+</code></pre>
+
+<p>You will need to accept keys again</p>
+<pre><code>salt-key 
+salt-key -A
+</code></pre>
+
+<h3 id="salt-equivalent-of-hiera-eyaml">Salt equivalent of hiera-eyaml</h3>
+<p>Salt.runners.nacl</p>
+<p>Similar to hiera-eyaml, it is used for encrypting data stored in pillar:</p>
+<p><code>https://docs.saltstack.com/en/latest/ref/runners/all/salt.runners.nacl.html</code></p>
+<h2 id="nsd-and-unbound-config">NSD and Unbound config</h2>
+<p>Set up the unbound/nsd-control</p>
+<pre><code>local-unbound-setup
+nsd-control-setup
+</code></pre>
+
+<p>Enable NSD and Unbound to start in <code>/etc/rc.conf</code></p>
+<pre><code>sysrc nsd_enable=&quot;YES&quot;
+sysrc local_unbound_enable=&quot;YES&quot;
+</code></pre>
+
+<p>Set a different listening port for NSD in <code>/usr/local/etc/nsd.conf</code></p>
+<pre><code>server:
+  port: 5353
+</code></pre>
+
+<p>Create an inital zone file <code>/usr/local/etc/nsd/home.lan.zone</code></p>
+<pre><code>$ORIGIN home.lan. ;
+$TTL 86400 ;
+
+@ IN SOA ns1.home.lan. admin.home.lan. (
+        2017080619 ;
+        28800 ;
+        7200 ;
+        864000 ;
+        86400 ;
+        )
+
+        NS ns1.home.lan.
+
+ns1 IN A 192.168.1.15
+jail IN A 192.168.1.15
+</code></pre>
+
+<p>Create the reverse lookup zone file <code>/usr/local/etc/nsd/home.lan.reverse</code></p>
+<pre><code>$ORIGIN home.lan.
+$TTL 86400
+
+0.1.168.192.in-addr.arpa. IN SOA ns1.home.lan. admin.home.lan. (
+        2017080619
+        28800
+        7200
+        864000
+        86400
+        )
+
+        NS ns1.home.lan.
+
+15.1.168.192.in-addr.arpa. IN PTR jail
+15.1.168.192.in-addr.arpa. IN PTR ns1
+</code></pre>
+
+<h3 id="opendnssec">OpenDNSSEC</h3>
+<p>Install the required packages</p>
+<pre><code>pkg install -y opendnssec softhsm
+</code></pre>
+
+<p>Set the softhsm database location in <code>/usr/local/etc/softhsm.conf</code></p>
+<pre><code>0:/var/lib/softhsm/slot0.db
+</code></pre>
+
+<p>Initialise the token database:</p>
+<pre><code>softhsm --init-token --slot 0 --label &quot;OpenDNSSEC&quot;
+Enter the PIN for the SO and then the USER.
+</code></pre>
+
+<p>Make sure opendnssec has permission to access the token database</p>
+<pre><code>chown opendnssec /var/lib/softhsm/slot0.db
+chgrp opendnssec /var/lib/softhsm/slot0.db
+</code></pre>
+
+<p>Set some options for OpenDNSSEC in <code>/usr/local/etc/opendnssec/conf.xml</code></p>
+<pre><code>&lt;Repository name=&quot;SoftHSM&quot;&gt;
+        &lt;Module&gt;/usr/local/lib/softhsm/libsofthsm.so&lt;/Module&gt;
+        &lt;TokenLabel&gt;OpenDNSSEC&lt;/TokenLabel&gt;
+        &lt;PIN&gt;1234&lt;/PIN&gt;
+        &lt;SkipPublicKey/&gt;
+&lt;/Repository&gt;
+</code></pre>
+
+<p>Edit <code>/usr/local/etc/opendnssec/kasp.xml</code>. Change unixtime to datecounter in the Serial parameter. This allows us to use YYYYMMDDXX format for the SOA SERIAL values.</p>
+<pre><code>&lt;Zone&gt;
+        &lt;PropagationDelay&gt;PT300S&lt;/PropagationDelay&gt;
+        &lt;SOA&gt;
+                &lt;TTL&gt;PT300S&lt;/TTL&gt;
+                &lt;Minimum&gt;PT300S&lt;/Minimum&gt;
+                &lt;Serial&gt;datecounter&lt;/Serial&gt;
+        &lt;/SOA&gt;
+&lt;/Zone&gt;
+</code></pre>
+
+<h2 id="compiling-nginx-with-chacha20-support">Compiling NGINX with ChaCha20 support</h2>
+<p>Make a working directory</p>
+<pre><code>mkdir ~/nginx
+cd ~/nginx
+</code></pre>
+
+<p>Install some dependencies</p>
+<pre><code>pkg install -y ca_root_nss pcre perl5
+</code></pre>
+
+<p>Pull the source files</p>
+<pre><code>fetch https://nginx.org/download/nginx-1.13.0.tar.gz
+fetch https://www.openssl.org/source/openssl-1.1.0e.tar.gz
+</code></pre>
+
+<p>Extract the tarballs</p>
+<pre><code>tar -xzvf nginx-1.13.0.tar.gz
+tar -xzvf openssl-1.1.0e.tar.gz
+rm *.tar.gz
+</code></pre>
+
+<h1 id="_2">*</h1>
+<p>Compile openssl</p>
+<pre><code>cd ~/nginx/openssl-1.1.0e.tar.gz
+./config
+make
+make install
+</code></pre>
+
+<p>The compiled OpenSSL binary should be located in /usr/local/bin by default, unless the prefixdir variable has been set</p>
+<pre><code>/usr/local/bin/openssl version
+# Should output OpenSSL 1.1.0e
+</code></pre>
+
+<p>Compile NGINX</p>
+<pre><code>#!/bin/sh
+cd ~/nginx/nginx-1.13.0/
+#make clean
+
+./configure \
+    --with-http_ssl_module \
+    --with-http_gzip_static_module \
+    --with-file-aio \
+    --with-ld-opt=&quot;-L /usr/local/lib&quot; \
+
+    --without-http_browser_module \
+    --without-http_fastcgi_module \
+    --without-http_geo_module \
+    --without-http_map_module \
+    --without-http_proxy_module \
+    --without-http_memcached_module \
+    --without-http_ssi_module \
+    --without-http_userid_module \
+    --without-http_split_clients_module \
+    --without-http_uwsgi_module \
+    --without-http_scgi_module \
+    --without-http_limit_conn_module \
+    --without-http_referer_module \
+    --without-http_http-cache \
+    --without_upstream_ip_hash_module \
+    --without-mail_pop3_module \
+    --without-mail-imap_module \
+    --without-mail_smtp_module
+
+    --with-openssl=~/nginx/openssl-1.1.0e/
+
+make
+make install
+</code></pre>
+
+<p>After running the compile script, NGINX should be installed in /usr/local/nginx</p>
+<p>Start the service</p>
+<pre><code>/usr/local/nginx/sbin/nginx
+</code></pre>
+
+<p>If there are no issues, update the config file as appropriate in <code>/usr/local/nginx/conf/nginx.conf</code></p>
+<p>Reload NGINX to apply the new config</p>
+<pre><code>/usr/local/nginx/sbin/nginx -s reload
+</code></pre>
+
+<p>Generate a self-signed certificate</p>
+<p>Current NGINX config</p>
+<pre><code>worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;
+
+    server {
+        listen       80;
+        server_name  localhost;
+        location / {
+            root   /usr/local/www/;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+
+    }
+
+    server {
+        listen       443 ssl;
+        server_name  localhost;
+
+    ssl on;
+        #ssl_certificate      /root/nginx/server.pem;
+        #ssl_certificate_key  /root/nginx/private.pem;
+    ssl_certificate /usr/local/www/nginx-selfsigned.crt;
+    ssl_certificate_key /usr/local/www/nginx-selfsigned.key;
+    ssl_ciphers &quot;ECDHE-RSA-CHACHA20-POLY1305&quot;;
+        ssl_prefer_server_ciphers  on;
+    ssl_protocols TLSv1.2;
+    ssl_ecdh_curve X25519;
+
+    location / {
+            root   /usr/local/www/;
+            index  index.html index.htm;
+        }
+    }
+
+}
+</code></pre>
+
+<h2 id="bhyve-vm-creation">Bhyve VM creation</h2>
+<h3 id="bhyve-initial-setup">Bhyve Initial Setup</h3>
+<p>Enable the tap interface in <code>/etc/sysctl.conf</code> and load it on the currently running system</p>
+<pre><code>net.link.tap.up_on_open=1
+sysctl -f /etc/sysctl.conf
+</code></pre>
+
+<p>Enable bhyve, serial console and bridge/tap interface kernel modules in <code>/boot/loader.conf</code>. Reboot to apply changes or use kldload.</p>
+<pre><code>vmm_load=&quot;YES&quot;
+nmdm_load=&quot;YES&quot;
+if_bridge_load=&quot;YES&quot;
+if_tap_load=&quot;YES&quot;
+</code></pre>
+
+<p>Set up the network interfaces in <code>/etc/rc.conf</code></p>
+<pre><code>cloned_interfaces=&quot;bridge0 tap0&quot;
+ifconfig_bridge0=&quot;addm re0 addm tap0&quot;
+</code></pre>
+
+<p>Create a ZFS volume</p>
+<pre><code>zfs create -V16G -o volmode=dev zroot/testvm
+</code></pre>
+
+<p>Download the installation image</p>
+<pre><code>fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/ISO-IMAGES/11.1/FreeBSD-11.1-RELEASE-amd64-disc1.iso 
+</code></pre>
+
+<p>Start the VM</p>
+<pre><code>sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/testvm -i -I FreeBSD-11.1-RELEASE-amd64-disc1.iso testvm
+</code></pre>
+
+<p>Install as normal, following the menu options</p>
+<h3 id="new-vm-creation-script">New VM Creation Script</h3>
+<pre><code>#! /bin/sh
+read -p &quot;Enter hostname: &quot; hostname
+zfs create -V16G -o volmode=dev zroot/$hostname
+sh /usr/share/examples/bhyve/vmrun.sh -c 1 -m 512M -t tap0 -d /dev/zvol/zroot/$hostname -i -I ~/FreeBSD-11.1-RELEASE-amd64-disc1.iso $hostname
+</code></pre>
+
+<h3 id="creating-a-linux-guest">Creating a Linux guest</h3>
+<p>Create a file for the hard disk</p>
+<pre><code>truncate -s 16G linux.img
+</code></pre>
+
+<p>Create the file to map the virtual devices for kernel load</p>
+<pre><code>~/device.map
+
+(hd0) /root/linux.img
+(cd0) /root/linux.iso
+</code></pre>
+
+<p>Load the kernel</p>
+<pre><code>grub-bhyve -m ~/device.map -r cd0 -M 1024M linuxguest
+</code></pre>
+
+<p>Grub should start, choose install as normal</p>
+<p>Start the VM</p>
+<pre><code>bhyve -A -H -P -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,tap0 -s 3:0,virtio-blk,/root/linux.img -l com1,/dev/nmdm0A -c 1 -m 512M linuxguest
+</code></pre>
+
+<p>Access through the serial console</p>
+<pre><code>cu -l /dev/nmdm0B
+</code></pre>
+
+<h3 id="pfsense-in-a-vm">pfSense in a VM</h3>
+<p>Download the pfSense disk image from the website using fetch</p>
+<pre><code>fetch https://frafiles.pfsense.org/mirror/downloads/pfSense-CE-2.3.1-RELEASE-2g-amd64-nanobsd.img.gz -o ~/pfSense.img.gz
+</code></pre>
+
+<p>Create the storage</p>
+<pre><code>zfs create -V2G -o volmode=dev zroot/pfsense
+</code></pre>
+
+<p>Unzip the file, and redirect output to the storage via dd</p>
+<pre><code>gzip -dc pfSense.img.gz | dd of=/dev/zvol/zroot/pfsense obs=64k
+</code></pre>
+
+<p>Load the kernel and start the boot process</p>
+<pre><code>bhyveload -c /dev/nmdm0A -d /dev/zvol/zroot/pfsense -m 256MB pfsense
+</code></pre>
+
+<p>Start the VM</p>
+<pre><code>/usr/sbin/bhyve -c 1 -m 256 -A -H -P -s 0:0,hostbridge -s 1:0,virtio-net,tap0 -s 3:0,ahci-hd,/dev/zvol/zroot/pfsense -s 4:1,lpc -l com1,/dev/nmdm0A pfsense
+</code></pre>
+
+<p>Connect to the VM via the serial connection with nmdm</p>
+<pre><code>cu -l /dev/nmdm0B
+</code></pre>
+
+<p>Perform initial configuration through the shell to assign the network interfaces</p>
+<p>Once done, use the IP address to access through the web console </p>
+<p>When finished, you can shutdown/reboot</p>
+<p>To de-allocate the resources, you need to destroy the VM</p>
+<pre><code>bhyvectl --destroy --vm=pfsense
+</code></pre>
+
+<h3 id="multiple-vms-using-bhyve">Multiple VMs using bhyve</h3>
+<p>To allow networking on multiple vms, there should be a tap assigned to each vm, connected to the same bridge. </p>
+<pre><code>cloned_interfaces=&quot;bridge0 tap0 tap1 tap2&quot;
+ifconfig_bridge0=&quot;addm re0 addm tap0 addm tap1 addm tap2&quot;
+</code></pre>
+
+<p>Then when you provision vms, assign one of the tap interfaces to them.</p>
+<h3 id="vm-bhyve">vm-bhyve</h3>
+<p>A better way for managing a bhyve hypervisor.</p>
+<p>Follow the instructions on the repo.</p>
+<p>When adding the switch to a network interface, it doesn't work with re0. tap1 works, but then internet doesnt work in the VMs. Needs sorting.</p>
+<p>zfs </p>
+<p>bsd-cloud-init should be tested, it sets hostname based on openstack image name.</p>
+<p>otherwise, if we figure out how to make a template VM, you could set the hostname as part of transferring over the rc.conf file</p>
+<p>create template VM, start it, zfs send/recv?</p>
+<h2 id="jail-creation">Jail Creation</h2>
+<p>Create a template dataset</p>
+<pre><code>zfs create -o mountpoint=/usr/local/jails zroot/jails
+zfs create -p zroot/jails/template
+</code></pre>
+
+<p>Download the base files into a new directory</p>
+<pre><code>mkdir ~/jails
+fetch ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/11.1-RELEASE/base.txz -o ~/jails
+</code></pre>
+
+<p>Extract the base files into the template directory (mountpoint)</p>
+<pre><code>tar -xf ~/jails/base.txz -C /usr/local/jails/template
+</code></pre>
+
+<p>Copy the resolv.conf file from host to template so that we have working DNS resolution</p>
+<pre><code>cp /etc/resolv.conf /usr/local/jails/template/etc/resolv.conf
+</code></pre>
+
+<p>When finished, take a snapshot. Anything after the '@' symbol is the snapshot name. You can make changes to the template at any time, just make sure that you take another snapshot when you are finished and that any subsequently created jails use the new snapshot.</p>
+<pre><code>zfs snapshot zroot/jails/template@1
+</code></pre>
+
+<p>New jails can then be created by cloning the snapshot of the template dataset</p>
+<pre><code>zfs clone zroot/jails/template@1 zroot/jails/testjail
+</code></pre>
+
+<p>Add the jails configuration to /etc/jail.conf</p>
+<pre><code># Global settings applied to all jails
+
+interface = &quot;re0&quot;;
+host.hostname = &quot;$name&quot;;
+ip4.addr = 192.168.1.$ip;
+path = &quot;/usr/local/jails/$name&quot;;
+
+exec.start = &quot;/bin/sh /etc/rc&quot;;
+exec.stop = &quot;/bin/sh /etc/rc.shutdown&quot;;
+exec.clean;
+mount.devfs;
+
+# Jail Definitions
+testjail {
+    $ip = 15;
+}
+</code></pre>
+
+<p>Run the jail</p>
+<pre><code>jail -c testjail
+</code></pre>
+
+<p>View running jails</p>
+<pre><code>jls
+</code></pre>
+
+<p>Login to the jail</p>
+<pre><code>jexec testjail sh
+</code></pre>
+
+<h2 id="hardware">Hardware</h2>
+<h3 id="virtualisation-host">Virtualisation Host</h3>
+<p>Gigabyte Brix Pro GB-BXI7-4770R</p>
+<ul>
+<li>Intel Core i7-4770R (quad core 3.2GHz)</li>
+<li>16GB RAM</li>
+<li>250GB mSATA SSD</li>
+<li>250GB 2.5 inch SSD</li>
+</ul>
+<h3 id="nas">NAS</h3>
+<p>HP ProLiant G8 Microserver G1610T</p>
+<ul>
+<li>Intel Celeron G1610T (dual core 2.3 GHz)</li>
+<li>16GB RAM</li>
+<li>2 x 250GB SSD</li>
+<li>2 x 3TB HDD</li>
+</ul>
+<h3 id="management">Management</h3>
+<p>Raspberry Pi 2 Model B
+- Quad core 1GB RAM
+- 8GB MicroSD (w/ NOOBS)</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../implementation/" class="btn btn-neutral" title="Implementation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../implementation/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

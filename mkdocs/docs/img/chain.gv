@@ -1,0 +1,11 @@
+digraph structs {
+node [shape=record];
+	childzone [shape=record, label="Child Zone | <f1> DNSKEY Public KSK"];
+	tldzone [shape=record, label="TLD Zone | <f1> DNSKEY Public KSK | { <f2> DNSKEY Hashed KSK }"];
+	rootzone [shape=record, label="Root Zone | <f1> DNSKEY Public KSK | { <f2> DNSKEY Hashed KSK }"];
+	private [shape=record, label="Private Root Signing Key"];
+
+	childzone:f1 -> tldzone:f2;
+	tldzone:f1 -> rootzone:f2;
+	rootzone:f1 -> private;
+}

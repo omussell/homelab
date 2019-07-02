@@ -1,0 +1,9 @@
+digraph structs {
+node [shape=record];
+	struct1 [shape=record, label="<f10>Parent Zone|<f1> DNSKEY Hashed KSK"];
+	struct2 [shape=record, label="<f11>Child Zone|<f2> DNSKEY Public KSK|<f3> CDS/CDNSKEY"];
+
+	struct1:f10 -> struct2:f11 [style=dotted,label="Check"];
+	struct2:f2 -> struct1:f1
+	struct2:f3 -> struct1:f1 [label="Update"];
+}

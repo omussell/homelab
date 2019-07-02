@@ -48,6 +48,33 @@
 	<ul class="current">
 	  
           
+            <li class="toctree-l1 current">
+		
+    <a class="current" href=".">Home</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#end-goal">End Goal</a></li>
+    
+
+    <li class="toctree-l2"><a href="#background">Background</a></li>
+    
+
+    <li class="toctree-l2"><a href="#high-level-design">High-Level Design</a></li>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="design/">Design</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="implementation/">Implementation</a>
+	    </li>
+          
             <li class="toctree-l1">
 		
     <a class="" href="homelab/">Homelab</a>
@@ -85,11 +112,26 @@
           <div role="main">
             <div class="section">
               
-                
+                <p>Create an infrastructure with an emphasis on security, resiliency and ease of maintenance. </p>
+<h2 id="end-goal">End Goal</h2>
+<p>Produce a working implementation of a secure, resilient and easy to maintain infrastructure. This will be published in the form of version-controlled configuration documents, with the philosophy and background of the chosen configuration documented here. Anyone should be able to download the base operating system, and the configuration documents should convert that base OS into the desired state. </p>
+<p>The documentation on this site is split into two sections, Design and Implementation. The Design documents what the infrastructure should look like in high level terms. The Implementation is a working version that follows the design.</p>
+<h2 id="background">Background</h2>
+<p>The intent is for the infrastructure to work regardless of participating in the wider internet. The design is aimed at organisations that have strict security and uptime requirements (government/critical physical infrastructure), although there is nothing preventing other organisations from adopting this design and/or changing it to suit them.</p>
+<p>Organisations would likely still use the existing internet infrastructure in order to connect between their sites, however, there is the option to not be dependent on the third-party PKI and DNS systems. By removing the dependencies between organisations, there is greater decentralisation which allows more freedom. </p>
+<h2 id="high-level-design">High-Level Design</h2>
+<p><img src="img/secenv.svg"></p>
               
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="design/" class="btn btn-neutral float-right" title="Design">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
   
 
   <hr/>
@@ -114,6 +156,8 @@
       
       
       
+        <span style="margin-left: 15px"><a href="design/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
     </span>
 </div>
     <script>var base_url = '.';</script>
@@ -125,5 +169,5 @@
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2019-07-02 20:35:05
+Build Date UTC : 2019-06-02 12:24:31
 -->

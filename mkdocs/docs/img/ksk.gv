@@ -1,0 +1,11 @@
+digraph structs {
+node [shape=record];
+	dnskey [shape=record, label="DNSKEY RRset"];
+	struct1 [shape=record, label="DNSKEY Public KSK"];
+	struct2 [shape=record, label="DNSKEY Public ZSK"];
+	verified [shape=record, label="RRSIG Signature"];
+
+	struct1 -> dnskey [style=dotted];
+	struct2 -> dnskey [style=dotted];
+	dnskey -> verified;
+}

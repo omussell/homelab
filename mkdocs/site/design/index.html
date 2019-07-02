@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Design - GRIM</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Design";
+    var mkdocs_page_input_path = "design.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> GRIM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Design</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#ipv6">IPv6</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#address-autoconfiguration-slaac">Address Autoconfiguration (SLAAC)</a></li>
+        
+            <li><a class="toctree-l3" href="#send">SEND</a></li>
+        
+            <li><a class="toctree-l3" href="#send-savi">SEND SAVI</a></li>
+        
+            <li><a class="toctree-l3" href="#dhcpv6">DHCPv6</a></li>
+        
+            <li><a class="toctree-l3" href="#vpn">VPN</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#version-control">Version Control</a></li>
+    
+
+    <li class="toctree-l2"><a href="#configuration-management">Configuration Management</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#host-install-tools">Host Install Tools</a></li>
+        
+            <li><a class="toctree-l3" href="#ad-hoc-change-tools">Ad-Hoc Change Tools</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#dns">DNS</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#dnssec">DNSSEC</a></li>
+        
+            <li><a class="toctree-l3" href="#dane">DANE</a></li>
+        
+            <li><a class="toctree-l3" href="#dane-for-email-security">DANE for Email Security</a></li>
+        
+            <li><a class="toctree-l3" href="#dane-for-website-security">DANE for Website Security</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#ntp">NTP</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#openntpd">OpenNTPD</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#application-servers">Application Servers</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#nginx">NGINX</a></li>
+        
+            <li><a class="toctree-l3" href="#nginx-unit">NGINX Unit</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#security-and-crypto">Security and Crypto</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#tls">TLS</a></li>
+        
+            <li><a class="toctree-l3" href="#ssh">SSH</a></li>
+        
+            <li><a class="toctree-l3" href="#hsm">HSM</a></li>
+        
+            <li><a class="toctree-l3" href="#passwords">Passwords</a></li>
+        
+            <li><a class="toctree-l3" href="#tcp-wrapper">TCP Wrapper</a></li>
+        
+            <li><a class="toctree-l3" href="#ids">IDS</a></li>
+        
+            <li><a class="toctree-l3" href="#firewalls">Firewalls</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#configuration-management_1">Configuration Management</a></li>
+    
+
+    <li class="toctree-l2"><a href="#authorisation-access-control-lists">Authorisation / Access Control Lists</a></li>
+    
+
+    <li class="toctree-l2"><a href="#role-based-access-control-shared-administration-sudo">Role-Based Access Control / Shared Administration (sudo)</a></li>
+    
+
+    <li class="toctree-l2"><a href="#rbac">RBAC</a></li>
+    
+
+    <li class="toctree-l2"><a href="#sudo">sudo</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#domain-naming-service">Domain Naming Service</a></li>
+        
+            <li><a class="toctree-l3" href="#directory-service-ldap">Directory Service (LDAP)</a></li>
+        
+            <li><a class="toctree-l3" href="#time-service">Time Service</a></li>
+        
+            <li><a class="toctree-l3" href="#logging-auditing">Logging / Auditing</a></li>
+        
+            <li><a class="toctree-l3" href="#rpc-admin-service">RPC / Admin service</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#designing-for-operations">Designing for Operations</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#specific-operational-requirements">Specific Operational Requirements</a></li>
+        
+            <li><a class="toctree-l3" href="#unspecific-operational-requirements">Unspecific Operational Requirements</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#user-access">User Access</a></li>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../implementation/">Implementation</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../homelab/">Homelab</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">GRIM</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Design</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h2 id="ipv6">IPv6</h2>
+<p>IPv6 is the latest version of the IP protocol, which offers significant advantages over IPv4. </p>
+<p>IPv6 uses a 128-bit address which allows a much larger address space, 2^128. A single /64 subnet has a size of 2^64 addresses which equates to the square of the entire IPv4 address space. An address is represented as eight groups of four hexadecimal digits with the groups separated by colons, e.g. 2001:0db8:0000:0042:0000:8a2e:0370:7334. Guidance for representing IPv6 addresses in text is shown in <a href="https://tools.ietf.org/html/rfc5952">RFC5952</a>.</p>
+<p>IPv6 addresses can be assigned in two ways, stateful or stateless, via Stateless Address Autoconfiguration (<a href="https://tools.ietf.org/html/rfc4862">SLAAC</a>) and/or DHCPv6. The stateless approach is used when a site is not particularly concerned with the addresses hosts use, whereas stateful DHCPv6 is used when a site requires tighter control over addresses. Both SLAAC and DHCPv6 may be used simultaneously. </p>
+<h3 id="address-autoconfiguration-slaac">Address Autoconfiguration (SLAAC)</h3>
+<p>The autoconfiguration process includes generating a link-local address, generating global addresses via stateless address autoconfiguration, and the Duplicate Address Detection procedure to verify the uniqueness of the addresses on a link. The IPv6 stateless autoconfiguration mechanism requires no manual configuration of hosts, minimal configuration of routers, and no additional servers. The stateless mechanism allows a host to generate its own addresses using a combination of locally available information and information advertised by routers. Routers advertise prefixes that identify the subnet(s) associated with a link, while hosts generate an "interface identifier" that uniquely identifies an interface on a subnet. An address is formed by combining the two. In the absence of routers, a host can only generate link-local addresses. However, link-local addresses are sufficient for allowing communication among nodes attached to the same link.</p>
+<p>IPv6 nodes on the same link use the Neighbor Discovery protocol to discover each others presence, to determine each others link-layer addresses, to find routers, and to maintain reachability information about the paths to active neighbors.</p>
+<p>All interfaces of IPv6 hosts require a link-local address, which is derived from the MAC address of the interface and the prefix fe80::/10. The address space is filled with prefix bits left-justified to the most-significant bit, and filling the MAC address in EUI-64 format into the least-significant bits. Any remaining bits between the two parts are set to zero.</p>
+<ul>
+<li>The left-most 'prefix length' bits of the address are those of the link-local prefix</li>
+<li>The bits in the address to the right of the link-local prefix are set to all zeroes</li>
+<li>If the length of the interface identifier is Nbits, the right-most N bits of the address are replaced by the interface identifier</li>
+</ul>
+<p>Global addresses are formed by appending an interface identifier to a prefix of appropriate length. Prefixes are obtained from Prefix Information options contained in Router Advertisements. RA's are sent periodically to the all-nodes multicast address. To obtain an advertisement quickly, a host send out Router Solicitations as described in <a href="https://tools.ietf.org/html/rfc4861">RFC4861</a>.</p>
+<ul>
+<li>Routers advertise prefixes that identify the subnet(s) associated with a link</li>
+<li>Hosts generate an interface identifier that uniquely identifies an interface on a subnet</li>
+</ul>
+<p>The Neighbor Discovery Protocol (<a href="https://tools.ietf.org/html/rfc4861">NDP</a>) is used by nodes to determine the link-layer addresses for neighbors known to reside on the same attached link, to find neighboring routers to forward packets, and to keep track of neighbors that are reachable or not.</p>
+<p>The IPv6 router will be allocated a subnet by the ISP and configured with the first 64 bits of the 128-bit address. <a href="https://tools.ietf.org/html/rfc4862#section-5.4">Duplicate Address Detection</a> and <a href="https://tools.ietf.org/html/rfc4861#section-7.3">Neighbor Unreachability Detection</a> serve as error handling for the address autoconfiguration. </p>
+<p>Since the IPv6 addresses are generated from the prefix on the router, it is possible to renumber an entire network by changing the prefix on the router.</p>
+<p>IPv6 address are mapped to hostnames in DNS using <a href="https://tools.ietf.org/html/rfc3596">AAAA resource records</a>. Reverse resolution uses the ip6.arpa domain.</p>
+<h3 id="send">SEND</h3>
+<p>The SEcure Neighbor Discovery (<a href="https://tools.ietf.org/html/rfc3971">SEND</a>) protocol is designed to counter threats to the Neighbor Discovery Protocol (<a href="https://tools.ietf.org/html/rfc4861">NDP</a>) used by IPv6 to discover the presence of nodes on the same link and to find routers. SEND does not apply to addresses generated by SLAAC.</p>
+<p>Components of SEND:</p>
+<ul>
+<li>Certification paths are expected to certify the authority of routers. A host must be configured with a trust anchor to which the router has a certification path before the host can adopt the router as its default router. </li>
+<li>Cryptographically Generated Addresses are used to make sure that the sender of a Neighbor Discovery message is the owner of the claimed address.</li>
+<li>Timestamp and Nonce options are used to provide replay protection.</li>
+</ul>
+<p>The deployment model for trust anchors can be either a globally rooted public key infrastructure, or a local decentralised deployment similar to that used for TLS. At the moment, a global root does not exist and so cannot be used. In the decentralised model, a public key can be published by the end hosts own organisation. In a roaming environment, multiple trusted public keys can be configured. Also, a SEND node can fall back to the use of a non-SEND router.</p>
+<p>By default, a SEND-enabled node should use only CGAs for its own addresses. Cryptographically Generated Addresses (<a href="https://tools.ietf.org/html/rfc3972">CGA</a>) are IPv6 addresses for which the interface identifier is generated by computing a cryptographic one-way hash function from a public key and other parameters. The binding between the public key and the address can be verified by re-computing the hash value and by comparing the hash value with the interface identifier. Messages from an IPv6 address can be protected by attaching the public key and parameters and then signing the message with the corresponding private key.</p>
+<p>The purpose of CGAs is to prevent stealing and spoofing of existing IPv6 addresses. The public key of the address owner is bound cryptographically to the address. The address owner can use the corresponding private key to assert its ownership and to sign SEND messages sent from the address. An attacker can create a new address from an arbitrary subnet prefix and a public key because CGAs are not certified. Hwoever, the attacker cannot impersonate somebody else's address.</p>
+<h3 id="send-savi">SEND SAVI</h3>
+<p>The SEcure Neighbor Discovery (SEND) Source Address Validation Improvement (<a href="https://tools.ietf.org/html/rfc7219">SAVI</a>) is a mechanism to provide source address validation using the SEND protocol. SEND SAVI uses the Duplicate Address Detection and Neighbor Unreachability messages to validate the address ownership claim of a node. Using the information contained in these messages, host IPv6 addresses are associated to switch ports, so that data packets will be validated by checking for consistency in this binding. In addition, SEND SAVI prevents hosts from generating packets containing off-link IPv6 source addresses.</p>
+<p>SEND SAVI is limited to links and prefixes in which every IPv6 host and router uses the SEND protocol to protect the exchange of Neighbor Discovery information.</p>
+<h3 id="dhcpv6">DHCPv6</h3>
+<p>DHCPv6 is the stateful counterpart to SLAAC. DHCPv6 enables DHCP servers to pass IPv6 network information to IPv6 nodes, such as addresses and configuration information carried in options.</p>
+<p>Clients transmit and receive DHCP messages over UDP using the autogenerated link-local address.</p>
+<h3 id="vpn">VPN</h3>
+<p><code>wireguard</code></p>
+<p>Secure the connection of routers between sites</p>
+<h2 id="version-control">Version Control</h2>
+<p>Version control software is used to track changes to OS configuration files, OS and application binaries/source code and configuration management tool files over time. The changes to these files are timestamped, authored and a specific set of changes exists in an atomic transaction. By tracking these changes we can audit the entire history of the codebase and revert to previous versions if necessary.</p>
+<p>While third party hosted services are available, these options are unavailable to an infrastructure with limited internet access. There should also be no need for a dependency on third party infrastructure. In addition, it is often the case that company-confidential data is stored in version control, and the organisation should be encouraged to use version control as much as possible and this is a barrier. </p>
+<p>Version control tools tend to be one of two models: centralised and decentralised. A centralised keeps one copy of the versioned code and admins will pull down a working copy of specific files to work on. The changes are then checked back in. With a DVCS the entire repository and its history are downloaded at once, worked on then the changes are checked in to some agreed upon location for collaboration.</p>
+<p>Version control should be used to manage only one machine in each distinct infrastructure, the infrastructure master (puppet master, salt master, chef server etc.). Changes to any other machine in the infrastructure would be done from this server.</p>
+<p>Many tools depend on version controlled files and need to be notified when changes occur. They may do this by polling the repository for changes, using post-commit scripts or augmented by continuous integration tools.</p>
+<h2 id="configuration-management">Configuration Management</h2>
+<p>By using configuration management tools, we can codify our infrastructure which allows us to follow the same deployment pipeline as the applications we host, are able to perform disaster recovery quicker and have a history of the changes to the infrastructure.</p>
+<p>All changes to the infrastructure should be performed by the configuration management tools with the changed files being stored in version control.</p>
+<p>Configuration management tools would be used to manage both server provisioning and the configuration. Some configuration management tools can perform both roles which is preferable.</p>
+<p>Also, the server provisioning process is only for applying the base files onto a machine. It is likely that the newly provisioned server will need software installed in order to communicate with version control and configuration management servers. It is useful to include a step in the provisioning process to install this needed software, and also to pre-seed any authentication keys required to secure the connection between the provisioned server and any infrastucture masters.</p>
+<p>There are multiple facets to configuration management tools. First is in keeping the configuration of a node in sync. This is integral to a congruent infrastructure, in that the desired state and actual state are aligned. Second is orchestration. There isn't an easy way of describing for a server to be patched as a static state, except in an immutable infrastructure. So you need to be able to perform ad-hoc changes to the infrastructure in a way that is similar to normal configuration management tools. Thirdly, is event driven architecture by responding to events that happen. The IP of a node may change when it reboots, so its corresponding resource records in DNS need updating. The event triggers the requisite orchestration tools to run which would update the records on the DNS servers.</p>
+<h3 id="host-install-tools">Host Install Tools</h3>
+<p>ZFS BE + PkgBase</p>
+<h3 id="ad-hoc-change-tools">Ad-Hoc Change Tools</h3>
+<p>rsync. zfs send/receive.</p>
+<p>Ad-hoc changes should never need to happen, but realistically, they are sometimes required. In order to facilitate ad-hoc changes, the administrators should have the ability to connect to the servers to perform changes. This should be done using the same SSH infrastructure as that used by the other applications, with the exception that the administrators would need to initially connect to a bastion host first. This includes SSH key rotation, validation of host keys using SSHFP records and having dedicated user accounts on each of the servers. </p>
+<h2 id="dns">DNS</h2>
+<p>DNS is required to provide hostname to IP mapping. Querying the DNS for the IP address is a mechanism employed by almost all applications, therefore it is imperative that it is secured correctly.</p>
+<p>In addition, a high emphasis on DNS security is required given that other security protocols are dependant upon it. For example, when a client connects to a server using SSH and the public key of the server is not known to the client, a fingerprint of the key is presented to the user for verification. This fingerprint can be stored in the DNS using SSHFP records so that the fingerprint can be verified out-of-band. TLS, which is commonly used for securing websites, can also use the DNS by storing certificates using TLSA records with DANE. </p>
+<p>This also means that whatever method that is used to secure DNS must be verified to be secure since the DNS is considered authoritative for the security of the domain. So in DNSSEC, the security of the domain is only as secure as the KSK, so it should be stored in a HSM.</p>
+<h3 id="dnssec">DNSSEC</h3>
+<p>DNSSEC creates a secure domain name system by adding cryptographic signatures to existing DNS records. These digital signatures are stored in DNS name servers alongside other record types like AAAA, MX etc. By checking the associated signature, you can verify that a DNS record comes from its authoritative name server and hasn't been altered. DNSSEC uses public key cryptography to sign and authenticate DNS resource record sets (RRsets). When requesting a DNS record, you can verify it comes from its authoritative name server and wasn't altered en-route by verifying its signature. </p>
+<p>New DNS record types were added to support DNSSEC:</p>
+<ul>
+<li>DNSKEY -  A zone signs its authoritative RRsets by using a private key and stores the corresponding public key in a DNSKEY RR. A resolver can then use the public key to validate signatures covering the RRsets in the zone, and authenticate them.</li>
+<li>RRSIG - Digital signatures are stored in RRSIG resource records and are used in the DNSSEC authentication process. A validator can use these RRSIG RRs to authenticate RRsets from the zone. A RRSIG record contains the signature for a RRset with a particular name, class, and type. The RRSIG RR specifies a validity interval for the signature and uses the Algorithm, the Signer's Name and the Key Tag to identify the DNSKEY RR containing the public key that a validator can use to verify the signature.</li>
+<li>NSEC and NSEC3 - The NSEC resource record lists two separate things: the next owner name that contains authoritative data or a delegation point NS RRset, and the set of RR types present at the NSEC RR's owner name. The complete set of NSEC RR's in a zone indicates which authoritative RRsets exist in a zone and also form a chain of authoritative owner names in the zone. This information is used to provide authenticated denial of existence for DNS data. To provide protection against zone enumeration, the owner names used in the NSEC3 RR are cryptographic hashes of the original owner name prepended as a single label to the name of the zone. The NSEC3 RR indicates which hash function is used to construct the hash, which salt is used, and how many iterations of the hash function are performed over the original owner name.</li>
+<li>DS - The DS resource record refers to a DNSKEY RR and is used in the DNS DNSKEY authentication process. A DS RR referes to a DNSKEY RR by storing the key tag, algorithm number, and a digest of the DNSKEY RR. By authenticating the DS record, a resolver can authenticate the DNSKEY RR to which the DS record points. The DS RR and its corresponding DNSKEY RR have the same owner name, but they are stored in different locations. The DS RR appears only on the upper (parental) side of a delegation. The corresponding DNSKEY RR is stored in the child zone. This simplifies DNS zone management and zone signing but introduces processing requirements for the DS RR, which can be solved using the CDS RR.</li>
+<li>CDNSKEY and CDS - The CDS and CDNSKEY resource records are published in the Child zone and give the Child control of what is published for it in the parental zone. The CDS/CDNSKEY RRset expresses what the Child would like the DS RRset to look like after the change using the CDS RR, or the DNSKEY RRset with the CDNSKEY RR.</li>
+</ul>
+<p>Resource records of the same type are grouped together into a resource record set or RRset. The RRset is then digitally signed, rather than individual DNS records.</p>
+<p><img src="img/rrsets.svg"></p>
+<p>The RRset is digitally signed by the private part of the zone signing key pair (ZSK). The digital signature is then stored in a RRSIG record. This proves that the data in the RRset originates from the zone.</p>
+<p><img src="img/zsk.svg"></p>
+<p>The signature can be verified by recording the public part of the zone signing key pair in a DNSKEY record. The RRset, RRSIG and DNSKEY (public ZSK) can then be used by a resolver to validate the response from a name server.</p>
+<p><img src="img/zskverify.svg"></p>
+<p>The DNSKEY records containing the public zone signing keys are then organised into a RRset, and signed by the Key Signing Key (KSK), which is stored in a DNSKEY record as well. This creates a RRSIG for the DNSKEY RRset.</p>
+<p><img src="img/ksk.svg"></p>
+<p>The private key signing key signs a zone signing key which in turn will sign other zone data. The public key signing key is also signed by the private key signing key. The public KSK can then be used to validate the public ZSK.</p>
+<p><img src="img/kskverify.svg"></p>
+<p>The DS RRset resides at a delegation point in a parent zone and indicates the public keys corresponding to the private keys used to self-sign the DNSKEY RRset at the delegated child zones apex. The public KSK in the child zone is hashed and stored in a DS record in the parent zone.</p>
+<p><img src="img/ds.svg"></p>
+<p>Each time the child zone changes its KSK, the new public KSK needs to be transmitted to the parent zone in order to be stored in its DS record. In most cases this is a manual process, however, this can be mitigated by used CDS/CDNSKEY records. A CDS/CDNSKEY record contains the new information that the child zone would like to be published in the parent zone. These records only exist when the child zone wishes for the DS record in the parent zone to be changed. The parent zone should periodically check the child zone for the existence of CDS/CDNSKEY records, or can be prompted to do so.</p>
+<p><img src="img/cds.svg"></p>
+<p>The above steps produce a trusted zone that connects to its parent, but the DS record in the parent zone also needs to be trusted. The signing process is repeated for the DS records in the DS RRset, and the process repeats up the parent zones in a chain up to the root zone. </p>
+<p>There are now two scenarios: </p>
+<ul>
+<li>For public DNS servers, you are reliant on the trust given to the root zone owners that they have signed the root zone correctly and stored the private root signing key securely.</li>
+<li>For internal-only domains, the island of security approach means that the signed zone does not have an authentication chain to its parent.</li>
+</ul>
+<p><img src="img/chain.svg"></p>
+<h3 id="dane">DANE</h3>
+<p>DNS-Based Authentication of Named Entities or <a href="https://tools.ietf.org/html/rfc6698">DANE</a> allows certificates, used by TLS, to be bound to DNS names using DNSSEC. DANE allows you to authenticate the association of the server's certificate with the domain name without trusting an external certificate authority. Given that the DNS administrator is authoritative for the zone, it makes sense to allow the administrator to also be authoritative for the binding between the domain name and a certificate. This is done with DNS, and the security of the information is verified with DNSSEC.</p>
+<p>DANE is implemented by placing TLSA records in the DNS.</p>
+<p>TLS via DANE can be used to secure websites over HTTPS, email via the <a href="https://tools.ietf.org/html/rfc7929">OpenPGP</a> and <a href="https://tools.ietf.org/html/draft-ietf-dane-smime-14">S/MIME</a> extensions, instant messaging (XMPP, IRC) and other applications via SRV records.</p>
+<h3 id="dane-for-email-security">DANE for Email Security</h3>
+<p>Since SMTP was designed to be transmitted in plaintext, encryption in the form of <a href="https://tools.ietf.org/html/rfc3207">STARTTLS</a> or <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS">Opportunistic TLS</a> was developed to secure email communication. However, <a href="https://blog.filipo.io/the-sad-state-of-smtp-encryption/">it is known</a> to be <a href="https://en.wikipedia.org/wiki/Opportunistic_TLS#Weaknesses_and_mitigations">vulnerable to downgrade attacks</a>, since the initial handshake occurs in plain text. An attacker could perform a man-in-the-middle attack by preventing the handshake from taking place and thus make it appear that TLS is unavailable, so clients revert to plain text.  </p>
+<p>The Electronic Frontier Foundation (<a href="https://www.eff.org">EFF</a>) has created a project called <a href="https://github.com/EFForg/starttls-everywhere">STARTTLS Everywhere</a> in an effort to enforce TLS between popular email domains, with the help of <a href="https://letsencrypt.org">Let's Encrypt</a> to serve certificates.</p>
+<p>However, this is only to serve as an <a href="https://github.com/EFForg/starttls-everywhere#alternatives">intermediate solution</a> until <a href="https://tools.ietf.org/html/draft-ietf-dane-smtp-with-dane-10">DNSSEC and DANE</a> see widespread adoption.</p>
+<p>Our implementation includes DNSSEC and DANE, and so email protection will be available. However, since the infrastructure is not designed to be publicly accessible, some unique challenges surrounding maintenance of the DNS and CA root domains require solutions and also how to securely send between organisations needs to be determined.</p>
+<p>While DANE can be used to validate the connection between mail exchangers, the emails themselves are still unencrypted. S/MIME allows email messages to be encrypted. Combining DANE transport security with S/MIME encrypted messages allows secure email between organisations.</p>
+<p>A guide to setting up DNSSEC+DANE to guarantee secure email between organisations is <a href="http://nccoe.nist.gov/sites/default/files/library/sp1800/dns-secure-email-sp1800-6-draft.pdf">published by NIST</a>. It shows the experiments carried out by Microsoft Corporation, NLnet Laboratories, Secure64, Internet Systems Consortium and Fraunhofer IAO, and includes the configuration required for their respective MUA, MTA and DNS services, including: </p>
+<ul>
+<li><a href="https://www.mozilla.org/en-GB/thunderbird/">Thunderbird</a></li>
+<li><a href="https://www.dovecot.org">Dovecot</a></li>
+<li><a href="http://www.postfix.org">Postfix</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Microsoft_Outlook">Outlook</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Microsoft_Exchange_Server">Exchange</a></li>
+<li><a href="https://www.nlnetlabs.nl/projects/nsd/">NSD</a></li>
+<li><a href="http://unbound.net">Unbound</a></li>
+<li><a href="https://www.opendnssec.org">OpenDNSSEC</a></li>
+<li><a href="https://www.isc.org/downloads/bind/">ISC BIND</a></li>
+<li><a href="http://dx.doi.org/10.6028/NIST.SP.800-81-2">Secure Domain Name System Deployment Guide</a></li>
+<li><a href="http://dx.doi.org/10.6028/NIST.SP.800-177">Trustworthy Email</a></li>
+</ul>
+<h3 id="dane-for-website-security">DANE for Website Security</h3>
+<h2 id="ntp">NTP</h2>
+<h3 id="openntpd">OpenNTPD</h3>
+<h2 id="application-servers">Application Servers</h2>
+<h3 id="nginx">NGINX</h3>
+<h3 id="nginx-unit">NGINX Unit</h3>
+<h2 id="security-and-crypto">Security and Crypto</h2>
+<h3 id="tls">TLS</h3>
+<h3 id="ssh">SSH</h3>
+<p>The Secure Shell (<a href="https://tools.ietf.org/html/rfc4251">SSH</a>) protocol is used for secure remote login and tunneling other network services over an insecure network. SSH consists of three main components:</p>
+<ul>
+<li>Transport Layer Protocol - Provides server authentication, confidentiality, and integrity with perfect forward secrecy. The transport layer will typically be run over a TCP/IP connection.</li>
+<li>User Authentication Protocol - Authenticates the client to the server. It runs over the transport layer protocol.</li>
+<li>Connection Protocol - Multiplexes the encrypted tunnel into several logical channels. It runs over the user authentication protocol.</li>
+</ul>
+<p>There are two authentication processes that need to take place before a SSH connection is established, host key authentication and user authentication.</p>
+<p>Each server must have a host key pair. The host keys are used during key exchange to verify that the client is talking to the correct server. The client must therefore have a way of validating that the host keys are correct. </p>
+<p>The usual way that this is achieved is manually by an administrator logging into the server. The client manages a local database, in the form of a known_hosts file. While this allows a peer to peer architecture, it also requires updating the known_hosts file on every client whenever host keys are rotated. Each client becomes responsible for validating the servers that it connects to. This allows you to scale at the expense of increased manageability. This is not the preferred option because when you have a lot of servers it becomes very hard to manage the known_hosts files on every server.</p>
+<p>The alternative and preferred option is to use SSHFP records stored in DNS, and secured with DNSSEC. The content of the public host key is used to generate a fingerprint in a specific layout which can then be stored in a specific type of DNS record called SSHFP or SSH FingerPrint. When the host key authentication takes place, the client checks DNS for the hostname of the server and will also check for the existence of a SSHFP record. If it exists, it will compare the fingerprint of the public host key provided by the server with the fingerprint of the SSHFP record. If they match the host key can be validated. We can be certain that the SSHFP record is correct because it is secured by DNSSEC. It is also much easier to manage because you only have to update the fingerprint of the host key in DNS once, then all clients can use it for validation. </p>
+<p>The downside of this approach is that you need to have DNSSEC enabled servers. However, we are using DNSSEC throughout this infrastructure so it is not a problem.</p>
+<p>SSHFP records consist of three properties:</p>
+<ul>
+<li>Algorithm (4)</li>
+<li>Fingerprint type (2)</li>
+<li>
+<p>Fingerprint in hexadecimal (4893752075487258092758094)</p>
+<p>hostname.fqdn IN SSHFP 4 2 4893752075487258092758094</p>
+</li>
+</ul>
+<p><strong>First connection</strong></p>
+<p>ssh obtains configuration data from sources in the following order:</p>
+<ul>
+<li>command-line options</li>
+<li>users configuration file (~/.ssh/ssh_config)</li>
+<li>system-wide configuration file (/etc/ssh/ssh_config)</li>
+</ul>
+<p>The chosen options must also comply with the configurations specified in sshd_config on the receiving end.</p>
+<p>The client sends its chosen algorithm details and key exchange method to the host. The host replies with its chosen algorithms. The two perform key exchange of the host keys. Once verified, the client sends the user authentication details. The host verifies these details. If verified, the host accepts the connection.</p>
+<p><strong>ssh_config</strong></p>
+<ul>
+<li><strong>Host</strong> - restrict the following options (up to the next Host or Match) to be only used for those hosts matching the pattern.</li>
+<li><strong>AddressFamily inet6</strong> - Use IPv6 only when connecting</li>
+<li><strong>CanonicalizeHostname</strong> et al. - When an unqualified domain name is given as the SSH target, use the systems resolver to find the FQDN. The domain suffix is specified in CanonicalizeDomains. Can be set to strictly check so that if lookup fails within the specified domain, the SSH connection fails. This may be useful if unqualified names are used consistently, however, it adds another configuration file that is required to be maintained. !! Needs testing !!</li>
+<li><strong>Ciphers chacha20-poly1305@openssh.com</strong></li>
+<li><strong>FingerprintHash sha256</strong> - Prefer SHA256 over MD5 when displaying key fingerprints</li>
+<li><strong>HashKnownHosts yes</strong> - SSH will hash host names and addresses when they are added to ~/.ssh/known_hosts. Hashed names can be used normally by SSH, but are unreadable to humans.</li>
+<li><strong>HostKeyAlgorithms ssh-ed25519</strong> - Prefer use of DJB's cipher. </li>
+<li><strong>KexAlgorithms curve25519-sha256@libssh.org</strong> - Prefer use of DJB's cipher. Key Exchange Algorithms</li>
+</ul>
+<p><strong>sshd_config</strong></p>
+<ul>
+<li><strong>AddressFamily inet6</strong> - Use IPv6 only when connecting</li>
+<li><strong>Banner none</strong> - No banner message is displayed to the user before authentication.</li>
+<li><strong>Ciphers chacha20-poly1305@openssh.com</strong></li>
+<li><strong>FingerprintHash sha256</strong> - Prefer SHA256 over MD5 when displaying key fingerprints</li>
+<li><strong>HostKey /etc/ssh/ssh_host_ed25519_key</strong> - Specifies the ed25519 host private key file.</li>
+<li><strong>HostKeyAlgorithms ssh-ed25519</strong> - Prefer use of DJB's cipher. </li>
+<li><strong>KexAlgorithms curve25519-sha256@libssh.org</strong> - Prefer use of DJB's cipher. Key Exchange Algorithm.</li>
+<li><strong>PasswordAuthentication no</strong> - Disable password authentication</li>
+<li><strong>PermitRootLogin no</strong> - Do not allow root login over SSH</li>
+<li><strong>PrintLastLog no</strong> - Disables printing the date and time of the last user login. </li>
+<li><strong>PrintMotd no</strong> - Disables printing the /etc/motd when a user logs in.</li>
+<li><strong>PubkeyAcceptedKeyTypes ssh-ed25519@openssh.com</strong> - Prefer use of DJB's cipher. Key types for public key authentication.</li>
+<li><strong>PubkeyAuthentication yes</strong> - Use public key authentication</li>
+<li><strong>UseDNS yes</strong> - Tells sshd to look up the remote host name and check that the resolved host name for the remote IP address maps back to the same IP address.</li>
+<li><strong>StrictHostKeyChecking yes</strong> - SSH refuses to connect to a host if the host key fingerprint differs from the SSHFP record. </li>
+<li><strong>VerifyHostKeyDNS yes</strong> - Specifies to verify the host key using DNS and SSHFP resource records. The client will implicitly trust keys that match a secure fingerprint from DNS.</li>
+</ul>
+<h3 id="hsm">HSM</h3>
+<p>Will a HSM really be used? Preferable for DNSSEC root keys</p>
+<h3 id="passwords">Passwords</h3>
+<p><a href="https://www.passwordstore.org">Pass</a></p>
+<h3 id="tcp-wrapper">TCP Wrapper</h3>
+<h3 id="ids">IDS</h3>
+<h3 id="firewalls">Firewalls</h3>
+<h2 id="configuration-management_1">Configuration Management</h2>
+<p>Traditional system administration follows the "waterfall" method, where each step: gather requirements, design, implement, test, verify, deploy; is performed by a different team, and often conducted by hand. Each step or team has an end goal after which the product is handed over to the new team. The methodology documented in the papers at infrastructures.org, now referred to as DevOps, adds a layer of abstraction to the administration of services. By describing the infrastructure in structured configuration files, you leave the implementation up to the configuration management tool. So rather than specifying how to install a package for multiple operating systems, you say that you want the package installed, and leave the implementation up to the configuration management tool. </p>
+<p>Also, the concept of idempotency is important. Rather than having a script that says "service $SERVICE start" which doesn't check if the service is already started, you instead say that you want a service to be in a started state. The configuration management tool then periodically checks the state of the service, and changes it to the desired state if necessary.</p>
+<p>Features of this method include:</p>
+<ul>
+<li>Same Development and Operations toolchain</li>
+<li>Consistent software development life cycle</li>
+<li>Managed configuration and automation</li>
+<li>Infrastructure as code</li>
+<li>Automated provisioning and deployment</li>
+<li>Automated build and release</li>
+<li>Release packaging</li>
+<li>Abstracted administration</li>
+</ul>
+<p>Continuous Delivery:</p>
+<ul>
+<li>The process for releasing/deploying must be repeatable and reliable</li>
+<li>Automate everything</li>
+<li>If something is difficult or painful, do it more often to improve and automate it</li>
+<li>Keep everything in source control</li>
+<li>"Done" means "released, working properly, in the hands of the end user"</li>
+<li>Build quality in</li>
+<li>Everybody has responsibility for the release process</li>
+<li>Improve continuously</li>
+</ul>
+<p>Have buildbot create a new ZFS BE in response to the security notice email for a new release. </p>
+<h2 id="authorisation-access-control-lists">Authorisation / Access Control Lists</h2>
+<p>You can control access to objects using the ACL authorisation mechanism. </p>
+<p>NFSv4 ACLs allow more fine grained control</p>
+<h2 id="role-based-access-control-shared-administration-sudo">Role-Based Access Control / Shared Administration (sudo)</h2>
+<h1 id="rbac">RBAC</h1>
+<p>Maintaining the fine-grained control of files can be arduous and is difficult to maintain at scale.</p>
+<p>One way to bring control over this is through role-based access control (RBAC). Instead of applying permissions to individual users and groups, you create roles which are applied to users and are collections of groups. A role might be HR staff, which have read/write access to the HR folder but only read to the Sales folder. </p>
+<h1 id="sudo">sudo</h1>
+<p>Access to the root account is restricted. Instead, sysadmins have a regular unix account which is given permission to perform administrative tasks with sudo. </p>
+<h2 id="domain-naming-service">Domain Naming Service</h2>
+<h2 id="directory-service-ldap">Directory Service (LDAP)</h2>
+<h2 id="time-service">Time Service</h2>
+<h2 id="logging-auditing">Logging / Auditing</h2>
+<p>Logs should remain on the server itself for a defined period of time, or defined file size, whichever occurs sooner. The logs should be rotated to ensure that they do not fill the disk. Ideally the logs should be stored in a separate disk/filesystem so that if the logs do fill the disk its doesn't affect the rest of the system.</p>
+<p>The logs should also be sent to some centralised place in the event that the server is tampered with or dies for whatever reason. The central logging server itself should also rotate logs and archive off old logs after a defined period of time. </p>
+<h2 id="rpc-admin-service">RPC / Admin service</h2>
+<p>!!</p>
+<h1 id="designing-for-operations">Designing for Operations</h1>
+<h2 id="specific-operational-requirements">Specific Operational Requirements</h2>
+<ul>
+<li>Configuration</li>
+<li>Startup and shutdown</li>
+<li>Queue draining</li>
+<li>Software upgrades </li>
+<li>Backups and restores</li>
+<li>Redundancy</li>
+<li>Replicated databases</li>
+<li>Hot swaps</li>
+<li>Access controls and rate limits</li>
+<li>Monitoring</li>
+<li>Auditing</li>
+</ul>
+<p>!!</p>
+<h3 id="configuration">Configuration ###</h3>
+<p>The configuration should be able to be backed up and restored. You should be able to view the difference between one version and the other. Archive the running configuration while the system is running. This is best done with text files, as they can be stored in existing version control systems</p>
+<pre><code>- NanoBSD, conf file
+- Jails, conf file
+- Kerberos
+- OpenDNSSEC
+- SoftHSM
+- NSD
+- Unbound
+- OpenLDAP
+- OpenNTP
+- OpenSSH
+- Configuration Management
+- NFS
+</code></pre>
+<h3 id="startup-and-shutdown">Startup and shutdown</h3>
+<p>Enter drain mode; Stop the applications (optional); Stop the jails (which should have scripts to stop the apps); Shutdown. Startup, start the jails on boot, mount and filesystems in jails; run apps check before saying ready; Exit drain mode.</p>
+<h3 id="queue-draining">Queue draining</h3>
+<p>All requests are going through the load balancer, individual nodes can be put into drain mode.</p>
+<h3 id="software-upgrades">Software upgrades</h3>
+<p>For app upgrades, snapshot current, update app, restart jail with new updated app jail. For OS upgrades, build new offline image, update slice 2, reboot. </p>
+<h3 id="backups-and-restores">Backups and restores</h3>
+<p>Config files / OS files / data files</p>
+<p>How to backup and restore:</p>
+<pre><code>- Kerberos principals, groups etc.
+- LDAP data
+- DNS records/zones
+- HSM data
+</code></pre>
+<p>Calculate the latency/data limits required to perform above backups/restores</p>
+<h3 id="redundancy">Redundancy</h3>
+<p>OS, hard drive, zfs. Services are behind a load balancer</p>
+<h3 id="replicated-databases">Replicated databases</h3>
+<h3 id="hot-swaps">Hot swaps</h3>
+<p>Physical components should be hot swappable. Service components should also be hot swappable.</p>
+<h3 id="access-controls-and-rate-limits">Access controls and rate limits</h3>
+<p>If a service provides an API, that API should include an Access Control List</p>
+<h3 id="monitoring">Monitoring</h3>
+<p>Configuration management tools typically monitor the OS / Application code is correct. Use normal network monitoring tools to monitor up/down, latency etc...
+icinga
+tick stack</p>
+<h3 id="auditing">Auditing</h3>
+<p>Logging to central servers
+Auditd / openbsm</p>
+<h2 id="unspecific-operational-requirements">Unspecific Operational Requirements</h2>
+<h1 id="user-access">User Access</h1>
+<ul>
+<li>Documents</li>
+<li>Applications</li>
+<li>Email</li>
+<li>Instant Messaging</li>
+<li>Working remotely</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../implementation/" class="btn btn-neutral float-right" title="Implementation">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../implementation/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

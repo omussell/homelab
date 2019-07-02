@@ -1,0 +1,38 @@
+digraph SecureInfrastructure {
+
+	VC [shape=box,label="Version Control"];
+	CM [shape=box,label="Configuration Management"];
+	AHCT [shape=box,label="Ad-Hoc Change Tools"];
+	HIT [shape=box,label="Host Install Tools"];
+	DIR [shape=box,label="Directory Servers"];
+	AUTH [shape=box,label="Authentication Servers"];
+	TIME [shape=box,label="Time Servers"];
+	NFS [shape=box,label="Network File Servers"];
+	FRS [shape=box,label="File Replication Servers"];
+	CFA [shape=box,label="Client File Access"];
+	COSU [shape=box,label="Client OS Update"];
+	CCM [shape=box,label="Client Configuration Management"];
+	MAIL [shape=box,label="Mail"];
+	PRNT [shape=box,label="Printing"];
+	MONT [shape=box,label="Monitoring"];
+	CAM [ shape=box,label="Client Application Management"]; 
+
+	VC -> CM;
+	CM -> AHCT;
+	CM -> HIT;
+	AHCT -> DIR;
+	HIT -> DIR;
+	DIR -> AUTH;
+	DIR -> TIME;
+	AUTH -> NFS;
+	TIME -> NFS;
+	TIME -> FRS;
+	NFS -> CFA;
+	FRS -> CFA;
+	CFA -> COSU;
+	COSU -> CCM;
+	CCM -> MAIL;
+	CCM -> PRNT;
+	CCM -> MONT;
+	CCM -> CAM;
+}

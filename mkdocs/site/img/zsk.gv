@@ -1,0 +1,9 @@
+digraph structs {
+node [shape=record];
+	struct1 [shape=record, label="AAAA RRset"];
+	struct2 [shape=record, label="ZSK"];
+	struct3 [shape=record, label="RRSIG Signature"];
+
+	struct1 -> struct2 [arrowhead=none];
+	struct2 -> struct3;
+}
