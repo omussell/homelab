@@ -1,3 +1,32 @@
+## Taskfile
+
+https://taskfile.dev/
+
+Alternative to Make, a build tool written in Go. Supply commands in a yaml file.
+
+```
+version: '2'
+
+vars:
+  GREETING: Hello, World!
+  py_ver: 3.6
+  VENV: |-
+    test -d venv || python{{.py_ver}} -m venv venv
+    VIRTUAL_ENV="$PWD/venv"
+    PATH="$VIRTUAL_ENV/bin:$PATH"
+    export PATH
+    pip -q install --upgrade pip
+
+tasks:
+  pip_install:
+    cmds:
+    - |
+      set -e
+      {{.VENV}}
+      pip -q install --upgrade -r requirements.txt
+```
+
+
 ## Taiga (Project Management application)
 
 pkg install -y gcc py36-libxml2 py36-lxml py36-pillow gettext
