@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Homelab - GRIM</title>
+  <title>Homelab - Homelab</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -36,7 +36,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
       <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> GRIM</a>
+        <a href=".." class="icon icon-home"> Homelab</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
@@ -48,51 +48,138 @@
 	<ul class="current">
 	  
           
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
             <li class="toctree-l1 current">
 		
     <a class="current" href="./">Homelab</a>
     <ul class="subnav">
             
+    <li class="toctree-l2"><a href="#taskfile">Taskfile</a></li>
+    
+
     <li class="toctree-l2"><a href="#taiga-project-management-application">Taiga (Project Management application)</a></li>
     
 
-    <li class="toctree-l2"><a href="#sample_data-takes-forever">sample_data takes forever...</a></li>
+    <li class="toctree-l2"><a href="#massively-scalable-web-applications">Massively scalable Web Applications</a></li>
+    
+
+    <li class="toctree-l2"><a href="#architecture">Architecture</a></li>
     
         <ul>
         
-            <li><a class="toctree-l3" href="#massively-scalable-web-applications">Massively scalable Web Applications</a></li>
+            <li><a class="toctree-l3" href="#tls-termination">TLS Termination</a></li>
         
-            <li><a class="toctree-l3" href="#architecture">Architecture</a></li>
+            <li><a class="toctree-l3" href="#caching">Caching</a></li>
         
-            <li><a class="toctree-l3" href="#example-architecture">Example Architecture</a></li>
+            <li><a class="toctree-l3" href="#dynamic-content">Dynamic Content</a></li>
         
-            <li><a class="toctree-l3" href="#alternative-example-architecture">Alternative Example architecture</a></li>
+            <li><a class="toctree-l3" href="#proxying-and-authentication">Proxying and authentication</a></li>
         
-            <li><a class="toctree-l3" href="#nginx-tcpudp-proxy">NGINX TCP/UDP proxy</a></li>
-        
-            <li><a class="toctree-l3" href="#nginx-unit">NGINX Unit</a></li>
-        
-            <li><a class="toctree-l3" href="#odoo-erpcrm">Odoo ERP/CRM</a></li>
-        
-            <li><a class="toctree-l3" href="#zfs-be-pkgbase">ZFS BE + PkgBase</a></li>
-        
-            <li><a class="toctree-l3" href="#handling-go-dependencies">Handling Go Dependencies</a></li>
-        
-            <li><a class="toctree-l3" href="#packaging-go-applications">Packaging Go Applications</a></li>
-        
-            <li><a class="toctree-l3" href="#building-go-programs-using-bazel">Building Go programs using Bazel</a></li>
-        
-            <li><a class="toctree-l3" href="#ci-with-buildbot">CI with Buildbot</a></li>
-        
-            <li><a class="toctree-l3" href="#postgresql-101-with-replication">PostgreSQL 10.1 with replication</a></li>
-        
-            <li><a class="toctree-l3" href="#static-sites-with-hugo">Static sites with Hugo</a></li>
-        
-            <li><a class="toctree-l3" href="#self-hosted-git">Self-hosted Git</a></li>
-        
-            <li><a class="toctree-l3" href="#saltstack-install-and-config">Saltstack install and config</a></li>
+            <li><a class="toctree-l3" href="#application-server">Application server</a></li>
         
         </ul>
+    
+
+    <li class="toctree-l2"><a href="#example-architecture">Example Architecture</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#tls-termination-hitch">TLS Termination - Hitch</a></li>
+        
+            <li><a class="toctree-l3" href="#caching-varnish">Caching - Varnish</a></li>
+        
+            <li><a class="toctree-l3" href="#dynamic-content-varnish-edge-side-includes-vcl-pipe">Dynamic Content - Varnish Edge Side Includes / VCL Pipe</a></li>
+        
+            <li><a class="toctree-l3" href="#proxying-and-authentication-nginx">Proxying and authentication - NGINX</a></li>
+        
+            <li><a class="toctree-l3" href="#application-server-nginx-unit">Application server - NGINX Unit</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#alternative-example-architecture">Alternative Example architecture</a></li>
+    
+
+    <li class="toctree-l2"><a href="#nginx-tcpudp-proxy">NGINX TCP/UDP proxy</a></li>
+    
+
+    <li class="toctree-l2"><a href="#nginx-unit">NGINX Unit</a></li>
+    
+
+    <li class="toctree-l2"><a href="#odoo-erpcrm">Odoo ERP/CRM</a></li>
+    
+
+    <li class="toctree-l2"><a href="#zfs-be-pkgbase">ZFS BE + PkgBase</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#zfs-boot-environments">ZFS Boot Environments</a></li>
+        
+            <li><a class="toctree-l3" href="#pkgbase">PkgBase</a></li>
+        
+            <li><a class="toctree-l3" href="#zfs-be-pkgbase-working-together">ZFS BE + PkgBase working together</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#handling-go-dependencies">Handling Go Dependencies</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#bazel-gazelle">Bazel / Gazelle</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#packaging-go-applications">Packaging Go Applications</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#packaging-with-fpm">Packaging with fpm</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#building-go-programs-using-bazel">Building Go programs using Bazel</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#gazelle">Gazelle</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#ci-with-buildbot">CI with Buildbot</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#adding-dependencies">Adding dependencies</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#postgresql-101-with-replication">PostgreSQL 10.1 with replication</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#postgresql-101-scram-authentication">PostgreSQL 10.1 SCRAM Authentication</a></li>
+        
+            <li><a class="toctree-l3" href="#postgresql-101-using-repmgr-for-database-replication-wal-g-for-wal-archiving-and-minio-for-s3-compatible-storage">PostgreSQL 10.1 using repmgr for database replication, WAL-G for WAL archiving, and minio for S3 compatible storage</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#static-sites-with-hugo">Static sites with Hugo</a></li>
+    
+
+    <li class="toctree-l2"><a href="#self-hosted-git">Self-hosted Git</a></li>
+    
+
+    <li class="toctree-l2"><a href="#saltstack-install-and-config">Saltstack install and config</a></li>
     
 
     <li class="toctree-l2"><a href="#_1">*</a></li>
@@ -140,7 +227,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">GRIM</a>
+        <a href="..">Homelab</a>
       </nav>
 
       
@@ -162,32 +249,72 @@
           <div role="main">
             <div class="section">
               
-                <h2 id="taiga-project-management-application">Taiga (Project Management application)</h2>
-<p>pkg install -y gcc py36-libxml2 py36-lxml py36-pillow gettext
+                <h2 id="taskfile">Taskfile</h2>
+<p>https://taskfile.dev/</p>
+<p>Alternative to Make, a build tool written in Go. Supply commands in a yaml file.</p>
+<pre><code>version: '2'
+
+vars:
+  GREETING: Hello, World!
+  py_ver: 3.6
+  VENV: |-
+    test -d venv || python{{.py_ver}} -m venv venv
+    VIRTUAL_ENV=&quot;$PWD/venv&quot;
+    PATH=&quot;$VIRTUAL_ENV/bin:$PATH&quot;
+    export PATH
+    pip -q install --upgrade pip
+
+tasks:
+  pip_install:
+    cmds:
+    - |
+      set -e
+      {{.VENV}}
+      pip -q install --upgrade -r requirements.txt
+</code></pre>
+
+<h2 id="taiga-project-management-application">Taiga (Project Management application)</h2>
+<p>https://taiga.io/</p>
+<pre><code>pkg install -y gcc py36-libxml2 py36-lxml py36-pillow gettext
 setenv CC gcc
 pip install -r requirements
-cp -v settings/local.py.example settings/local.py</p>
-<p>./manage.py migrate --noinput
+cp -v settings/local.py.example settings/local.py
+</code></pre>
+
+<pre><code>./manage.py migrate --noinput
 ./manage.py loaddata initial_user
 ./manage.py loaddata initial_project_templates
 ./manage.py compilemessages
-./manage.py collectstatic --noinput</p>
-<h1 id="sample_data-takes-forever">sample_data takes forever...</h1>
-<p>./manage.py sample_data</p>
-<p>frontend:
+./manage.py collectstatic --noinput
+# sample_data takes forever...
+./manage.py sample_data
+</code></pre>
+
+<pre><code>frontend:
 deactivate venv
-pkg install -y python2</p>
-<p>edit conf.json, use correct IP address
-serve static files using NGINX as per production instructions</p>
+pkg install -y python2
+
+edit conf.json, use correct IP address
+serve static files using NGINX as per production instructions
+</code></pre>
+
 <h2 id="massively-scalable-web-applications">Massively scalable Web Applications</h2>
-<p>HTTPS Request -&gt; Hitch &lt;-&gt; Varnish &lt;-&gt; Varnish ESI &lt;-&gt; NGINX &lt;-&gt; NGINX Unit</p>
-<p>Scaling cube:
-X - Horizontal - More servers
-Y - Vertical - Bigger servers
-Z - Depth - Sharding</p>
-<p>X - Scale by adding more servers of same size. Requests can be evenly distributed amongst them.
-Y - Give more CPU+RAM to servers
-Z - Distribute requests to specific groups of servers. Maybe geo location so servers are specific to a region. Maybe for caching its splitting the cache up into partitions.</p>
+<ul>
+<li>HTTPS Request -&gt; Hitch &lt;-&gt; Varnish &lt;-&gt; Varnish ESI &lt;-&gt; NGINX &lt;-&gt; NGINX Unit</li>
+</ul>
+<p>Scaling cube:</p>
+<ul>
+<li>X - Horizontal - More servers</li>
+<li>Y - Vertical - Bigger servers</li>
+<li>
+<p>Z - Depth - Sharding</p>
+</li>
+<li>
+<p>X - Scale by adding more servers of same size. Requests can be evenly distributed amongst them.</p>
+</li>
+<li>Y - Give more CPU+RAM to servers</li>
+<li>Z - Distribute requests to specific groups of servers. Maybe geo location so servers are specific to a region. Maybe for caching its splitting the cache up into partitions.</li>
+</ul>
 <h2 id="architecture">Architecture</h2>
 <h3 id="tls-termination">TLS Termination</h3>
 <p>HTTPS to the edge. This is the main interface for users to the web application. Usually paired with load balancers to manage traffic ingress.</p>
@@ -202,25 +329,35 @@ Z - Distribute requests to specific groups of servers. Maybe geo location so ser
 <h2 id="example-architecture">Example Architecture</h2>
 <h3 id="tls-termination-hitch">TLS Termination - Hitch</h3>
 <p><a href="https://hitch-tls.org">Hitch</a> is an implementation of a TLS proxy by the makers of Varnish. It is simple and performs one job.</p>
-<p>X - Multiple hitch servers behind load balancer
-Y - Bigger servers
-Z - Load balancers for specific geo regions. Load balancers for specific domains so hitch servers only get a subset of requests.</p>
+<ul>
+<li>X - Multiple hitch servers behind load balancer</li>
+<li>Y - Bigger servers</li>
+<li>Z - Load balancers for specific geo regions. Load balancers for specific domains so hitch servers only get a subset of requests.</li>
+</ul>
 <h3 id="caching-varnish">Caching - Varnish</h3>
-<p>X - Multiple varnish caches. Maybe shared cache.
-Y - Bigger servers. More RAM means more content can be cached.
-Z - Sharded cache objects</p>
+<ul>
+<li>X - Multiple varnish caches. Maybe shared cache.</li>
+<li>Y - Bigger servers. More RAM means more content can be cached.</li>
+<li>Z - Sharded cache objects</li>
+</ul>
 <h3 id="dynamic-content-varnish-edge-side-includes-vcl-pipe">Dynamic Content - Varnish Edge Side Includes / VCL Pipe</h3>
-<p>X - 
-Y - 
-Z - </p>
+<ul>
+<li>X - </li>
+<li>Y - </li>
+<li>Z - </li>
+</ul>
 <h3 id="proxying-and-authentication-nginx">Proxying and authentication - NGINX</h3>
-<p>X - 
-Y - 
-Z - </p>
+<ul>
+<li>X - </li>
+<li>Y - </li>
+<li>Z - </li>
+</ul>
 <h3 id="application-server-nginx-unit">Application server - NGINX Unit</h3>
-<p>X - 
-Y - 
-Z - </p>
+<ul>
+<li>X - </li>
+<li>Y - </li>
+<li>Z - </li>
+</ul>
 <h2 id="alternative-example-architecture">Alternative Example architecture</h2>
 <p>One issue with the architecture described above is that communication between layers is done via HTTP rather than HTTPS. Hitch and Varnish do not support HTTPS backends.</p>
 <p>An alternative would be to use NGINX for all layers, since it can use HTTPS upstreams.</p>
@@ -292,7 +429,7 @@ service unitd start
 </code></pre>
 
 <h2 id="odoo-erpcrm">Odoo ERP/CRM</h2>
-<p><a href="https://www.odoo.com">Odoo</a> is an open source ERP/CRM solution. It uses Python and PostgreSQL for the backend and simply Less CSS for the frontend.</p>
+<p><a href="https://www.odoo.com">Odoo</a> is an open source ERP/CRM solution. It uses Python and PostgreSQL for the backend and Less CSS for the frontend.</p>
 <p>Download the source code</p>
 <p><code>git clone https://github.com/odoo/odoo.git --branch 11.0 --depth 1</code></p>
 <p>Install the dependencies</p>
@@ -1214,6 +1351,13 @@ testjail {
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
 
   <hr/>
 
@@ -1235,6 +1379,8 @@ testjail {
   <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
     </span>
