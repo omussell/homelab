@@ -1,5 +1,5 @@
-site_name: GRIM
+site_name: Homelab
 theme: readthedocs
 nav:
-        #- Home: index.md
+        - Home: index.md
         - Homelab: homelab.md

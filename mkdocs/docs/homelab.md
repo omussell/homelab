@@ -29,12 +29,17 @@ tasks:
 
 ## Taiga (Project Management application)
 
+https://taiga.io/
+
+```
 pkg install -y gcc py36-libxml2 py36-lxml py36-pillow gettext
 setenv CC gcc
 pip install -r requirements
 cp -v settings/local.py.example settings/local.py
+```
 
 
+```
 ./manage.py migrate --noinput
 ./manage.py loaddata initial_user
 ./manage.py loaddata initial_project_templates
@@ -42,31 +47,30 @@ cp -v settings/local.py.example settings/local.py
 ./manage.py collectstatic --noinput
 # sample_data takes forever...
 ./manage.py sample_data
+```
 
-
-
-
+```
 frontend:
 deactivate venv
 pkg install -y python2
 
 edit conf.json, use correct IP address
 serve static files using NGINX as per production instructions
-
-
+```
 
 ## Massively scalable Web Applications
 
-HTTPS Request -> Hitch <-> Varnish <-> Varnish ESI <-> NGINX <-> NGINX Unit
+- HTTPS Request -> Hitch <-> Varnish <-> Varnish ESI <-> NGINX <-> NGINX Unit
 
 Scaling cube:
-X - Horizontal - More servers
-Y - Vertical - Bigger servers
-Z - Depth - Sharding
 
-X - Scale by adding more servers of same size. Requests can be evenly distributed amongst them.
-Y - Give more CPU+RAM to servers
-Z - Distribute requests to specific groups of servers. Maybe geo location so servers are specific to a region. Maybe for caching its splitting the cache up into partitions.
+- X - Horizontal - More servers
+- Y - Vertical - Bigger servers
+- Z - Depth - Sharding
+
+- X - Scale by adding more servers of same size. Requests can be evenly distributed amongst them.
+- Y - Give more CPU+RAM to servers
+- Z - Distribute requests to specific groups of servers. Maybe geo location so servers are specific to a region. Maybe for caching its splitting the cache up into partitions.
 
 ## Architecture
 
@@ -91,29 +95,29 @@ The application running as a web server to receive uncacheable requests
 
 [Hitch](https://hitch-tls.org) is an implementation of a TLS proxy by the makers of Varnish. It is simple and performs one job.
 
-X - Multiple hitch servers behind load balancer
-Y - Bigger servers
-Z - Load balancers for specific geo regions. Load balancers for specific domains so hitch servers only get a subset of requests.
+- X - Multiple hitch servers behind load balancer
+- Y - Bigger servers
+- Z - Load balancers for specific geo regions. Load balancers for specific domains so hitch servers only get a subset of requests.
 
 
 ### Caching - Varnish
-X - Multiple varnish caches. Maybe shared cache.
-Y - Bigger servers. More RAM means more content can be cached.
-Z - Sharded cache objects
+- X - Multiple varnish caches. Maybe shared cache.
+- Y - Bigger servers. More RAM means more content can be cached.
+- Z - Sharded cache objects
 
 ### Dynamic Content - Varnish Edge Side Includes / VCL Pipe
-X - 
-Y - 
-Z - 
+- X - 
+- Y - 
+- Z - 
 
 ### Proxying and authentication - NGINX
-X - 
-Y - 
-Z - 
+- X - 
+- Y - 
+- Z - 
 ### Application server - NGINX Unit
-X - 
-Y - 
-Z - 
+- X - 
+- Y - 
+- Z - 
 
 ## Alternative Example architecture
 One issue with the architecture described above is that communication between layers is done via HTTP rather than HTTPS. Hitch and Varnish do not support HTTPS backends.
@@ -204,7 +208,7 @@ The config file:
 
 ## Odoo ERP/CRM
 
-[Odoo](https://www.odoo.com) is an open source ERP/CRM solution. It uses Python and PostgreSQL for the backend and simply Less CSS for the frontend.
+[Odoo](https://www.odoo.com) is an open source ERP/CRM solution. It uses Python and PostgreSQL for the backend and Less CSS for the frontend.
 
 Download the source code
 
