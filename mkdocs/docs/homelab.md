@@ -1,3 +1,55 @@
+## NGINX TLS 1.3, HTTP2, mTLS
+
+Generate the certificates signed by the same CA for each of:
+
+- NGINX on host
+- NGINX in jail
+
+This can be done using [minica](https://github.com/jsha/minica).
+
+NGINX config on host:
+
+```
+server {
+    listen       [::]:443 ssl http2;
+    server_name  localhost;
+    ssl_certificate /usr/local/etc/nginx/ssl/cert.pem;
+    ssl_certificate_key /usr/local/etc/nginx/ssl/key.pem;
+    ssl_protocols TLSv1.3;
+    ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305';
+    ssl_prefer_server_ciphers on;
+
+    location / {
+            proxy_pass https://192.168.1.15;
+            proxy_ssl_certificate /usr/local/etc/nginx/ssl/client.pem;
+            proxy_ssl_certificate_key /usr/local/etc/nginx/ssl/client.key;
+            proxy_ssl_trusted_certificate /usr/local/etc/nginx/ssl/trusted_ca_cert.crt;
+            proxy_ssl_protocols TLSv1.3;
+    }
+```
+
+NGINX config in jail:
+
+```
+server {
+    listen       [::]:443 ssl;
+    server_name  omuss.net;
+
+    ssl_certificate /usr/local/etc/nginx/ssl/server.crt;
+    ssl_certificate_key /usr/local/etc/nginx/ssl/server.key;
+    ssl_client_certificate /usr/local/etc/nginx/ssl/ca.crt;
+    ssl_verify_client on;
+}
+```
+This can then be tested with curl:
+
+```
+curl --tls13-ciphers TLS_CHACHA20_POLY1305_SHA256 -vIk https://localhost
+```
+
+HTTP2 is just a wrapper around HTTP1.1. NGINX can only use HTTP1.1 when passing requests to upstreams. This is because there is no benefit to using HTTP2 on the upstreams. All of the benefits to HTTP2 are for client connections (header compression, multiplexing, binary streaming).
+
+
 ## Taskfile
 
 https://taskfile.dev/
@@ -57,72 +109,6 @@ pkg install -y python2
 edit conf.json, use correct IP address
 serve static files using NGINX as per production instructions
 ```
-
-## Massively scalable Web Applications
-
-- HTTPS Request -> Hitch <-> Varnish <-> Varnish ESI <-> NGINX <-> NGINX Unit
-
-Scaling cube:
-
-- X - Horizontal - More servers
-- Y - Vertical - Bigger servers
-- Z - Depth - Sharding
-
-- X - Scale by adding more servers of same size. Requests can be evenly distributed amongst them.
-- Y - Give more CPU+RAM to servers
-- Z - Distribute requests to specific groups of servers. Maybe geo location so servers are specific to a region. Maybe for caching its splitting the cache up into partitions.
-
-## Architecture
-
-### TLS Termination
-HTTPS to the edge. This is the main interface for users to the web application. Usually paired with load balancers to manage traffic ingress.
-
-### Caching
-Cache some content to improve resource load times
-
-### Dynamic Content
-Resources that can't be cached, and should be passed to the application server to be generated
-
-### Proxying and authentication
-Routing requests to the correct application server. Using API keys for authentication.
-
-### Application server
-The application running as a web server to receive uncacheable requests
-
-## Example Architecture
-
-### TLS Termination - Hitch
-
-[Hitch](https://hitch-tls.org) is an implementation of a TLS proxy by the makers of Varnish. It is simple and performs one job.
-
-- X - Multiple hitch servers behind load balancer
-- Y - Bigger servers
-- Z - Load balancers for specific geo regions. Load balancers for specific domains so hitch servers only get a subset of requests.
-
-
-### Caching - Varnish
-- X - Multiple varnish caches. Maybe shared cache.
-- Y - Bigger servers. More RAM means more content can be cached.
-- Z - Sharded cache objects
-
-### Dynamic Content - Varnish Edge Side Includes / VCL Pipe
-- X - 
-- Y - 
-- Z - 
-
-### Proxying and authentication - NGINX
-- X - 
-- Y - 
-- Z - 
-### Application server - NGINX Unit
-- X - 
-- Y - 
-- Z - 
-
-## Alternative Example architecture
-One issue with the architecture described above is that communication between layers is done via HTTP rather than HTTPS. Hitch and Varnish do not support HTTPS backends.
-
-An alternative would be to use NGINX for all layers, since it can use HTTPS upstreams.
 
 ## NGINX TCP/UDP proxy
 
