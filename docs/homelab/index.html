@@ -1,221 +1,29 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  
-  <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Homelab - Homelab</title>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "Homelab";
-    var mkdocs_page_input_path = "homelab.md";
-    var mkdocs_page_url = null;
-  </script>
-  
-  <script src="../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script> 
-  
-</head>
-
-<body class="wy-body-for-nav" role="document">
-
-  <div class="wy-grid-for-nav">
-
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-      <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> Homelab</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
-  </form>
-</div>
-      </div>
-
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-	<ul class="current">
-	  
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="..">Home</a>
-	    </li>
-          
-            <li class="toctree-l1 current">
-		
-    <a class="current" href="./">Homelab</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l2"><a href="#rqlite">RQLite</a></li>
-    
-
-    <li class="toctree-l2"><a href="#nginx-tls-13-http2-mtls">NGINX TLS 1.3, HTTP2, mTLS</a></li>
-    
-
-    <li class="toctree-l2"><a href="#taskfile">Taskfile</a></li>
-    
-
-    <li class="toctree-l2"><a href="#taiga-project-management-application">Taiga (Project Management application)</a></li>
-    
-
-    <li class="toctree-l2"><a href="#nginx-tcpudp-proxy">NGINX TCP/UDP proxy</a></li>
-    
-
-    <li class="toctree-l2"><a href="#nginx-unit">NGINX Unit</a></li>
-    
-
-    <li class="toctree-l2"><a href="#odoo-erpcrm">Odoo ERP/CRM</a></li>
-    
-
-    <li class="toctree-l2"><a href="#zfs-be-pkgbase">ZFS BE + PkgBase</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#zfs-boot-environments">ZFS Boot Environments</a></li>
-        
-            <li><a class="toctree-l3" href="#pkgbase">PkgBase</a></li>
-        
-            <li><a class="toctree-l3" href="#zfs-be-pkgbase-working-together">ZFS BE + PkgBase working together</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#handling-go-dependencies">Handling Go Dependencies</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#bazel-gazelle">Bazel / Gazelle</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#packaging-go-applications">Packaging Go Applications</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#packaging-with-fpm">Packaging with fpm</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#building-go-programs-using-bazel">Building Go programs using Bazel</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#gazelle">Gazelle</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#ci-with-buildbot">CI with Buildbot</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#adding-dependencies">Adding dependencies</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#postgresql-101-with-replication">PostgreSQL 10.1 with replication</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#postgresql-101-scram-authentication">PostgreSQL 10.1 SCRAM Authentication</a></li>
-        
-            <li><a class="toctree-l3" href="#postgresql-101-using-repmgr-for-database-replication-wal-g-for-wal-archiving-and-minio-for-s3-compatible-storage">PostgreSQL 10.1 using repmgr for database replication, WAL-G for WAL archiving, and minio for S3 compatible storage</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#static-sites-with-hugo">Static sites with Hugo</a></li>
-    
-
-    <li class="toctree-l2"><a href="#self-hosted-git">Self-hosted Git</a></li>
-    
-
-    <li class="toctree-l2"><a href="#saltstack-install-and-config">Saltstack install and config</a></li>
-    
-
-    <li class="toctree-l2"><a href="#_1">*</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#salt-formulas">Salt Formulas</a></li>
-        
-            <li><a class="toctree-l3" href="#salt-equivalent-to-r10k-and-using-git-as-a-pillar-source">Salt equivalent to R10K and using git as a pillar source</a></li>
-        
-            <li><a class="toctree-l3" href="#installing-raet">Installing RAET</a></li>
-        
-            <li><a class="toctree-l3" href="#salt-equivalent-of-hiera-eyaml">Salt equivalent of hiera-eyaml</a></li>
-        
-            <li><a class="toctree-l3" href="#nsd-and-unbound-config">NSD and Unbound config</a></li>
-        
-            <li><a class="toctree-l3" href="#compiling-nginx-with-chacha20-support">Compiling NGINX with ChaCha20 support</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#_2">*</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#bhyve-vm-creation">Bhyve VM creation</a></li>
-        
-            <li><a class="toctree-l3" href="#jail-creation">Jail Creation</a></li>
-        
-            <li><a class="toctree-l3" href="#hardware">Hardware</a></li>
-        
-        </ul>
-    
-
-    </ul>
-	    </li>
-          
-        </ul>
-      </div>
-      &nbsp;
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">Homelab</a>
-      </nav>
-
-      
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="..">Docs</a> &raquo;</li>
-    
-      
-    
-    <li>Homelab</li>
-    <li class="wy-breadcrumbs-aside">
-      
-    </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main">
-            <div class="section">
-              
-                <h2 id="rqlite">RQLite</h2>
+<html>
+  <head>
+    <title>Homelab - Homelab</title>
+    <style>
+    body {
+        max-width: 720px;
+        padding: 2em;
+    }
+    .title {
+        text-align: center;
+    }
+    .main {
+        font-size: 1em;
+        line-height: 1em;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    em {
+        font-style: normal;
+        font-family: monospace;
+    }
+    </style>
+  </head>
+  <body>
+    <div class=main>
+        <h2 id="rqlite">RQLite</h2>
 <p>SQLite, distributed over many nodes with consensus achieved with the Raft protocol.</p>
 <pre><code>go get github.com/rqlite/rqlite
 cd ~/go/src/github.com/rqlite/rqlite/cmd/rqlite
@@ -1313,48 +1121,6 @@ testjail {
 <p>Raspberry Pi 2 Model B
 - Quad core 1GB RAM
 - 8GB MicroSD (w/ NOOBS)</p>
-              
-            </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
     </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <!-- Copyright etc -->
-    
-  </div>
-
-  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-</footer>
-      
-        </div>
-      </div>
-
-    </section>
-
-  </div>
-
-  <div class="rst-versions" role="note" style="cursor: pointer">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-      
-        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-    </span>
-</div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-
-</body>
+  </body>
 </html>

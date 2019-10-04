@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ config.site_name }}</title>
+    <style>
+    body {
+        max-width: 720px;
+        padding: 2em;
+    }
+    .title {
+        text-align: center;
+    }
+    .main {
+        font-size: 1em;
+        line-height: 1em;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    em {
+        font-style: normal;
+        font-family: monospace;
+    }
+    </style>
+  </head>
+  <body>
+    <div class=main>
+        {{ page.content }}
+    </div>
+  </body>
+</html>
