@@ -6,6 +6,71 @@
 - [Factorio](https://github.com/omussell/factorio_jupyter) - Jupyter Notebooks for Factorio
 <!--- Ominous: - Control NGINX configurations, similar to NGINX Controller-->
 
+## Fabfile for building this site
+
+```
+from fabric import task
+
+signify_bin = "/bin/signify-openbsd"
+signify_pubkey = "/home/oem/homelab/html.pub"
+signify_privkey = "/home/oem/homelab/html.sec"
+git_root = "/home/oem/homelab"
+mkdocs_bin = "/home/oem/.local/bin/mkdocs"
+
+@task
+def verify(c):
+    c.run(f"{signify_bin} -V -p {signify_pubkey} -m {git_root}/docs/index.html -x {git_root}/docs/index.html.sig")
+
+@task
+def sign(c):
+    c.run(f"{signify_bin} -S -s {signify_privkey} -m {git_root}/docs/index.html -x {git_root}/docs/index.html.sig")
+
+@task(post=[sign, verify])
+def build(c):
+    with c.cd(f"{git_root}/mkdocs"):
+        c.run(f"{mkdocs_bin} build -d ../docs")
+
+@task()
+def serve(c):
+    with c.cd(f"{git_root}/mkdocs"):
+        c.run(f"{mkdocs_bin} serve")
+```
+
+## Signing HTML documents
+
+If you inspect the source code of this HTML file, you may see this:
+
+```
+<!--
+  Signify pubkey: RWTjHKmnjHMiHevQlfEB8lKEdx2C1pyA3OHgSpapgZdMtYXzAf9bsVVK
+-->
+```
+
+This is the public key that can be used along with the `index.html.sig` signature file to verify that this file hasn't been tampered with.
+
+## Signify
+
+Sign and verify files
+
+Generate keys without password (remove -n flag to ask for a password)
+
+```
+signify-openbsd -G -p keyname.pub -s keyname.sec -n
+```
+
+Sign a file
+
+```
+signify-openbsd -S -s keyname.sec -m $file_to_sign -x $signature_file
+
+```
+
+Verify a file
+
+```
+signify-openbsd -V -p keyname.pub -m $file_to_verify -x $signature_file
+```
+
 ## RQLite
 
 SQLite, distributed over many nodes with consensus achieved with the Raft protocol.

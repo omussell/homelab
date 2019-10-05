@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+  <!--
+  Signify pubkey: RWTjHKmnjHMiHevQlfEB8lKEdx2C1pyA3OHgSpapgZdMtYXzAf9bsVVK
+  -->
   <head>
     <title>Homelab - Homelab</title>
     <style>
@@ -31,6 +34,57 @@
 <li><a href="https://github.com/omussell/factorio_jupyter">Factorio</a> - Jupyter Notebooks for Factorio
 <!--- Ominous: - Control NGINX configurations, similar to NGINX Controller--></li>
 </ul>
+<h2 id="fabfile-for-building-this-site">Fabfile for building this site</h2>
+<pre><code>from fabric import task
+
+signify_bin = &quot;/bin/signify-openbsd&quot;
+signify_pubkey = &quot;/home/oem/homelab/html.pub&quot;
+signify_privkey = &quot;/home/oem/homelab/html.sec&quot;
+git_root = &quot;/home/oem/homelab&quot;
+mkdocs_bin = &quot;/home/oem/.local/bin/mkdocs&quot;
+
+@task
+def verify(c):
+    c.run(f&quot;{signify_bin} -V -p {signify_pubkey} -m {git_root}/docs/index.html -x {git_root}/docs/index.html.sig&quot;)
+
+@task
+def sign(c):
+    c.run(f&quot;{signify_bin} -S -s {signify_privkey} -m {git_root}/docs/index.html -x {git_root}/docs/index.html.sig&quot;)
+
+@task(post=[sign, verify])
+def build(c):
+    with c.cd(f&quot;{git_root}/mkdocs&quot;):
+        c.run(f&quot;{mkdocs_bin} build -d ../docs&quot;)
+
+@task()
+def serve(c):
+    with c.cd(f&quot;{git_root}/mkdocs&quot;):
+        c.run(f&quot;{mkdocs_bin} serve&quot;)
+</code></pre>
+
+<h2 id="signing-html-documents">Signing HTML documents</h2>
+<p>If you inspect the source code of this HTML file, you may see this:</p>
+<pre><code>&lt;!--
+  Signify pubkey: RWTjHKmnjHMiHevQlfEB8lKEdx2C1pyA3OHgSpapgZdMtYXzAf9bsVVK
+--&gt;
+</code></pre>
+
+<p>This is the public key that can be used along with the <code>index.html.sig</code> signature file to verify that this file hasn't been tampered with.</p>
+<h2 id="signify">Signify</h2>
+<p>Sign and verify files</p>
+<p>Generate keys without password (remove -n flag to ask for a password)</p>
+<pre><code>signify-openbsd -G -p keyname.pub -s keyname.sec -n
+</code></pre>
+
+<p>Sign a file</p>
+<pre><code>signify-openbsd -S -s keyname.sec -m $file_to_sign -x $signature_file
+
+</code></pre>
+
+<p>Verify a file</p>
+<pre><code>signify-openbsd -V -p keyname.pub -m $file_to_verify -x $signature_file
+</code></pre>
+
 <h2 id="rqlite">RQLite</h2>
 <p>SQLite, distributed over many nodes with consensus achieved with the Raft protocol.</p>
 <pre><code>go get github.com/rqlite/rqlite
