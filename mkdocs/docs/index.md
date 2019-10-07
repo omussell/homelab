@@ -4,7 +4,71 @@
 - [GRIM](https://omussell.github.io/grim/) - Bootstrapping a Secure Infrastructure
 - [Crucible](https://omussell.github.io/crucible/) - Build applications using Python and ZFS
 - [Factorio](https://github.com/omussell/factorio_jupyter) - Jupyter Notebooks for Factorio
-<!--- Ominous: - Control NGINX configurations, similar to NGINX Controller-->
+<!-- Ominous: - Control NGINX configurations, similar to NGINX Controller-->
+
+## Brotli Compression with NGINX
+
+Brotli can be used as an alternative to GZIP. It can give better compression in some cases.
+
+[NGINX Brotli Docs](https://docs.nginx.com/nginx/admin-guide/dynamic-modules/brotli/)
+[Module Docs](https://github.com/google/ngx_brotli/)
+
+The normal `nginx` package does not include the brotli module. You can either compile NGINX yourself and include the Brotli module, or otherwise install the `nginx-full` package (though the package is big because of lots of dependencies and includes lots of other modules).
+
+Once you have a NGINX binary with the Brotli module included, you need to load the module in the NGINX configuration:
+
+```
+load_module /usr/local/libexec/nginx/ngx_http_brotli_static_module.so;
+load_module /usr/local/libexec/nginx/ngx_http_brotli_filter_module.so;
+```
+
+Now you have two options, compress you static files manually and put them where NGINX can find them, or let NGINX compress them on-the-fly. 
+
+### Static
+With `brotli_static` set to `on` or `always`, the files must already be compressed. This can be done by installing the `brotli` package on FreeBSD, or otherwise you can do it quick and dirty with python like:
+
+```
+# pip install brotli
+
+import brotli
+with open('index.html', 'rb') as f:
+    with open('index.html.br', 'wb') as brotted:
+        brotted.write(brotli.compress(f.read()))
+```
+
+Note that brotli prefers bytestrings.
+
+With the `brotli_static` option turned on, I found that using `index.html.br` didn't work, but if I set the filename to `index.html` but with Brotli-fied contents, it loaded correctly.
+
+You should also make sure to set `add_header Content-Encoding "br";` so that the browser knows that it is Brotli encoded.
+
+### Dynamic
+
+Otherwise, set `brotli on;` and it will compress file on-the-fly.
+
+
+
+
+<!--
+## Creating Ed25519 certificates
+
+I want to use Ed25519 (or even Ed448) certificates for use with TLS between services.
+
+I wanted a tool like `minica` or `mkcert` that created a self signed CA root certificate, then create certificates for domains that are specified. It doesnt seem like this exists.
+
+The code on the master branch of the python cryptography library seems to support creating Ed25519 certficates, but its now complaining about the OpenSSL version not supporting them. 
+
+On FreeBSD, there is a `openssl111` package which is version 1.1.1d. I moved the /usr/bin/openssl binary which is 1.1.1a to another location so that when I run `pip install git+https://github.com/pyca/cryptography.git@master` it would compile using the newer version.
+
+Now its complaining about:
+
+```
+ImportError: /root/shield/venv/lib/python3.7/site-packages/cryptography/hazmat/bindings/_openssl.abi3.so: Undefined symbol "SSLv3_client_method"
+```
+
+Support for Ed25519 cert building is coming in cryptography 2.8, so I'm going to have to wait for that to come out. The support is already in Golang I think, but I'm less certain with Go.
+-->
+
 
 ## Fabfile for building this site
 
