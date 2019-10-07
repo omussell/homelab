@@ -22,6 +22,8 @@ load_module /usr/local/libexec/nginx/ngx_http_brotli_static_module.so;
 load_module /usr/local/libexec/nginx/ngx_http_brotli_filter_module.so;
 ```
 
+Also an important note, you MUST use HTTPS for Brotli to work. So make sure you set a server block to use HTTPS and set up a certificate etc.
+
 Now you have two options, compress you static files manually and put them where NGINX can find them, or let NGINX compress them on-the-fly. 
 
 ### Static

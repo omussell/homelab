@@ -44,6 +44,7 @@
 load_module /usr/local/libexec/nginx/ngx_http_brotli_filter_module.so;
 </code></pre>
 
+<p>Also an important note, you MUST use HTTPS for Brotli to work. So make sure you set a server block to use HTTPS and set up a certificate etc.</p>
 <p>Now you have two options, compress you static files manually and put them where NGINX can find them, or let NGINX compress them on-the-fly. </p>
 <h3 id="static">Static</h3>
 <p>With <code>brotli_static</code> set to <code>on</code> or <code>always</code>, the files must already be compressed. This can be done by installing the <code>brotli</code> package on FreeBSD, or otherwise you can do it quick and dirty with python like:</p>
