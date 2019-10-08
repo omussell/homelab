@@ -43,11 +43,6 @@
 
 ssl_certificate      /usr/local/etc/nginx/ssl/$ssl_server_name.crt;
 ssl_certificate_key  /usr/local/etc/nginx/ssl/$ssl_server_name.key;
-
-# or maybe even:
-
-ssl_certificate      /usr/local/etc/nginx/ssl/$host.crt;
-ssl_certificate_key  /usr/local/etc/nginx/ssl/$host.key;
 </code></pre>
 
 <p>With certificate and key files named appropriately:</p>
@@ -57,6 +52,8 @@ ssl_certificate_key  /usr/local/etc/nginx/ssl/$host.key;
 /usr/local/etc/nginx/ssl/omuss-test.net.key
 </code></pre>
 
+<p>Note that certificates are lazy loaded, as in they are only loaded when a request comes in. So all certificates aren't loaded into memory, which means less resource usage, but there is some overhead for the TLS negotiation because NGINX has to load the certificate from disk. TLS session caching may help alleviate this though.</p>
+<p>You would probably want the certificates stored on a fast disk to eliminate I/O overhead.</p>
 <h2 id="brotli-compression-with-nginx">Brotli Compression with NGINX</h2>
 <p>Brotli can be used as an alternative to GZIP. It can give better compression in some cases.</p>
 <p><a href="https://docs.nginx.com/nginx/admin-guide/dynamic-modules/brotli/">NGINX Brotli Docs</a>

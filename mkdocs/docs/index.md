@@ -18,11 +18,6 @@ server_name  omuss.net omuss-test.net;
 
 ssl_certificate      /usr/local/etc/nginx/ssl/$ssl_server_name.crt;
 ssl_certificate_key  /usr/local/etc/nginx/ssl/$ssl_server_name.key;
-
-# or maybe even:
-
-ssl_certificate      /usr/local/etc/nginx/ssl/$host.crt;
-ssl_certificate_key  /usr/local/etc/nginx/ssl/$host.key;
 ```
 
 With certificate and key files named appropriately:
@@ -34,6 +29,9 @@ With certificate and key files named appropriately:
 /usr/local/etc/nginx/ssl/omuss-test.net.key
 ```
 
+Note that certificates are lazy loaded, as in they are only loaded when a request comes in. So all certificates aren't loaded into memory, which means less resource usage, but there is some overhead for the TLS negotiation because NGINX has to load the certificate from disk. TLS session caching may help alleviate this though.
+
+You would probably want the certificates stored on a fast disk to eliminate I/O overhead.
 
 
 ## Brotli Compression with NGINX
