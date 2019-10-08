@@ -6,6 +6,36 @@
 - [Factorio](https://github.com/omussell/factorio_jupyter) - Jupyter Notebooks for Factorio
 <!-- Ominous: - Control NGINX configurations, similar to NGINX Controller-->
 
+## Dynamic Certificate loading with NGINX
+
+[NGINX Announcement](https://www.nginx.com/blog/nginx-plus-r18-released/)
+[NGINX Docs](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate)
+
+If you have a lot of NGINX servers/vhosts all served from the same box, you probably want to secure them with TLS. Normally this would mean a lot of duplicate configuration to specify which certificate is needed for each server_name. With Dynamic Certificate Loading, you can use a NGINX variable as part of the certificate name. So if you have certificate/key files named after the server name, you can load them dynamically with NGINX.
+
+```
+server_name  omuss.net omuss-test.net;
+
+ssl_certificate      /usr/local/etc/nginx/ssl/$ssl_server_name.crt;
+ssl_certificate_key  /usr/local/etc/nginx/ssl/$ssl_server_name.key;
+
+# or maybe even:
+
+ssl_certificate      /usr/local/etc/nginx/ssl/$host.crt;
+ssl_certificate_key  /usr/local/etc/nginx/ssl/$host.key;
+```
+
+With certificate and key files named appropriately:
+
+```
+/usr/local/etc/nginx/ssl/omuss.net.crt
+/usr/local/etc/nginx/ssl/omuss.net.key
+/usr/local/etc/nginx/ssl/omuss-test.net.crt
+/usr/local/etc/nginx/ssl/omuss-test.net.key
+```
+
+
+
 ## Brotli Compression with NGINX
 
 Brotli can be used as an alternative to GZIP. It can give better compression in some cases.
