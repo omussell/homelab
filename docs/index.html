@@ -35,6 +35,25 @@
 <li><a href="https://github.com/omussell/factorio_jupyter">Factorio</a> - Jupyter Notebooks for Factorio
 <!-- Ominous: - Control NGINX configurations, similar to NGINX Controller--></li>
 </ul>
+<h2 id="tls-13-0-rtt-with-nginx">TLS 1.3 0-RTT with NGINX</h2>
+<p><a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_early_data">NGINX Docs</a>
+<a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#var_ssl_early_data">Early data var</a></p>
+<pre><code>ssl_early_data on;
+proxy_set_header Early-Data $ssl_early_data;
+limit_except GET {
+    deny  all;
+}
+</code></pre>
+
+<p>0-RTT is vulnerable to replay attacks, so we should only use this with requests using the GET method. If passing the request to a backend, you can set a header with <code>proxy_set_header Early-Data $ssl_early_data;</code>. The value of the $ssl_early_data variable is "1" is early data is used, otherwise "". This header is passed to the upstream, so it can be used by the upstream application to determine the response.</p>
+<h2 id="only-allow-certain-http-methods-with-nginx">Only allow certain HTTP methods with NGINX</h2>
+<p><a href="https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except">NGNX Docs</a></p>
+<pre><code>limit_except GET {
+    deny  all;
+}
+</code></pre>
+
+<p>Only allows GET requests through, denies all other methods, with the exception of HEAD because if GET is allowed HEAD is too.</p>
 <h2 id="dynamic-certificate-loading-with-nginx">Dynamic Certificate loading with NGINX</h2>
 <p><a href="https://www.nginx.com/blog/nginx-plus-r18-released/">NGINX Announcement</a>
 <a href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_certificate">NGINX Docs</a></p>

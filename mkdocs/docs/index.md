@@ -6,6 +6,34 @@
 - [Factorio](https://github.com/omussell/factorio_jupyter) - Jupyter Notebooks for Factorio
 <!-- Ominous: - Control NGINX configurations, similar to NGINX Controller-->
 
+## TLS 1.3 0-RTT with NGINX
+
+[NGINX Docs](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_early_data)
+[Early data var](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#var_ssl_early_data)
+
+```
+ssl_early_data on;
+proxy_set_header Early-Data $ssl_early_data;
+limit_except GET {
+    deny  all;
+}
+```
+
+0-RTT is vulnerable to replay attacks, so we should only use this with requests using the GET method. If passing the request to a backend, you can set a header with `proxy_set_header Early-Data $ssl_early_data;`. The value of the $ssl_early_data variable is "1" is early data is used, otherwise "". This header is passed to the upstream, so it can be used by the upstream application to determine the response.
+
+
+## Only allow certain HTTP methods with NGINX
+
+[NGNX Docs](https://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except)
+
+```
+limit_except GET {
+    deny  all;
+}
+```
+
+Only allows GET requests through, denies all other methods, with the exception of HEAD because if GET is allowed HEAD is too.
+
 ## Dynamic Certificate loading with NGINX
 
 [NGINX Announcement](https://www.nginx.com/blog/nginx-plus-r18-released/)
