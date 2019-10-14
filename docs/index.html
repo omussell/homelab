@@ -7,22 +7,25 @@
     <title>Homelab - Homelab</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-    body {
-        max-width: 720px;
-        padding: 2em;
-    }
     .title {
         text-align: center;
     }
     .main {
-        font-size: 150%;
-        line-height: 1em;
-        font-family: Arial, Helvetica, sans-serif;
+        margin:40px auto;
+        max-width:650px;
+        line-height:1.6;
+        font-size:18px;
+        padding:0
+        10px
     }
     em {
         font-style: normal;
         font-family: monospace;
     }
+	pre {
+ 		white-space: pre-wrap;  
+word-wrap: break-word;
+	}
     </style>
   </head>
   <body>
@@ -119,6 +122,18 @@ Now its complaining about:
 
 
 Support for Ed25519 cert building is coming in cryptography 2.8, so I'm going to have to wait for that to come out. The support is already in Golang I think, but I'm less certain with Go.
+
+
+According to [this blog post](https://blog.pinterjann.is/ed25519-certificates.html) you can create Ed25519 certs using openssl:
+
+
+<pre><code>openssl genpkey -algorithm ED25519 &gt; example.com.key
+openssl req -new -out example.com.csr -key example.com.key
+# self-signed...
+openssl x509 -req -days 700 -in example.com.csr -signkey example.com.key -out example.com.crt
+</code></pre>
+
+
 -->
 
 <h2 id="fabfile-for-building-this-site">Fabfile for building this site</h2>
@@ -417,7 +432,10 @@ This creates a new database in postgresql, hence the createdb perms required on 
 <h2 id="handling-go-dependencies">Handling Go Dependencies</h2>
 <p>During development, you will often use <code>go get</code> to download libraries for import into the program which is useful for development but not so useful when building the finished product. Managing these dependencies over time is a hassle as they change frequently and can sometimes disappear entirely.</p>
 <p>The <code>dep</code> tool provides a way of automatically scanning your import statements and evaluating all of the dependencies. It create some files <code>Gopkg.toml</code> and <code>Gopkg.lock</code> which contain the location and latest Git SHA of your dependencies.</p>
-<p><code>dep</code> is installed via <code>curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh</code></p>
+<p><code>dep</code> is installed via:</p>
+<pre><code>curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+</code></pre>
+
 <p>Run <code>dep init</code> to create the initial files, then as your develop run <code>dep ensure</code> to update dependencies to the latest version.</p>
 <p>The <code>dep</code> tool also downloads a copy of all dependencies into a <code>vendor</code> folder at the root of your project. This provides a backup in case a dependency disappears and provides the facility for reproducible builds.</p>
 <h3 id="bazel-gazelle">Bazel / Gazelle</h3>
@@ -494,15 +512,15 @@ bazel build //:go_tests
 
 <p>A built binary should be output to the ~/.cache directory. Once a binary has been built once, Bazel will only build again if the source code changes. Otherwise, any subsequent runs just complete successfully extremely quickly.</p>
 <p>When attempting to use bazel in any capacity like <code>bazel run ...</code> or <code>bazel build ...</code> it would give the following error:</p>
-<pre><code>ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+<pre><code>ERROR: /root/.cache/bazel/_bazel_root/...285a1776/external/io_bazel_rules_go/
 BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
 :packages.txt', but this target could not be found because of: no such package '@go_sdk//': 
 Unsupported operating system: freebsd
-ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+ERROR: /root/.cache/bazel/_bazel_root/...1776/external/io_bazel_rules_go/
 BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
 :files', but this target could not be found because of: no such package '@go_sdk//': 
 Unsupported operating system: freebsd
-ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+ERROR: /root/.cache/bazel/_bazel_root/...5a1776/external/io_bazel_rules_go/
 BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
 :tools', but this target could not be found because of: no such package '@go_sdk//': 
 Unsupported operating system: freebsd
@@ -510,7 +528,15 @@ ERROR: Analysis of target '//:gazelle' failed; build aborted: no such package '@
 Unsupported operating system: freebsd
 </code></pre>
 
-<p>I think this is caused by bazel attempting to download and build go which isn't necessary as we've already installed via the package anyway. In the WORKSPACE file, change the <code>go_register_toolchains()</code> line to <code>go_register_toolchains(go_version="host")</code> as documented at https://github.com/bazelbuild/rules_go/blob/master/go/toolchains.rst#using-the-installed-go-sdk. This will force bazel to use the already installed go tools.</p>
+<p>I think this is caused by bazel attempting to download and build go which isn't necessary as we've already installed via the package anyway. In the WORKSPACE file, change the <code>go_register_toolchains()</code> line to </p>
+<pre><code>go_register_toolchains(go_version=&quot;host&quot;)
+</code></pre>
+
+<p>as documented at:</p>
+<pre><code>https://github.com/bazelbuild/rules_go/blob/master/go/toolchains.rst#using-the-installed-go-sdk.
+</code></pre>
+
+<p>This will force bazel to use the already installed go tools.</p>
 <h2 id="ci-with-buildbot">CI with Buildbot</h2>
 <p>Example buildbot config:</p>
 <pre><code>factory.addStep(steps.Git(repourl='git://github.com/omussell/go_tests.git', mode='incremental'))
@@ -580,13 +606,17 @@ cp -v repmgr--4.0.sql /usr/local/share/postgresql/extension/
 cp -v repmgr.control /usr/local/share/postgresql/extension
 </code></pre>
 
-<p>vim /var/db/postgrs/data10/postgresql.conf </p>
+<pre><code>vim /var/db/postgrs/data10/postgresql.conf 
+</code></pre>
+
 <p>Add lines: </p>
 <pre><code>include_dir = 'postgresql.conf.d'
 listen_addresses = '\*'
 </code></pre>
 
-<p>vim /var/db/postgres/data10/postgresql.conf.d/postgresql.replication.conf</p>
+<pre><code>vim /var/db/postgres/data10/postgresql.conf.d/postgresql.replication.conf
+</code></pre>
+
 <p>Add lines:</p>
 <pre><code>max_wal_senders = 10
 wal_level = 'replica'
@@ -824,9 +854,13 @@ gitfs_remotes:
 
 <h3 id="salt-equivalent-to-r10k-and-using-git-as-a-pillar-source">Salt equivalent to R10K and using git as a pillar source</h3>
 <p>If the git server is also a minion, you can use Reactor to signal to the master to update the fileserver on each git push:</p>
-<p><code>https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#refreshing-gitfs-upon-push</code></p>
+<pre><code>https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#refreshing-gitfs-upon-push
+</code></pre>
+
 <p>You can also use git as a pillar source (host your specific config data in version control)</p>
-<p><code>https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#using-git-as-an-external-pillar-source</code></p>
+<pre><code>https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#using-git-as-an-external-pillar-source
+</code></pre>
+
 <h3 id="installing-raet">Installing RAET</h3>
 <p>RAET support isn't enabled in the default package. If you install py27-salt and run <code>pkg info py27-salt</code> you can see in the options <code>RAET: off</code>. In order to use RAET, you need to build the py27-salt port.</p>
 <p>Compile the port</p>
@@ -855,7 +889,9 @@ salt-key -A
 <h3 id="salt-equivalent-of-hiera-eyaml">Salt equivalent of hiera-eyaml</h3>
 <p>Salt.runners.nacl</p>
 <p>Similar to hiera-eyaml, it is used for encrypting data stored in pillar:</p>
-<p><code>https://docs.saltstack.com/en/latest/ref/runners/all/salt.runners.nacl.html</code></p>
+<pre><code>https://docs.saltstack.com/en/latest/ref/runners/all/salt.runners.nacl.html
+</code></pre>
+
 <h2 id="nsd-and-unbound-config">NSD and Unbound config</h2>
 <p>Set up the unbound/nsd-control</p>
 <pre><code>local-unbound-setup

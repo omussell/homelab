@@ -125,6 +125,17 @@ ImportError: /root/shield/venv/lib/python3.7/site-packages/cryptography/hazmat/b
 ```
 
 Support for Ed25519 cert building is coming in cryptography 2.8, so I'm going to have to wait for that to come out. The support is already in Golang I think, but I'm less certain with Go.
+
+
+According to [this blog post](https://blog.pinterjann.is/ed25519-certificates.html) you can create Ed25519 certs using openssl:
+
+```
+openssl genpkey -algorithm ED25519 > example.com.key
+openssl req -new -out example.com.csr -key example.com.key
+# self-signed...
+openssl x509 -req -days 700 -in example.com.csr -signkey example.com.key -out example.com.crt
+```
+
 -->
 
 
@@ -520,7 +531,11 @@ During development, you will often use `go get` to download libraries for import
 
 The `dep` tool provides a way of automatically scanning your import statements and evaluating all of the dependencies. It create some files `Gopkg.toml` and `Gopkg.lock` which contain the location and latest Git SHA of your dependencies.
 
-`dep` is installed via `curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh`
+`dep` is installed via:
+
+```
+curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+```
 
 Run `dep init` to create the initial files, then as your develop run `dep ensure` to update dependencies to the latest version.
 
@@ -644,15 +659,15 @@ A built binary should be output to the ~/.cache directory. Once a binary has bee
 When attempting to use bazel in any capacity like `bazel run ...` or `bazel build ...` it would give the following error:
 
 ```
-ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+ERROR: /root/.cache/bazel/_bazel_root/...285a1776/external/io_bazel_rules_go/
 BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
 :packages.txt', but this target could not be found because of: no such package '@go_sdk//': 
 Unsupported operating system: freebsd
-ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+ERROR: /root/.cache/bazel/_bazel_root/...1776/external/io_bazel_rules_go/
 BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
 :files', but this target could not be found because of: no such package '@go_sdk//': 
 Unsupported operating system: freebsd
-ERROR: /root/.cache/bazel/_bazel_root/b3532a61fb0a1349ae431191285a1776/external/io_bazel_rules_go/
+ERROR: /root/.cache/bazel/_bazel_root/...5a1776/external/io_bazel_rules_go/
 BUILD.bazel:7:1: every rule of type go_context_data implicitly depends upon the target '@go_sdk//
 :tools', but this target could not be found because of: no such package '@go_sdk//': 
 Unsupported operating system: freebsd
@@ -660,7 +675,19 @@ ERROR: Analysis of target '//:gazelle' failed; build aborted: no such package '@
 Unsupported operating system: freebsd
 ```
 
-I think this is caused by bazel attempting to download and build go which isn't necessary as we've already installed via the package anyway. In the WORKSPACE file, change the `go_register_toolchains()` line to `go_register_toolchains(go_version="host")` as documented at https://github.com/bazelbuild/rules_go/blob/master/go/toolchains.rst#using-the-installed-go-sdk. This will force bazel to use the already installed go tools.
+I think this is caused by bazel attempting to download and build go which isn't necessary as we've already installed via the package anyway. In the WORKSPACE file, change the `go_register_toolchains()` line to 
+
+```
+go_register_toolchains(go_version="host")
+``` 
+
+as documented at:
+
+```
+https://github.com/bazelbuild/rules_go/blob/master/go/toolchains.rst#using-the-installed-go-sdk.
+```
+
+This will force bazel to use the already installed go tools.
 
 ## CI with Buildbot
 
@@ -757,7 +784,9 @@ cp -v repmgr.control /usr/local/share/postgresql/extension
 ```
 
 
+```
 vim /var/db/postgrs/data10/postgresql.conf 
+```
 
 Add lines: 
 
@@ -766,7 +795,9 @@ include_dir = 'postgresql.conf.d'
 listen_addresses = '\*'
 ```
 
+```
 vim /var/db/postgres/data10/postgresql.conf.d/postgresql.replication.conf
+```
 
 Add lines:
 
@@ -1086,11 +1117,15 @@ include:
 
 If the git server is also a minion, you can use Reactor to signal to the master to update the fileserver on each git push:
 
-`https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#refreshing-gitfs-upon-push`
+```
+https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#refreshing-gitfs-upon-push
+```
 
 You can also use git as a pillar source (host your specific config data in version control)
 
-`https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#using-git-as-an-external-pillar-source`
+```
+https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html#using-git-as-an-external-pillar-source
+```
 
 
 ### Installing RAET
@@ -1135,7 +1170,9 @@ Salt.runners.nacl
 
 Similar to hiera-eyaml, it is used for encrypting data stored in pillar:
 
-`https://docs.saltstack.com/en/latest/ref/runners/all/salt.runners.nacl.html`
+```
+https://docs.saltstack.com/en/latest/ref/runners/all/salt.runners.nacl.html
+```
 
 ## NSD and Unbound config
 
