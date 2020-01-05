@@ -6,6 +6,29 @@
 - [Factorio](https://github.com/omussell/factorio_jupyter) - Jupyter Notebooks for Factorio
 <!-- Ominous: - Control NGINX configurations, similar to NGINX Controller-->
 
+## Bazel Remote Cache
+
+When building with Bazel, by default you are connecting to a local Bazel server which runs the build. If multiple people are running the same builds, you are all independently having to build the whole thing from scratch every time. 
+
+With a Remote Cache, some other storage service can cache parts of the build and artifacts which can then be reused by multiple people. 
+This can be a plain HTTP server like NGINX or Google Cloud Storage.
+
+```
+mkdir -p /var/cache/nginx
+chmod 777 /var/cache/nginx
+
+# nginx config:
+location / {
+    root /var/cache/nginx;
+    dav_methods PUT;
+    create_full_put_path on;
+    client_max_body_size 1G;
+    allow all;
+}
+```
+
+Then when running the Bazel build, add the `--remote_cache=http://$ip:$port` flag to the build parameter like `bazel build --remote_cache=http://192.168.1.10:80 //...`
+
 ## TLS 1.3 0-RTT with NGINX
 
 [NGINX Docs](http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_early_data)
