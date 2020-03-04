@@ -38,6 +38,40 @@ word-wrap: break-word;
 <li><a href="https://github.com/omussell/factorio_jupyter">Factorio</a> - Jupyter Notebooks for Factorio
 <!-- Ominous: - Control NGINX configurations, similar to NGINX Controller--></li>
 </ul>
+<h2 id="serverless-with-knative-running-in-gvisor-sandbox-on-minikube">Serverless with Knative running in gVisor sandbox on Minikube</h2>
+<ul>
+<li><a href="https://kubernetes.io/docs/tasks/tools/install-minikube/">Minikube</a> - A Kubernetes distribution which starts a single-node cluster</li>
+<li><a href="https://gvisor.dev">gVisor</a> - A user-space kernel, written in Go, that implements a substantial portion of the Linux system call interface.</li>
+<li><a href="https://knative.dev/">Knative</a> - Run serverless services on Kubernetes</li>
+</ul>
+<p>Install Minikube as described in the documentation.</p>
+<p>Install gVisor as per <a href="https://github.com/kubernetes/minikube/blob/master/deploy/addons/gvisor/README.md">the docs</a>:</p>
+<pre><code>minikube start --container-runtime=containerd  \
+    --docker-opt containerd=/var/run/containerd/containerd.sock
+minikube addons enable gvisor
+kubectl get pod,runtimeclass gvisor -n kube-system
+</code></pre>
+
+<h2 id="quick-multi-node-kubernetes-cluster">Quick Multi-Node Kubernetes Cluster</h2>
+<h3 id="multipass">Multipass</h3>
+<p><a href="https://multipass.run/">Multipass</a> lets you easily spin up Ubuntu VMs on a workstation. </p>
+<pre><code># Install
+snap install multipass --classic
+</code></pre>
+
+<p>Then to create a new instance, just run <code>multipass launch</code>. It will create a new instance based on an Ubuntu LTS image. </p>
+<p>To access the instance, just run <code>multipass shell $name</code>. You then have full access to the instance. </p>
+<p>The instances can also be bootstrapped via <a href="https://cloud-init.io/">cloud-init</a> in the same way that instances on cloud providers are.</p>
+<h3 id="microk8s">Microk8s</h3>
+<p><a href="https://microk8s.io">Microk8s</a> is a small Kubernetes distribution designed for appliances. </p>
+<pre><code># Install
+sudo snap install microk8s --classic --channel=1.16/stable
+sudo usermod -a -G microk8s $USER
+su - $USER
+</code></pre>
+
+<h3 id="cluster">Cluster</h3>
+<p>So with two Multipass instances launched, and Microk8s installed on each, we can now join them together to <a href="https://microk8s.io/docs/clustering">form a cluster</a> by running <code>microk8s.add-node</code> on the proposed master and then the requisite <code>microk8s.join</code> command on the other node. </p>
 <h2 id="bazel-remote-cache">Bazel Remote Cache</h2>
 <p>When building with Bazel, by default you are connecting to a local Bazel server which runs the build. If multiple people are running the same builds, you are all independently having to build the whole thing from scratch every time. </p>
 <p>With a Remote Cache, some other storage service can cache parts of the build and artifacts which can then be reused by multiple people. 
