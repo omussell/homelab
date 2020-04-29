@@ -38,7 +38,22 @@ word-wrap: break-word;
 <li><a href="https://github.com/omussell/factorio_jupyter">Factorio</a> - Jupyter Notebooks for Factorio
 <!-- Ominous: - Control NGINX configurations, similar to NGINX Controller--></li>
 </ul>
+<h2 id="lxd">LXD</h2>
+<p><a href="">https://linuxcontainers.org/lxd/introduction/</a></p>
+<p>Its better to have ZFS installed already and a pool created. Then LXD can use ZFS as the storage backend. </p>
+<pre><code>apt install zfsutils-linux
+zpool create tank /dev/sdb
+</code></pre>
+
+<p>Then to initialise LXD:</p>
+<pre><code>lxd init
+</code></pre>
+
+<p>A alpine container can be created with <code>lxc launch images:alpine/3.11</code>. List the running containers <code>lxc list</code> and then connect to it <code>lxc exec $name sh</code>.</p>
+<p>There is a python library for controlling LXC/LXD containers: <a href="">https://pylxd.readthedocs.io/en/latest/</a></p>
+<p>Images could be built using distrobuilder: <a href="">https://github.com/lxc/distrobuilder</a></p>
 <h2 id="compile-nginx-on-alpine-with-brotli-support">Compile NGINX on Alpine with Brotli support</h2>
+<p>Once the below compilation steps are done, in the NGINX config you should add <code>brotli_static always</code> to always use precompressed files.  </p>
 <p>Shell script for the compilation is below. The nginx binary is at /usr/sbin/nginx.</p>
 <pre><code>set -x
 NGINX_VERSION=&quot;1.18.0&quot;
