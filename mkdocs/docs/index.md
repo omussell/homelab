@@ -6,6 +6,8 @@
 - [Factorio](https://github.com/omussell/factorio_jupyter) - Jupyter Notebooks for Factorio
 <!-- Ominous: - Control NGINX configurations, similar to NGINX Controller-->
 
+[TOC]
+
 ## LXD
 
 [https://linuxcontainers.org/lxd/introduction/]()
@@ -1413,7 +1415,6 @@ Then apply the examples state
 ```
 salt '*' state.apply examples
 ```
-#*
 
 ### Salt Formulas
 
@@ -1650,7 +1651,6 @@ tar -xzvf nginx-1.13.0.tar.gz
 tar -xzvf openssl-1.1.0e.tar.gz
 rm *.tar.gz
 ```
-#*
 
 Compile openssl
 
