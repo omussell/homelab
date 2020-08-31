@@ -1,255 +1,100 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  
-  <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Homelab - Homelab</title>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+<html lang="en">
+  <!--
+  Signify pubkey: RWTjHKmnjHMiHevQlfEB8lKEdx2C1pyA3OHgSpapgZdMtYXzAf9bsVVK
+  -->
+  <head>
+    <title>Homelab - Homelab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+    .title {
+        text-align: center;
+    }
+    .main {
+        margin:40px auto;
+        max-width:650px;
+        line-height:1.6;
+        font-size:18px;
+        padding:0
+        10px
+    }
+    em {
+        font-style: normal;
+        font-family: monospace;
+    }
+	pre {
+ 		white-space: pre-wrap;  
+word-wrap: break-word;
+	}
+    </style>
+  </head>
+  <body>
+    <div class=main>
+        <h2 id="rqlite">RQLite</h2>
+<p>SQLite, distributed over many nodes with consensus achieved with the Raft protocol.</p>
+<pre><code>go get github.com/rqlite/rqlite
+cd ~/go/src/github.com/rqlite/rqlite/cmd/rqlite
+go get -t -d -v ./...
+go build
+# You now have the rqlite binary
+cd ~/go/src/github.com/rqlite/rqlite/cmd/rqlited
+go build
+# You now have the rqlited binary
+</code></pre>
 
-  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "Homelab";
-    var mkdocs_page_input_path = "homelab.md";
-    var mkdocs_page_url = null;
-  </script>
-  
-  <script src="../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script> 
-  
-</head>
+<p>Set up the first cluster node:</p>
+<pre><code>./rqlited ~/node.1
+</code></pre>
 
-<body class="wy-body-for-nav" role="document">
+<p>Then subsequent cluster nodes:</p>
+<pre><code>rqlited -http-addr localhost:4003 -raft-addr localhost:4004 -join http://localhost:4001 ~/node.2
+</code></pre>
 
-  <div class="wy-grid-for-nav">
+<p>Presumably you'd have the HTTP address and Raft address to be the same port on different servers, and you'd join to the same master node.</p>
+<h2 id="nginx-tls-13-http2-mtls">NGINX TLS 1.3, HTTP2, mTLS</h2>
+<p>Generate the certificates signed by the same CA for each of:</p>
+<ul>
+<li>NGINX on host</li>
+<li>NGINX in jail</li>
+</ul>
+<p>This can be done using <a href="https://github.com/jsha/minica">minica</a>.</p>
+<p>NGINX config on host:</p>
+<pre><code>server {
+    listen       [::]:443 ssl http2;
+    server_name  localhost;
+    ssl_certificate /usr/local/etc/nginx/ssl/cert.pem;
+    ssl_certificate_key /usr/local/etc/nginx/ssl/key.pem;
+    ssl_protocols TLSv1.3;
+    ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305';
+    ssl_prefer_server_ciphers on;
 
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-      <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> Homelab</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
-  </form>
-</div>
-      </div>
+    location / {
+            proxy_pass https://192.168.1.15;
+            proxy_ssl_certificate /usr/local/etc/nginx/ssl/client.pem;
+            proxy_ssl_certificate_key /usr/local/etc/nginx/ssl/client.key;
+            proxy_ssl_trusted_certificate /usr/local/etc/nginx/ssl/trusted_ca_cert.crt;
+            proxy_ssl_protocols TLSv1.3;
+    }
+</code></pre>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-	<ul class="current">
-	  
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="..">Home</a>
-	    </li>
-          
-            <li class="toctree-l1 current">
-		
-    <a class="current" href="./">Homelab</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l2"><a href="#taskfile">Taskfile</a></li>
-    
+<p>NGINX config in jail:</p>
+<pre><code>server {
+    listen       [::]:443 ssl;
+    server_name  omuss.net;
 
-    <li class="toctree-l2"><a href="#taiga-project-management-application">Taiga (Project Management application)</a></li>
-    
+    ssl_certificate /usr/local/etc/nginx/ssl/server.crt;
+    ssl_certificate_key /usr/local/etc/nginx/ssl/server.key;
+    ssl_client_certificate /usr/local/etc/nginx/ssl/ca.crt;
+    ssl_verify_client on;
+}
+</code></pre>
 
-    <li class="toctree-l2"><a href="#massively-scalable-web-applications">Massively scalable Web Applications</a></li>
-    
+<p>This can then be tested with curl:</p>
+<pre><code>curl --tls13-ciphers TLS_CHACHA20_POLY1305_SHA256 -vIk https://localhost
+</code></pre>
 
-    <li class="toctree-l2"><a href="#architecture">Architecture</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#tls-termination">TLS Termination</a></li>
-        
-            <li><a class="toctree-l3" href="#caching">Caching</a></li>
-        
-            <li><a class="toctree-l3" href="#dynamic-content">Dynamic Content</a></li>
-        
-            <li><a class="toctree-l3" href="#proxying-and-authentication">Proxying and authentication</a></li>
-        
-            <li><a class="toctree-l3" href="#application-server">Application server</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#example-architecture">Example Architecture</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#tls-termination-hitch">TLS Termination - Hitch</a></li>
-        
-            <li><a class="toctree-l3" href="#caching-varnish">Caching - Varnish</a></li>
-        
-            <li><a class="toctree-l3" href="#dynamic-content-varnish-edge-side-includes-vcl-pipe">Dynamic Content - Varnish Edge Side Includes / VCL Pipe</a></li>
-        
-            <li><a class="toctree-l3" href="#proxying-and-authentication-nginx">Proxying and authentication - NGINX</a></li>
-        
-            <li><a class="toctree-l3" href="#application-server-nginx-unit">Application server - NGINX Unit</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#alternative-example-architecture">Alternative Example architecture</a></li>
-    
-
-    <li class="toctree-l2"><a href="#nginx-tcpudp-proxy">NGINX TCP/UDP proxy</a></li>
-    
-
-    <li class="toctree-l2"><a href="#nginx-unit">NGINX Unit</a></li>
-    
-
-    <li class="toctree-l2"><a href="#odoo-erpcrm">Odoo ERP/CRM</a></li>
-    
-
-    <li class="toctree-l2"><a href="#zfs-be-pkgbase">ZFS BE + PkgBase</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#zfs-boot-environments">ZFS Boot Environments</a></li>
-        
-            <li><a class="toctree-l3" href="#pkgbase">PkgBase</a></li>
-        
-            <li><a class="toctree-l3" href="#zfs-be-pkgbase-working-together">ZFS BE + PkgBase working together</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#handling-go-dependencies">Handling Go Dependencies</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#bazel-gazelle">Bazel / Gazelle</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#packaging-go-applications">Packaging Go Applications</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#packaging-with-fpm">Packaging with fpm</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#building-go-programs-using-bazel">Building Go programs using Bazel</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#gazelle">Gazelle</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#ci-with-buildbot">CI with Buildbot</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#adding-dependencies">Adding dependencies</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#postgresql-101-with-replication">PostgreSQL 10.1 with replication</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#postgresql-101-scram-authentication">PostgreSQL 10.1 SCRAM Authentication</a></li>
-        
-            <li><a class="toctree-l3" href="#postgresql-101-using-repmgr-for-database-replication-wal-g-for-wal-archiving-and-minio-for-s3-compatible-storage">PostgreSQL 10.1 using repmgr for database replication, WAL-G for WAL archiving, and minio for S3 compatible storage</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#static-sites-with-hugo">Static sites with Hugo</a></li>
-    
-
-    <li class="toctree-l2"><a href="#self-hosted-git">Self-hosted Git</a></li>
-    
-
-    <li class="toctree-l2"><a href="#saltstack-install-and-config">Saltstack install and config</a></li>
-    
-
-    <li class="toctree-l2"><a href="#_1">*</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#salt-formulas">Salt Formulas</a></li>
-        
-            <li><a class="toctree-l3" href="#salt-equivalent-to-r10k-and-using-git-as-a-pillar-source">Salt equivalent to R10K and using git as a pillar source</a></li>
-        
-            <li><a class="toctree-l3" href="#installing-raet">Installing RAET</a></li>
-        
-            <li><a class="toctree-l3" href="#salt-equivalent-of-hiera-eyaml">Salt equivalent of hiera-eyaml</a></li>
-        
-            <li><a class="toctree-l3" href="#nsd-and-unbound-config">NSD and Unbound config</a></li>
-        
-            <li><a class="toctree-l3" href="#compiling-nginx-with-chacha20-support">Compiling NGINX with ChaCha20 support</a></li>
-        
-        </ul>
-    
-
-    <li class="toctree-l2"><a href="#_2">*</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#bhyve-vm-creation">Bhyve VM creation</a></li>
-        
-            <li><a class="toctree-l3" href="#jail-creation">Jail Creation</a></li>
-        
-            <li><a class="toctree-l3" href="#hardware">Hardware</a></li>
-        
-        </ul>
-    
-
-    </ul>
-	    </li>
-          
-        </ul>
-      </div>
-      &nbsp;
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">Homelab</a>
-      </nav>
-
-      
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="..">Docs</a> &raquo;</li>
-    
-      
-    
-    <li>Homelab</li>
-    <li class="wy-breadcrumbs-aside">
-      
-    </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main">
-            <div class="section">
-              
-                <h2 id="taskfile">Taskfile</h2>
+<p>HTTP2 is just a wrapper around HTTP1.1. NGINX can only use HTTP1.1 when passing requests to upstreams. This is because there is no benefit to using HTTP2 on the upstreams. All of the benefits to HTTP2 are for client connections (header compression, multiplexing, binary streaming).</p>
+<h2 id="taskfile">Taskfile</h2>
 <p>https://taskfile.dev/</p>
 <p>Alternative to Make, a build tool written in Go. Supply commands in a yaml file.</p>
 <pre><code>version: '2'
@@ -298,69 +143,6 @@ edit conf.json, use correct IP address
 serve static files using NGINX as per production instructions
 </code></pre>
 
-<h2 id="massively-scalable-web-applications">Massively scalable Web Applications</h2>
-<ul>
-<li>HTTPS Request -&gt; Hitch &lt;-&gt; Varnish &lt;-&gt; Varnish ESI &lt;-&gt; NGINX &lt;-&gt; NGINX Unit</li>
-</ul>
-<p>Scaling cube:</p>
-<ul>
-<li>X - Horizontal - More servers</li>
-<li>Y - Vertical - Bigger servers</li>
-<li>
-<p>Z - Depth - Sharding</p>
-</li>
-<li>
-<p>X - Scale by adding more servers of same size. Requests can be evenly distributed amongst them.</p>
-</li>
-<li>Y - Give more CPU+RAM to servers</li>
-<li>Z - Distribute requests to specific groups of servers. Maybe geo location so servers are specific to a region. Maybe for caching its splitting the cache up into partitions.</li>
-</ul>
-<h2 id="architecture">Architecture</h2>
-<h3 id="tls-termination">TLS Termination</h3>
-<p>HTTPS to the edge. This is the main interface for users to the web application. Usually paired with load balancers to manage traffic ingress.</p>
-<h3 id="caching">Caching</h3>
-<p>Cache some content to improve resource load times</p>
-<h3 id="dynamic-content">Dynamic Content</h3>
-<p>Resources that can't be cached, and should be passed to the application server to be generated</p>
-<h3 id="proxying-and-authentication">Proxying and authentication</h3>
-<p>Routing requests to the correct application server. Using API keys for authentication.</p>
-<h3 id="application-server">Application server</h3>
-<p>The application running as a web server to receive uncacheable requests</p>
-<h2 id="example-architecture">Example Architecture</h2>
-<h3 id="tls-termination-hitch">TLS Termination - Hitch</h3>
-<p><a href="https://hitch-tls.org">Hitch</a> is an implementation of a TLS proxy by the makers of Varnish. It is simple and performs one job.</p>
-<ul>
-<li>X - Multiple hitch servers behind load balancer</li>
-<li>Y - Bigger servers</li>
-<li>Z - Load balancers for specific geo regions. Load balancers for specific domains so hitch servers only get a subset of requests.</li>
-</ul>
-<h3 id="caching-varnish">Caching - Varnish</h3>
-<ul>
-<li>X - Multiple varnish caches. Maybe shared cache.</li>
-<li>Y - Bigger servers. More RAM means more content can be cached.</li>
-<li>Z - Sharded cache objects</li>
-</ul>
-<h3 id="dynamic-content-varnish-edge-side-includes-vcl-pipe">Dynamic Content - Varnish Edge Side Includes / VCL Pipe</h3>
-<ul>
-<li>X - </li>
-<li>Y - </li>
-<li>Z - </li>
-</ul>
-<h3 id="proxying-and-authentication-nginx">Proxying and authentication - NGINX</h3>
-<ul>
-<li>X - </li>
-<li>Y - </li>
-<li>Z - </li>
-</ul>
-<h3 id="application-server-nginx-unit">Application server - NGINX Unit</h3>
-<ul>
-<li>X - </li>
-<li>Y - </li>
-<li>Z - </li>
-</ul>
-<h2 id="alternative-example-architecture">Alternative Example architecture</h2>
-<p>One issue with the architecture described above is that communication between layers is done via HTTP rather than HTTPS. Hitch and Varnish do not support HTTPS backends.</p>
-<p>An alternative would be to use NGINX for all layers, since it can use HTTPS upstreams.</p>
 <h2 id="nginx-tcpudp-proxy">NGINX TCP/UDP proxy</h2>
 <p>NGINX needs to be compiled with the --with-stream option. It can't be dynamic, which is the default. In the config file you need to add:</p>
 <pre><code>load_module /usr/local/libexec/nginx/ngx_stream_module.so;
@@ -1346,48 +1128,6 @@ testjail {
 <p>Raspberry Pi 2 Model B
 - Quad core 1GB RAM
 - 8GB MicroSD (w/ NOOBS)</p>
-              
-            </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
     </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <!-- Copyright etc -->
-    
-  </div>
-
-  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-</footer>
-      
-        </div>
-      </div>
-
-    </section>
-
-  </div>
-
-  <div class="rst-versions" role="note" style="cursor: pointer">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-      
-        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-    </span>
-</div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-
-</body>
+  </body>
 </html>

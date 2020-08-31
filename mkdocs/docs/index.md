@@ -1,12 +1,35 @@
 # Homelab
 
+## Projects
+
 - [Homelab](https://omussell.github.io/homelab/homelab/) - Homelab projects
+- [FastAPI-Example](https://github.com/omussell/fastapi-example) - Example application using FastAPI
+- [api-http-client](https://github.com/omussell/api-http-client) - HTTP client wrapper around HTTPX to allow application servers to send API requests to other services. FastAPI but HTTP client instead.
+- [Saman](https://github.com/omussell/saman) - Large file encryption
+- [Mission-Control](https://github.com/omussell/mission-control) - Control rockets in KSP with Python
+
+## Inactive Projects
 - [GRIM](https://omussell.github.io/grim/) - Bootstrapping a Secure Infrastructure
-- [Crucible](https://omussell.github.io/crucible/) - Build applications using Python and ZFS
-- [Factorio](https://github.com/omussell/factorio_jupyter) - Jupyter Notebooks for Factorio
-<!-- Ominous: - Control NGINX configurations, similar to NGINX Controller-->
+- [Crucible](https://github.com/omussell/crucible/) - Build applications using Python and ZFS
 
 [TOC]
+
+
+## Firecracker
+
+[Firecracker](https://github.com/firecracker-microvm/firecracker) - Secure and fast microVMs for serverless computing.
+
+Follow the steps in [here](https://github.com/firecracker-microvm/firecracker/blob/master/docs/rootfs-and-kernel-setup.md) to compile the kernel and base file. 
+
+On Ubuntu when compiling you need to install dependencies like libssl-dev, libncurses-dev, bison, autoconf.
+
+Then if you try and compile and it complains about auto.conf not existing, run make menuconfig, then exit out immediately. That seems to have sorted it.
+
+Then when you run make vmlinux it asks lots of questions, but by using the preexisting config file from the repo a lot has already been decided. You could probably pipe yes into this, or otherwise just hold enter. Someone with more kernel experience needs to go over those options and decide if they're necessary. 
+
+Once compiled continue with the getting started instructions but change the path to the kernel file to the vmlinux you created.
+
+I compiled 5.4 kernel and used the existing alpine base from the getting started and it boots just fine.
 
 ## LXD
 
