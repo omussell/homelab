@@ -4,13 +4,13 @@
 
 - [Homelab](https://omussell.github.io/homelab/homelab/) - Homelab projects
 - [FastAPI-Example](https://github.com/omussell/fastapi-example) - Example application using FastAPI
-- [api-http-client](https://github.com/omussell/api-http-client) - HTTP client wrapper around HTTPX to allow application servers to send API requests to other services. FastAPI but HTTP client instead.
-- [Saman](https://github.com/omussell/saman) - Large file encryption
-- [Mission-Control](https://github.com/omussell/mission-control) - Control rockets in KSP with Python
 
 ## Inactive Projects
 - [GRIM](https://omussell.github.io/grim/) - Bootstrapping a Secure Infrastructure
 - [Crucible](https://github.com/omussell/crucible/) - Build applications using Python and ZFS
+- [api-http-client](https://github.com/omussell/api-http-client) - HTTP client wrapper around HTTPX to allow application servers to send API requests to other services. FastAPI but HTTP client instead.
+- [Saman](https://github.com/omussell/saman) - Large file encryption
+- [Mission-Control](https://github.com/omussell/mission-control) - Control rockets in KSP with Python
 
 [TOC]
 
