@@ -1,9 +1,0 @@
-baseURL = "/homelab/"
-#baseURL = "https://omussell.github.io"
-languageCode = "en-gb"
-title = "Homelab"
-theme = "elephants"
-publishDir = "../docs"
-
-[params]
-    sitename = "Homelab"
