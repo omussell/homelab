@@ -3,7 +3,10 @@
 => https://gemini.circumlunar.space/ Project Gemini
 
 ```
-Gemini is a new, collaboratively designed internet protocol, which explores the space inbetween gopher and the web, striving to address (perceived) limitations of one while avoiding the (undeniable) pitfalls of the other.
+Gemini is a new, collaboratively designed internet protocol, 
+which explores the space inbetween gopher and the web, striving 
+to address (perceived) limitations of one while avoiding the 
+(undeniable) pitfalls of the other.
 ```
 
 For the server I'm using 
