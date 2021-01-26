@@ -1,0 +1,28 @@
++++ title = "Serverless with Knative running in gVisor sandbox on Minikube" date = 2020-01-12
+
+[taxonomies] tags = ["k8s", "homelab"] +++
+
+## Serverless with Knative running in gVisor sandbox on Minikube
+
+* 
+=> https://kubernetes.io/docs/tasks/tools/install-minikube/ Minikube
+- A Kubernetes distribution which starts a single-node cluster
+* 
+=> https://gvisor.dev gVisor
+- A user-space kernel, written in Go, that implements a substantial portion of the Linux system call interface.
+* 
+=> https://knative.dev/ Knative
+- Run serverless services on Kubernetes
+
+Install Minikube as described in the documentation.
+
+Install gVisor as per 
+=> https://github.com/kubernetes/minikube/blob/master/deploy/addons/gvisor/README.md the docs
+:
+
+```
+minikube start --container-runtime=containerd  \
+    --docker-opt containerd=/var/run/containerd/containerd.sock
+minikube addons enable gvisor
+kubectl get pod,runtimeclass gvisor -n kube-system
+```

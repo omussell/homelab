@@ -1,0 +1,24 @@
++++ title = "AWS Firecracker" date = 2020-01-14
+
+[taxonomies] tags = ["homelab"] +++
+
+My summary
+
+# Firecracker
+
+=> https://github.com/firecracker-microvm/firecracker Firecracker
+- Secure and fast microVMs for serverless computing.
+
+Follow the steps in 
+=> https://github.com/firecracker-microvm/firecracker/blob/master/docs/rootfs-and-kernel-setup.md here
+to compile the kernel and base file.
+
+On Ubuntu when compiling you need to install dependencies like libssl-dev, libncurses-dev, bison, autoconf.
+
+Then if you try and compile and it complains about auto.conf not existing, run make menuconfig, then exit out immediately. That seems to have sorted it.
+
+Then when you run make vmlinux it asks lots of questions, but by using the preexisting config file from the repo a lot has already been decided. You could probably pipe yes into this, or otherwise just hold enter. Someone with more kernel experience needs to go over those options and decide if they're necessary.
+
+Once compiled continue with the getting started instructions but change the path to the kernel file to the vmlinux you created.
+
+I compiled 5.4 kernel and used the existing alpine base from the getting started and it boots just fine.
