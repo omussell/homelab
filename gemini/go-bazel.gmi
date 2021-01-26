@@ -1,6 +1,4 @@
-+++ title = "Building Go with Bazel" date = 2020-01-07
-
-[taxonomies] tags = ["programming", "homelab"] +++
+# Building Go with Bazel
 
 ## Handling Go Dependencies
 

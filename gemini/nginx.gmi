@@ -1,6 +1,4 @@
-+++ title = "NGINX" date = 2020-01-10
-
-[taxonomies] tags = ["nginx", "homelab"] +++
+# NGINX
 
 ## TLS 1.3 0-RTT with NGINX
 

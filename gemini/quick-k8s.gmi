@@ -1,8 +1,4 @@
-+++ title = "Quick Multi-Node Kubernetes Cluster" date = 2020-01-11
-
-[taxonomies] tags = ["k8s", "homelab"] +++
-
-## Quick Multi-Node Kubernetes Cluster
+# Quick Multi-Node Kubernetes Cluster
 
 ### Multipass
 

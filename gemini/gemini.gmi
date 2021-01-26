@@ -1,6 +1,4 @@
-+++ title = "Gemini Protocol" date = 2021-01-20
-
-[taxonomies] tags = ["homelab"] +++
+# Gemini Protocol
 
 => https://gemini.circumlunar.space/ Project Gemini
 

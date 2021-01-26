@@ -1,6 +1,4 @@
-+++ title = "FreeBSD Jail Creation" date = 2020-01-01
-
-[taxonomies] tags = ["freebsd", "homelab"] +++
+# FreeBSD Jail Creation
 
 Create a template dataset
 

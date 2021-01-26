@@ -1,6 +1,4 @@
-+++ title = "NSD and Unbound config" date = 2020-01-04
-
-[taxonomies] tags = ["dns", "homelab"] +++
+# NSD and Unbound config
 
 ## NSD and Unbound config
 

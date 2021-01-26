@@ -1,6 +1,4 @@
-+++ title = "Compiling NGINX with ChaCha20 support" date = 2020-01-03
-
-[taxonomies] tags = ["nginx", "homelab", "crypto"] +++
+# Compiling NGINX with ChaCha20 support
 
 Make a working directory
 

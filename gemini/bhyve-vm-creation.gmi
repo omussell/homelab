@@ -1,6 +1,5 @@
-+++ title = "Bhyve VM Creation" date = 2020-01-02
+# Bhyve VM Creation
 
-[taxonomies] tags = ["freebsd", "homelab"] +++
 
 ### Bhyve Initial Setup
 

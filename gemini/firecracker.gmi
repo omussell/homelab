@@ -1,10 +1,5 @@
-+++ title = "AWS Firecracker" date = 2020-01-14
+# AWS Firecracker
 
-[taxonomies] tags = ["homelab"] +++
-
-My summary
-
-# Firecracker
 
 => https://github.com/firecracker-microvm/firecracker Firecracker
 - Secure and fast microVMs for serverless computing.

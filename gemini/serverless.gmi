@@ -1,8 +1,4 @@
-+++ title = "Serverless with Knative running in gVisor sandbox on Minikube" date = 2020-01-12
-
-[taxonomies] tags = ["k8s", "homelab"] +++
-
-## Serverless with Knative running in gVisor sandbox on Minikube
+# Serverless with Knative running in gVisor sandbox on Minikube
 
 * 
 => https://kubernetes.io/docs/tasks/tools/install-minikube/ Minikube

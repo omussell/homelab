@@ -1,8 +1,4 @@
-+++ title = "Caching freebsd-update and pkg files" date = 2020-01-13
-
-[taxonomies] tags = ["freebsd", "homelab"] +++
-
-## Caching freebsd-update and pkg files
+# Caching freebsd-update and pkg files
 
 Change the domains as appropriate. The proxy_store location is where the cached files will be placed. This directory needs to be accessible by the user that NGINX is running as (defaults to www).
 

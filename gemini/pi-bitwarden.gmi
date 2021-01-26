@@ -1,6 +1,4 @@
-+++ title = "Running bitwarden_rs on a Raspberry Pi 4" date = 2021-01-12
-
-[taxonomies] tags = ["homelab"] +++
+# Running bitwarden_rs on a Raspberry Pi 4
 
 ## Summary
 
@@ -32,7 +30,7 @@ After compilation, the built binary will be `./target/release/bitwarden_rs`. Thi
 
 The data directory needs to be created with `mkdir -p /var/lib/bitwarden_rs/data. This is where the bitwarden keys and database are stored.
 
-Create a user account with `adduser bitwarden_rs`. Make sure the ownership of everything in `/var/lib/bitwarden_rs` is set to the `bitwarden_rs` user.
+Create a user account with `adduser bitwarden_rs`. Make sure the ownership of everything in `/var/lib/bitwarden_rs` is set to the `bitwarden_rs` user, `chown -R bitwarden_rs:bitwarden_rs /var/lib/bitwarden_rs`.
 
 ## Frontend
 
@@ -54,4 +52,4 @@ tar -xvf bw_web_v2.17.1.tar.gz
 
 Create the systemd service file. Copy the file from 
 => https://github.com/dani-garcia/bitwarden_rs/wiki/Setup-as-a-systemd-service the wiki
-.
+into `/etc/systemd/system/bitwarden_rs.service`.

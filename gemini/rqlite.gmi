@@ -1,8 +1,4 @@
-+++ title = "RQLite" date = 2020-01-08
-
-[taxonomies] tags = ["databases", "homelab"] +++
-
-## RQLite
+# RQLite
 
 SQLite, distributed over many nodes with consensus achieved with the Raft protocol.
 

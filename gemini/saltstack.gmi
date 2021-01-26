@@ -1,8 +1,4 @@
-+++ title = "Saltstack install and config" date = 2020-01-05
-
-[taxonomies] tags = ["config-mgmt", "homelab"] +++
-
-## Saltstack install and config
+# Saltstack install and config
 
 Install the salt package
 

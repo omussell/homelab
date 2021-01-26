@@ -1,8 +1,4 @@
-+++ title = "Signify" date = 2020-01-09
-
-[taxonomies] tags = ["crypto", "homelab"] +++
-
-## Signify
+# Signify
 
 Sign and verify files
 
