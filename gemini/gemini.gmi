@@ -32,7 +32,11 @@ Create a certificate with mkcert
 Run with:
 
 ```
-/root/agate/agate --content /root/homelab/gemini --key /root/certs/gemini.matrix-key.pem --cert /root/certs/gemini.matrix.pem --hostname gemini.matrix
+/root/agate/agate \
+    --content /root/homelab/gemini \
+    --key /root/certs/gemini.matrix-key.pem \
+    --cert /root/certs/gemini.matrix.pem \
+    --hostname gemini.matrix
 ```
 
 ## Client
