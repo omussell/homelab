@@ -9,32 +9,33 @@ to address (perceived) limitations of one while avoiding the
 (undeniable) pitfalls of the other.
 ```
 
+## Server
+
 For the server I'm using 
-=> https://git.sr.ht/~gsthnz/satellite satellite
+=> https://github.com/mbrubeck/agate Agate
 .
 
 ```
-git clone https://git.sr.ht/~gsthnz/satellite
-cd satellite
-go build
-mkdir -p /var/lib/satellite/certs
+# Download the binary (for Rpi)
+wget https://github.com/mbrubeck/agate/releases/download/v2.3.0/agate.aarch64-unknown-linux-gnu.gz
+gunzip agate.aarch64-unknown-linux-gnu.gz
+mv agate.aarch64-unknown-linux-gnu agate
+
+# Or build from source
+git clone https://github.com/mbrubeck/agate
+cd agate
+cargo build --release
 ```
 
-Create satellite.toml
+Create a certificate with mkcert
+
+Run with:
 
 ```
-# Address to listen to requests (default: 0.0.0.0:1965)
-#listen = "0.0.0.0"
-
-[tls]
-# Directory to save certificates
-directory = "/var/lib/satellite/certs"
-
-# Multiple domains can be set with the [[domain]] section
-[[domain]]
-name = "gemini.matrix"
-root = "/srv/gemini/gemini.matrix"
+/root/agate/agate --content /root/homelab/gemini --key /root/certs/gemini.matrix-key.pem --cert /root/certs/gemini.matrix.pem --hostname gemini.matrix
 ```
+
+## Client
 
 For the client I'm using 
 => https://bombadillo.colorfield.space/ bombadillo
