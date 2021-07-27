@@ -1,0 +1,11 @@
+require 'puppet-syntax/tasks/puppet-syntax'
+require 'puppet-lint/tasks/puppet-lint'
+
+task default: %w[test]
+
+PuppetSyntax.check_hiera_keys = true
+
+task :test => [
+:syntax,
+:lint,
+\

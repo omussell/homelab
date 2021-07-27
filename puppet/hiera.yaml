@@ -1,0 +1,23 @@
+---
+version: 5
+defaults:
+  datadir: data
+  data_hash: yaml_data
+hierarchy:
+  - name: "the hieradata and encrypted data"
+    lookup_key: eyaml_lookup_key
+    options:
+      extension: "yaml"
+      pkcs7_private_key: /path/to/privkey
+      pkcs7_public_key: /path/to/pubkey
+    paths:
+      - "nodes/%{trusted.certname}.yaml"
+      - "groups/%{::group}/%{::tier}/%{::role}.yaml"
+      - "groups/%{::group}/%{::tier}.yaml"
+      - "groups/%{::group}.yaml"
+      - "groups/%{::cluster}/%{::tier}.yaml"
+      - "groups/%{::cluster}.yaml"
+      - "common/%{::tier}/%{::role}.yaml"
+      - "common/roles/%{::role}.yaml"
+      - "common/%{::tier}.yaml"
+      - "common.yaml"
