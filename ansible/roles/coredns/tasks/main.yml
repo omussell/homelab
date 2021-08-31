@@ -1,0 +1,88 @@
+---
+
+- name: Download CoreDNS
+  become: yes
+  get_url: 
+    url: https://github.com/coredns/coredns/releases/download/v1.6.9/coredns_1.6.9_linux_amd64.tgz
+    dest: /tmp/coredns.tgz
+
+- name: Install unzip
+  become: yes
+  package:
+    name: unzip
+
+- name: Install tar
+  become: yes
+  package:
+    name: tar
+
+- name: Extract CoreDNS
+  become: yes
+  unarchive:
+    remote_src: yes
+    src: /tmp/coredns.tgz
+    dest: /usr/local/bin
+    creates: /usr/local/bin/coredns
+
+- name: Create CoreDNS group
+  become: yes
+  group:
+    name: coredns
+    system: yes
+
+- name: Create CoreDNS user
+  become: yes
+  user:
+    name: coredns
+    comment: coredns
+    create_home: no
+    group: coredns
+    shell: /bin/nologin
+    system: yes
+
+- name: Fix CoreDNS binary permissions
+  become: yes
+  file:
+    name: /usr/local/bin/coredns
+    owner: coredns
+    group: coredns
+    mode: 0755
+
+
+- name: Create CoreDNS dirs
+  become: yes
+  file:
+    path: /etc/CoreDNS
+    state: directory
+
+- name: Create CoreDNS config file
+  become: yes
+  template:
+    src: CoreFile.j2
+    dest: /etc/CoreDNS/CoreFile
+
+- name: Create CoreDNS zone file
+  become: yes
+  template:
+    src: matrix.zone.j2
+    dest: /etc/CoreDNS/matrix.zone
+
+- name: Create CoreDNS confd file
+  become: yes
+  template:
+    src: coredns.confd.j2
+    dest: /etc/conf.d/coredns
+
+- name: Create CoreDNS initd file
+  become: yes
+  template:
+    src: coredns.initd.j2
+    dest: /etc/init.d/coredns
+    mode: 0766
+
+- name: Enable/Start CoreDNS service
+  become: yes
+  service:
+    name: coredns
+    enabled: yes
+    state: started

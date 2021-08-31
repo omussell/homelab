@@ -1,0 +1,5 @@
+[dns]
+hideo.matrix
+
+[vaultwarden]
+hideo.matrix
