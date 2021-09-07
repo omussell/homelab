@@ -1,0 +1,135 @@
+---
+- name: Install curl
+  become: yes
+  package:
+    name: curl
+
+- name: Install alpine-sdk
+  become: yes
+  package:
+    name: alpine-sdk
+
+- name: Install openssl-dev
+  become: yes
+  package:
+    name: openssl-dev
+
+- name: "Install Rust"
+  become: yes
+  shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+  changed_when: false
+
+- name: Download Vaultwarden
+  become: yes
+  get_url: 
+    url: https://github.com/dani-garcia/vaultwarden/archive/refs/tags/1.22.2.tar.gz
+    dest: /tmp/vaultwarden.tgz
+
+- name: Install unzip
+  become: yes
+  package:
+    name: unzip
+
+- name: Install tar
+  become: yes
+  package:
+    name: tar
+
+- name: Extract Vaultwarden
+  become: yes
+  unarchive:
+    remote_src: yes
+    src: /tmp/vaultwarden.tgz
+    dest: /tmp
+    creates: /tmp/vaultwarden-1.22.2
+
+- name: Compile Vaultwarden binary
+  become: yes
+  command: 
+    cmd: /root/.cargo/bin/cargo build --features sqlite --release
+    chdir: /tmp/vaultwarden-1.22.2
+    creates: /tmp/vaultwarden-1.22.2/target/release/vaultwarden
+
+- name: Create Vaultwarden group 
+  become: yes
+  group:
+    name: vaultwarden
+    system: yes
+
+- name: Create Vaultwarden user
+  become: yes
+  user:
+    name: vaultwarden
+    comment: vaultwarden
+    create_home: no
+    group: vaultwarden
+    shell: /bin/nologin
+    system: yes
+
+- name: Copy vaultwarden binary file with owner and permissions
+  become: yes
+  ansible.builtin.copy:
+    src: /tmp/vaultwarden-1.22.2/target/release/vaultwarden
+    dest: /usr/local/bin
+    owner: vaultwarden
+    group: vaultwarden
+    mode: '0755'
+    remote_src: yes
+
+
+
+- name: Create Vaultwarden data dir
+  become: yes
+  file:
+    path: /var/lib/vaultwarden/data
+    state: directory
+    owner: vaultwarden
+    group: vaultwarden
+
+- name: Create Vaultwarden config dir
+  become: yes
+  file:
+    path: /etc/vaultwarden
+    state: directory
+    owner: vaultwarden
+    group: vaultwarden
+
+- name: Download Vaultwarden frontend
+  become: yes
+  get_url: 
+    url: https://github.com/dani-garcia/bw_web_builds/releases/download/v2.21.1/bw_web_v2.21.1.tar.gz
+    dest: /tmp/vaultwarden-frontend.tgz
+
+- name: Extract Vaultwarden
+  become: yes
+  unarchive:
+    remote_src: yes
+    src: /tmp/vaultwarden-frontend.tgz
+    dest: /var/lib/vaultwarden
+    creates: /var/lib/vaultwarden/web-vault
+
+- name: Create Vaultwarden config file
+  become: yes
+  template:
+    src: dot-env.j2
+    dest: /etc/vaultwarden/.env
+
+- name: Create Vaultwarden confd file
+  become: yes
+  template:
+    src: vaultwarden.confd.j2
+    dest: /etc/conf.d/vaultwarden
+
+- name: Create Vaultwarden initd file
+  become: yes
+  template:
+    src: vaultwarden.initd.j2
+    dest: /etc/init.d/vaultwarden
+    mode: 0766
+
+- name: Enable/Start Vaultwarden service
+  become: yes
+  service:
+    name: vaultwarden
+    enabled: yes
+    state: started

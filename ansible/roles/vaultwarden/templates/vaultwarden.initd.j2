@@ -1,0 +1,13 @@
+#!/sbin/openrc-run
+
+name=vaultwarden
+description="Vaultwarden"
+command=/usr/local/bin/vaultwarden
+command_args="$ARGS"
+command_user="vaultwarden:vaultwarden"
+supervisor="supervise-daemon"
+directory="/var/lib/vaultwarden"
+
+depend() {
+        need net
+}

@@ -1,22 +1,22 @@
 ---
 
-- name: apply common configuration to all nodes
-  hosts: all
-  remote_user: oem
-
-  roles:
-    - common
-
-- name: deploy DNS server
-  hosts: dns
-  remote_user: oem
-
-  roles:
-    - coredns
-
+#- name: apply common configuration to all nodes
+#  hosts: all
+#  remote_user: oem
+#
+#  roles:
+#    - common
+#
+#- name: deploy DNS server
+#  hosts: dns
+#  remote_user: oem
+#
+#  roles:
+#    - coredns
+#
 - name: deploy vaultwarden server
-  hosts: dbservers
-  remote_user: root
+  hosts: vaultwarden
+  remote_user: oem
 
   roles:
     - vaultwarden
