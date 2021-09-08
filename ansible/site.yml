@@ -1,22 +1,11 @@
 ---
 
-#- name: apply common configuration to all nodes
-#  hosts: all
-#  remote_user: oem
-#
-#  roles:
-#    - common
-#
-#- name: deploy DNS server
-#  hosts: dns
-#  remote_user: oem
-#
-#  roles:
-#    - coredns
-#
 - name: deploy vaultwarden server
-  hosts: vaultwarden
+  hosts: hideo
   remote_user: oem
 
   roles:
-    - vaultwarden
+    #    - common
+    #    - coredns
+    #    - vaultwarden
+    - minica

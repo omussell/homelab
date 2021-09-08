@@ -1,0 +1,33 @@
+---
+
+- name: Install go
+  become: yes
+  package:
+    name: go
+
+- name: Get minica repo
+  become: yes
+  ansible.builtin.git:
+    repo: 'https://github.com/jsha/minica.git'
+    dest: /root/minica
+
+- name: Build minica
+  become: yes
+  command:
+    cmd: go build
+    chdir: /root/minica
+    creates: /root/minica/minica
+
+- name: Create minica root cert
+  become: yes
+  command:
+    cmd: '/root/minica/minica -domains *.matrix'
+    chdir: /root/minica
+    creates: /root/minica/minica.pem
+
+- name: Create straylight.matrix cert
+  become: yes
+  command:
+    cmd: '/root/minica/minica -domains straylight.matrix'
+    chdir: /root/minica
+    creates: /root/minica/straylight.matrix

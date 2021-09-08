@@ -23,7 +23,7 @@
   become: yes
   get_url: 
     url: https://github.com/dani-garcia/vaultwarden/archive/refs/tags/1.22.2.tar.gz
-    dest: /tmp/vaultwarden.tgz
+    dest: /root/vaultwarden.tgz
 
 - name: Install unzip
   become: yes
@@ -39,16 +39,16 @@
   become: yes
   unarchive:
     remote_src: yes
-    src: /tmp/vaultwarden.tgz
-    dest: /tmp
-    creates: /tmp/vaultwarden-1.22.2
+    src: /root/vaultwarden.tgz
+    dest: /root
+    creates: /root/vaultwarden-1.22.2
 
 - name: Compile Vaultwarden binary
   become: yes
   command: 
     cmd: /root/.cargo/bin/cargo build --features sqlite --release
-    chdir: /tmp/vaultwarden-1.22.2
-    creates: /tmp/vaultwarden-1.22.2/target/release/vaultwarden
+    chdir: /root/vaultwarden-1.22.2
+    creates: /root/vaultwarden-1.22.2/target/release/vaultwarden
 
 - name: Create Vaultwarden group 
   become: yes
@@ -69,7 +69,7 @@
 - name: Copy vaultwarden binary file with owner and permissions
   become: yes
   ansible.builtin.copy:
-    src: /tmp/vaultwarden-1.22.2/target/release/vaultwarden
+    src: /root/vaultwarden-1.22.2/target/release/vaultwarden
     dest: /usr/local/bin
     owner: vaultwarden
     group: vaultwarden
@@ -98,13 +98,13 @@
   become: yes
   get_url: 
     url: https://github.com/dani-garcia/bw_web_builds/releases/download/v2.21.1/bw_web_v2.21.1.tar.gz
-    dest: /tmp/vaultwarden-frontend.tgz
+    dest: /root/vaultwarden-frontend.tgz
 
 - name: Extract Vaultwarden
   become: yes
   unarchive:
     remote_src: yes
-    src: /tmp/vaultwarden-frontend.tgz
+    src: /root/vaultwarden-frontend.tgz
     dest: /var/lib/vaultwarden
     creates: /var/lib/vaultwarden/web-vault
 

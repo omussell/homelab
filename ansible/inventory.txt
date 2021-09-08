@@ -1,5 +1,2 @@
-[dns]
-hideo.matrix
-
-[vaultwarden]
+[hideo]
 hideo.matrix

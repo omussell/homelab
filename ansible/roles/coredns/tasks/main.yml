@@ -4,7 +4,7 @@
   become: yes
   get_url: 
     url: https://github.com/coredns/coredns/releases/download/v1.6.9/coredns_1.6.9_linux_amd64.tgz
-    dest: /tmp/coredns.tgz
+    dest: /root/coredns.tgz
 
 - name: Install unzip
   become: yes
@@ -20,7 +20,7 @@
   become: yes
   unarchive:
     remote_src: yes
-    src: /tmp/coredns.tgz
+    src: /root/coredns.tgz
     dest: /usr/local/bin
     creates: /usr/local/bin/coredns
 
